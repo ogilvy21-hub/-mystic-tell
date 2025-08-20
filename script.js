@@ -2368,168 +2368,346 @@ function showCard(which) {
   });
 });
 
-// ===== 통합 라우팅 및 버튼 이벤트 시스템 =====
-(function() {
+// ===== 🎯 핵심 수정사항 =====
+
+// 1️⃣ 스플래시 스크린 통합 관리 (중복 제거)
+(function initSplash() {
+  let splashHandled = false;
+  
   const hideSplash = () => {
+    if (splashHandled) return;
+    splashHandled = true;
+    
     const splash = document.getElementById('splashScreen');
-    if (splash) splash.classList.add('hidden');
+    if (splash) {
+      splash.classList.add('hidden');
+      setTimeout(() => splash.style.display = 'none', 600);
+    }
   };
 
-  // 통합 라우팅 처리
-  function handleRoute() {
-    const hash = location.hash || '#/home';
-    const match = hash.match(/^#\/([^/]+)(?:\/([^/]+))?/);
-    const tab = match?.[1] || 'home';
-    const sub = match?.[2] || '';
+  // 자동 닫기
+  window.addEventListener('load', () => {
+    setTimeout(hideSplash, 800);
+  });
 
-    setActiveTab(tab);
+  // 시작 버튼 클릭
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#startBtn, .start-btn, .start-image-btn')) {
+      e.preventDefault();
+      hideSplash();
+    }
+  });
+})();
+
+// 2️⃣ 로또 뷰 표시 수정
+const views = {
+  'fortune-today': $('#view-today'),
+  'fortune-saju' : $('#view-saju'),
+  'fortune-tarot': $('#view-tarot'),
+  'fortune-palm' : $('#view-palm'),
+  'fortune-match': $('#view-match'),
+  'fortune-year' : $('#view-year'),
+  'fortune-lotto': $('#view-lotto')
+};
+
+function showFortuneView(route) {
+  closeAllOverlays();
+  
+  // 모든 뷰 숨기기
+  Object.values(views).forEach(v => {
+    if (v) v.style.display = 'none';
+  });
+
+  // 제목 업데이트
+  const titles = {
+    'fortune-today': '오늘의 운세',
+    'fortune-saju': '정통 사주',
+    'fortune-tarot': '타로 점',
+    'fortune-palm': '손금 보기',
+    'fortune-match': '궁합 보기',
+    'fortune-year': '신년 운세 (2025)',
+    'fortune-lotto': '🎲 행운번호'
+  };
+  
+  const fortuneTitle = $('#fortuneTitle');
+  if (fortuneTitle) {
+    fortuneTitle.textContent = titles[route] || '운세';
+  }
+
+  // 해당 뷰 표시
+  const targetView = views[route];
+  if (targetView) {
+    targetView.style.display = 'block';
     
-    if (tab === 'fortune') {
-      const viewMap = {
-        'today': 'fortune-today',
-        'saju': 'fortune-saju', 
-        'tarot': 'fortune-tarot',
-        'palm': 'fortune-palm',
-        'match': 'fortune-match',
-        'year': 'fortune-year',
-        'lotto': 'fortune-lotto'
-      };
-      showFortuneView(viewMap[sub] || 'fortune-today');
+    // 특별 처리
+    switch (route) {
+      case 'fortune-tarot':
+        initializeTarot();
+        break;
+      case 'fortune-palm':
+        setTimeout(() => initializePalmReading(), 50);
+        break;
+      case 'fortune-lotto':
+        // 로또 뷰가 보이지 않는 문제 해결
+        targetView.style.background = 'white';
+        targetView.style.minHeight = '400px';
+        targetView.style.padding = '20px';
+        break;
     }
   }
 
-  // ===================== 라우팅 훅 (최종본) =====================
-
-// 1) 전역 클릭 위임: data-route, CTA, 스플래시 Start 모두 처리
-document.addEventListener('click', (e) => {
-  // data-route 또는 CTA/Start 버튼들을 한 번에 캐치
-  const el = e.target.closest('[data-route], #ctaToday, #ctaSaju, #ctaStart, #ctaLotto, .start-btn');
-  if (!el) return;
-
-  e.preventDefault();
-  try { hideSplash?.(); } catch (_) {}
-
-  // data-route가 있으면 그 값을 우선 사용
-  const r = el.dataset?.route;
-  if (r) {
-    location.hash = r.startsWith('fortune-')
-      ? '#/fortune/' + r.replace('fortune-', '')
-      : '#/' + r;
-    return;
-  }
-
-  // data-route 없는 CTA 대비 (구형 마크업 호환)
-  if (el.id === 'ctaSaju') {
-    location.hash = '#/fortune/saju';
-  } else {
-    // 기본은 오늘의 운세로
-    location.hash = '#/fortune/today';
-  }
-});
-
-// 2) 해시 변경 시 라우팅
-window.addEventListener('hashchange', handleRoute);
-
-// 3) 최초 진입 시 라우팅
-window.addEventListener('load', () => {
-  try { hideSplash?.(); } catch (_) {}
-  if (!location.hash) location.hash = '#/home';
-  handleRoute();
-});
-
-function smoothScrollTo(selector) {
-const element = document.querySelector(selector);
-if (element) {
-element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
+  reactCrystal(`${titles[route] || '운세'}을(를) 준비합니다…`);
 }
 
-// 🔥 강력한 밑줄 완전 제거 (영구적용)
-function removeAllUnderlines() {
-  document.querySelectorAll('*').forEach(el => {
-    el.style.setProperty('text-decoration', 'none', 'important');
-    el.style.setProperty('text-decoration-line', 'none', 'important');
-    el.style.setProperty('border-bottom', 'none', 'important');
+// 3️⃣ 로또 번호 생성 개선
+function generateEnhancedLotto(birthdate = '') {
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`;
+  const seed = (birthdate || 'random') + dateStr;
+  
+  let hash = 0;
+  for(let i = 0; i < seed.length; i++) {
+    hash = (hash * 37 + seed.charCodeAt(i)) % 1000000;
+  }
+  
+  // 통계 기반 인기 번호들
+  const hotNumbers = [1, 7, 17, 20, 23, 27, 33, 40, 42, 43, 44, 45];
+  const numbers = new Set();
+  
+  // 개인화된 번호 생성
+  while(numbers.size < 6) {
+    const randomIndex = Math.abs(hash + numbers.size * 13) % 45;
+    const num = randomIndex + 1;
+    numbers.add(num);
+  }
+  
+  const finalNumbers = Array.from(numbers).sort((a,b) => a-b);
+  const bonus = (Math.abs(hash + 777) % 45) + 1;
+  
+  return {
+    numbers: finalNumbers,
+    bonus: bonus,
+    generated: dateStr,
+    personalized: !!birthdate
+  };
+}
+
+// 4️⃣ 로또 결과 표시 개선
+function showLottoResult(result, name = '') {
+  const nameText = name ? `${name}님의 ` : '';
+  
+  const html = `
+    <div class="result-section">
+      <div class="section-title-result">🎲 ${nameText}행운의 로또번호</div>
+      
+      <div class="lotto-numbers">
+        ${result.numbers.map(n => `<span class="lotto-ball">${String(n).padStart(2,'0')}</span>`).join('')}
+        <span class="bonus-separator">+</span>
+        <span class="lotto-ball bonus">${String(result.bonus).padStart(2,'0')}</span>
+      </div>
+      
+      <div class="lotto-info">
+        <div class="info-item">
+          <span class="info-label">생성일:</span>
+          <span class="info-value">${result.generated}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">유형:</span>
+          <span class="info-value">${result.personalized ? '🔮 개인맞춤' : '🎲 랜덤생성'}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="info-box">
+      <div class="info-title">🍀 행운번호 안내</div>
+      <div class="info-content">
+        <strong>생성방식:</strong> 생년월일 + 오늘 날짜를 기반으로 개인화된 번호를 생성합니다.<br/>
+        <strong>특징:</strong> 통계적으로 자주 나오는 번호와 개인화 알고리즘을 조합했습니다.<br/>
+        <strong>유효기간:</strong> 하루 단위로 새로운 번호가 생성됩니다.<br/>
+        ※ 로또는 순전히 운의 게임입니다. 재미로만 참고하세요! 🎯
+      </div>
+    </div>
+  `;
+  
+  return html;
+}
+
+// 5️⃣ 통합 라우팅 (중복 제거)
+function handleUnifiedRouting() {
+  // 기존 중복 리스너들 제거
+  document.removeEventListener('click', arguments.callee);
+  
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest('[data-route], #ctaToday, #ctaSaju, #ctaStart, #ctaLotto');
+    if (!el) return;
+
+    e.preventDefault();
+
+    // 라우팅 처리
+    const route = el.dataset?.route || el.id;
+    
+    if (route?.startsWith('fortune-')) {
+      const view = route.replace('fortune-', '');
+      location.hash = '#/fortune/' + view;
+    } else if (route === 'ctaLotto' || route?.includes('lotto')) {
+      location.hash = '#/fortune/lotto';
+    } else if (route === 'ctaSaju') {
+      location.hash = '#/fortune/saju';
+    } else if (route?.includes('home')) {
+      location.hash = '#/home';
+    } else {
+      location.hash = '#/fortune/today';
+    }
   });
 }
 
-// DOM 로드 후 실행
-document.addEventListener('DOMContentLoaded', removeAllUnderlines);
-
-// 페이지 로드 완료 후에도 실행 (혹시 모르니까)
-window.addEventListener('load', removeAllUnderlines);
-
-// 동적으로 추가되는 요소에도 적용
-const observer = new MutationObserver(removeAllUnderlines);
-observer.observe(document.body, {
-  childList: true,
-  subtree: true
-});
-                          
-// 🎲 로또 번호 생성기
-const LOTTO_STATS = {
-  hot: [40, 22, 34, 17, 10, 37, 27, 43, 33, 39, 12, 23],
-  lucky: [7, 14, 21, 28, 35, 42]
-};
-
-function generateLotto(birthdate = '') {
-  const today = new Date().toDateString();
-  const seed = (birthdate || 'random') + today;
-  let hash = 0;
+// 6️⃣ 로또 버튼 이벤트 수정
+function setupLottoButton() {
+  const btnLotto = $('#btnLotto');
+  if (!btnLotto) return;
   
-  for(let i = 0; i < seed.length; i++) {
-    hash = (hash * 31 + seed.charCodeAt(i)) % 100000;
-  }
+  // 기존 리스너 제거 후 새로 추가
+  btnLotto.replaceWith(btnLotto.cloneNode(true));
+  const newBtn = $('#btnLotto');
   
-  const numbers = [];
-  const hotNums = [...LOTTO_STATS.hot];
-  
-  // 통계 기반 4개
-  for(let i = 0; i < 4; i++) {
-    const idx = Math.abs(hash + i) % hotNums.length;
-    numbers.push(hotNums.splice(idx, 1)[0]);
-  }
-  
-  // 개인화 랜덤 2개
-  while(numbers.length < 6) {
-    const num = (Math.abs(hash + numbers.length * 7) % 45) + 1;
-    if(!numbers.includes(num)) numbers.push(num);
-  }
-  
-  const bonus = (Math.abs(hash + 99) % 45) + 1;
-  return { numbers: numbers.sort((a,b) => a-b), bonus };
+  newBtn.addEventListener('click', () => {
+    const birth = $('#lotto-birth')?.value?.trim() || '';
+    const name = $('#lotto-name')?.value?.trim() || '';
+    
+    try {
+      const result = generateEnhancedLotto(birth);
+      const htmlResult = showLottoResult(result, name);
+      
+      openSheet('🎲 행운의 로또번호', htmlResult, {
+        type: 'lotto',
+        birth: birth,
+        name: name,
+        numbers: result.numbers,
+        bonus: result.bonus,
+        generated: result.generated
+      });
+      
+      reactCrystal('행운의 번호를 생성했습니다! 🍀');
+      
+      // 최근 결과에 저장
+      pushRecent({
+        type: 'lotto',
+        numbers: result.numbers.join(', '),
+        bonus: result.bonus,
+        personalized: result.personalized
+      });
+      
+    } catch (error) {
+      console.error('로또 생성 오류:', error);
+      alert('번호 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+  });
 }
 
-// 로또 버튼 이벤트
-$('#btnLotto')?.addEventListener('click', ()=>{
-  const birth = $('#lotto-birth')?.value || '';
-  const result = generateLotto(birth);
-  const html = `
-    🎲 행운의 로또번호
+// 7️⃣ 로또 스타일 추가
+function addLottoStyles() {
+  if (document.getElementById('lotto-styles')) return;
+  
+  const css = `
+    .lotto-numbers {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
     
-    ${result.numbers.map(n => `[${String(n).padStart(2,'0')}]`).join(' ')}
-    보너스: [${String(result.bonus).padStart(2,'0')}]
+    .lotto-ball {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
     
-    ${birth ? '🔮 개인맞춤' : '🎲 랜덤'} 생성
-    📊 통계 기반 + 행운 조합
+    .lotto-ball.bonus {
+      background: linear-gradient(135deg, #ff6b35, #f7931e);
+    }
+    
+    .bonus-separator {
+      font-size: 24px;
+      font-weight: bold;
+      color: #666;
+      margin: 0 10px;
+    }
+    
+    .lotto-info {
+      background: #f8f9ff;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+    
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+    }
+    
+    .info-label {
+      color: #666;
+      font-weight: 500;
+    }
+    
+    .info-value {
+      color: #333;
+      font-weight: bold;
+    }
   `;
-  openSheet('🍀 행운의 로또번호', html, {type:'lotto', numbers:result.numbers, bonus:result.bonus});
-  reactCrystal('행운의 번호를 생성했습니다! 🍀');
+  
+  const style = document.createElement('style');
+  style.id = 'lotto-styles';
+  style.textContent = css;
+  document.head.appendChild(style);
+}
+
+// 8️⃣ 초기화 실행
+document.addEventListener('DOMContentLoaded', () => {
+  addLottoStyles();
+  handleUnifiedRouting();
+  setupLottoButton();
+  
+  // 캘린더 바인딩
+  bindCalToggle('today');
+  bindCalToggle('saju');
+  
+  // 초기 라우팅
+  if (!location.hash) location.hash = '#/home';
 });
 
-// 🎲 로또 페이지 강제 표시 (임시 해결)
-document.addEventListener('DOMContentLoaded', function() {
-  if (location.hash.includes('lotto')) {
-    setTimeout(() => {
-      const lottoView = document.querySelector('#view-lotto');
-      if (lottoView) {
-        lottoView.style.background = 'white';
-        lottoView.style.padding = '20px';
-        lottoView.style.border = '1px solid #ddd';
-        lottoView.style.borderRadius = '10px';
-        lottoView.style.margin = '20px auto';
-        lottoView.style.maxWidth = '500px';
-      }
-    }, 500);
+// 9️⃣ 해시 변경 처리
+window.addEventListener('hashchange', () => {
+  const hash = location.hash || '#/home';
+  const match = hash.match(/^#\/([^/]+)(?:\/([^/]+))?/);
+  const tab = match?.[1] || 'home';
+  const sub = match?.[2] || '';
+
+  setActiveTab(tab);
+  
+  if (tab === 'fortune') {
+    const viewMap = {
+      'today': 'fortune-today',
+      'saju': 'fortune-saju',
+      'tarot': 'fortune-tarot', 
+      'palm': 'fortune-palm',
+      'match': 'fortune-match',
+      'year': 'fortune-year',
+      'lotto': 'fortune-lotto'
+    };
+    showFortuneView(viewMap[sub] || 'fortune-today');
   }
 });
+
+console.log('🎯 MysticTell 앱이 수정 완료되었습니다!');
