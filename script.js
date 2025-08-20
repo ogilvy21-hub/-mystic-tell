@@ -1,14 +1,15 @@
-// lunar-javascript 글로벌 보정
-if (typeof window.Solar === "undefined" && typeof window.Lunar !== "undefined") {
-  window.Solar = window.Lunar.Solar;
-}
-if (typeof window.LunarMonth === "undefined" && typeof window.Lunar !== "undefined") {
-  window.LunarMonth = window.Lunar.LunarMonth;
-}
-
-const $=(s,r=document)=>r.querySelector(s);
-const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
-const LS_KEY="mystictell:recent";
+// lunar-javascript 글로벌 보정 (보강)
+(function fixLunarGlobals(){
+  try {
+    if (typeof window.Lunar !== "undefined") {
+      if (typeof window.Solar === "undefined")      window.Solar = window.Lunar.Solar;
+      if (typeof window.LunarYear === "undefined")  window.LunarYear = window.Lunar.LunarYear;
+      if (typeof window.LunarMonth === "undefined") window.LunarMonth = window.Lunar.LunarMonth;
+    }
+  } catch(e) {
+    console.warn("lunar globals patch skipped:", e);
+  }
+})();
 
 // 메뉴 썸네일/아이콘 숨기기 + 레이아웃 보정
 (function injectPalmStyles(){
@@ -1481,6 +1482,16 @@ card.addEventListener('click', () => selectTarotCard(card));
 card.__bound = true;
 });
 
+  // 타로: 클래스 변동 대비 전역 위임(중복 방지)
+if (!window.__mtTarotDelegation) {
+  document.addEventListener('click', (e) => {
+    const back = e.target.closest('.tarot-card-back, .tarot-card');
+    if (!back || back.classList.contains('revealed')) return;
+    selectTarotCard(back);
+  }, true); // 캡처 단계로 조기 가로채기
+  window.__mtTarotDelegation = true;
+}
+
 const randomBtn = $('#btnRandomTarot');
 if (randomBtn && !randomBtn.__bound) { 
 randomBtn.addEventListener('click', drawRandomTarotCard); 
@@ -2127,6 +2138,8 @@ function showComingSoonNotification() {
 document.addEventListener('DOMContentLoaded', function() {
   setPalmAsComingSoon();
   showPalmComingSoonAlert();
+  // 필요한 초기화가 더 있으면 여기서 호출
+}); // ← 반드시 닫기
   
   // 손금 관련 제목에 (예정) 추가
   setTimeout(() => {
