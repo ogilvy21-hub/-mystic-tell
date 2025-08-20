@@ -497,7 +497,12 @@ try { closeSheet(); } catch(e){}
 }
 
 // ===== 네비게이션 =====
-const pages={home:$('#page-home'),fortune:$('#page-fortune'),chat:$('#page-chat'),me:$('#page-me')};
+const pages = {
+  get home() { return document.getElementById('page-home'); },
+  get fortune() { return document.getElementById('page-fortune'); },
+  get chat() { return document.getElementById('page-chat'); },
+  get me() { return document.getElementById('page-me'); }
+};
 
 function setActiveTab(tab){
 $$('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.tab===tab));
