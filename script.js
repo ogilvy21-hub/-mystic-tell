@@ -505,6 +505,10 @@ const pages = {
 };
 
 function setActiveTab(tab){
+// 메인 컨테이너 보이게 만들기
+const mainContent = document.getElementById('mainContent');
+if (mainContent) mainContent.style.display = 'block';
+
 $$('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.tab===tab));
 Object.entries(pages).forEach(([k,el])=>el?.classList.toggle('show',k===tab));
 closeAllOverlays();
@@ -2414,5 +2418,13 @@ function showCard(which) {
     handleRoute();
   });
 })();
-
+function smoothScrollTo(selector) {
+const element = document.querySelector(selector);
+if (element) {
+element.scrollIntoView({ 
+behavior: 'smooth', 
+block: 'start' 
+});
+}
+}
 
