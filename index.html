@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔮 MysticTell</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+<!-- Splash: 배경 이미지 + 스타트 이미지 버튼 -->
+<div class="splash-screen" id="splashScreen" aria-label="MysticTell Splash">
+<button class="start-image-btn" id="startBtn" aria-label="Start"></button>
+</div>
+
+<!-- Main -->
+<div class="main-content" id="mainContent">
+<div class="header">
+<div class="logo">🔮 MysticTell</div>
+<div class="subtitle">신비로운 미래를 알려드리는 디지털 점술사</div>
+<div class="main-crystal" id="mainCrystal">구슬 속 미래를<br/>확인해보세요</div>
+</div>
+
+<!-- 홈 -->
+<section id="page-home" class="page show">
+<div class="section-title">✨ 핵심 운세 서비스</div>
+<div class="service-grid">
+<div class="service-item" data-route="fortune-today">
+<span class="service-icon">🗓️</span>
+<div class="service-name">오늘의 운세</div>
+<div class="service-desc">매일 새로운 운세를 확인하세요</div>
+</div>
+<div class="service-item" data-route="fortune-saju">
+<span class="service-icon">📜</span>
+<div class="service-name">정통 사주</div>
+<div class="service-desc">생년월일로 보는 인생 운세</div>
+</div>
+<div class="service-item" data-route="fortune-tarot">
+<span class="service-icon">🃏</span>
+<div class="service-name">타로 점</div>
+<div class="service-desc">카드가 전하는 미래 메시지</div>
+</div>
+<div class="service-item" data-route="fortune-match">
+<span class="service-icon">💕</span>
+<div class="service-name">궁합 보기</div>
+<div class="service-desc">두 사람의 운명적 만남</div>
+</div>
+</div>
+<div class="section-title">🌟 특별 서비스</div>
+<div class="special-grid">
+<div class="special-item" data-route="fortune-year">
+<div class="special-icon">🎊</div>
+<div class="special-title">신년 운세</div>
+<div class="special-desc">2025년 한 해 운세</div>
+</div>
+<div class="special-item" data-route="fortune-palm">
+<div class="special-icon">🖐️</div>
+<div class="special-title">손금 보기</div>
+<div class="special-desc">손바닥으로 보는 운명</div>
+</div>
+</div>
+</section>
+
+<!-- 운세 폼 -->
+<section id="page-fortune" class="page">
+<div class="section-title" id="fortuneTitle">운세</div>
+
+<!-- 오늘의 운세 -->
+<div id="view-today" class="card" style="display:none;">
+<div class="field">
+<div class="label">생년월일</div>
+<input class="input" type="date" id="today-birth" />
+</div>
+<label class="field-label">달력</label>
+<div class="seg">
+<label><input type="radio" name="today-cal" id="today-cal-solar" value="solar" checked> 양력</label>
+<label><input type="radio" name="today-cal" id="today-cal-lunar" value="lunar"> 음력</label>
+<label style="margin-left:8px;"><input type="checkbox" id="today-leap"> 윤달</label>
+</div>
+<button class="btn" id="btnToday">오늘의 운세 보기</button>
+</div>
+
+<!-- 정통 사주 -->
+<div id="view-saju" class="card" style="display:none;">
+<div class="field">
+<div class="label">생년월일</div>
+<input class="input" type="date" id="saju-birth" />
+</div>
+<label class="field-label">달력</label>
+<div class="seg">
+<label><input type="radio" name="saju-cal" id="saju-cal-solar" value="solar" checked> 양력</label>
+<label><input type="radio" name="saju-cal" id="saju-cal-lunar" value="lunar"> 음력</label>
+<label style="margin-left:8px;"><input type="checkbox" id="saju-leap"> 윤달</label>
+</div>
+<!-- 이름 (선택) -->
+<label for="saju-name" class="field-label">이름 (선택)</label>
+<input id="saju-name" type="text" placeholder="이름을 입력하세요" class="input" />
+<div class="field">
+<div class="label">성별</div>
+<select id="saju-gender" class="input">
+<option value="F">여성</option>
+<option value="M">남성</option>
+</select>
+</div>
+<div class="field">
+<div class="label">태어난 시간 (선택)</div>
+<input class="input" type="time" id="saju-time" step="900" placeholder="예: 13:30" />
+</div>
+<button class="btn" id="btnSaju">사주 해석 보기</button>
+</div>
+
+<!-- 타로 섹션 -->
+<div id="view-tarot" class="card" style="display:none;">
+<h3 style="margin-bottom: 20px; text-align: center; color: #667eea;">🔮 타로 카드 점</h3>
+<p style="text-align: center; color: #666; margin-bottom: 25px; font-style: italic;">
+🌟 마음을 집중하고 카드를 선택하세요
+</p>
+<!-- 7장 카드 선택 영역 -->
+<div class="tarot-card-selection">
+<div class="tarot-row">
+<div class="tarot-card-back" data-card-index="0">
+<div class="card-back-design">🌟</div>
+</div>
+<div class="tarot-card-back" data-card-index="1">
+<div class="card-back-design">🌟</div>
+</div>
+<div class="tarot-card-back" data-card-index="2">
+<div class="card-back-design">🌟</div>
+</div>
+<div class="tarot-card-back" data-card-index="3">
+<div class="card-back-design">🌟</div>
+</div>
+</div>
+<div class="tarot-row">
+<div class="tarot-card-back" data-card-index="4">
+<div class="card-back-design">🌟</div>
+</div>
+<div class="tarot-card-back" data-card-index="5">
+<div class="card-back-design">🌟</div>
+</div>
+<div class="tarot-card-back" data-card-index="6">
+<div class="card-back-design">🌟</div>
+</div>
+</div>
+</div>
+<div class="tarot-actions">
+<button id="btnRandomTarot" class="btn" style="background: linear-gradient(135deg, #8e44ad, #9b59b6);">
+🎲 랜덤 뽑기
+</button>
+<button id="btnResetTarot" class="btn btn-ghost">🔄 다시 시작</button>
+</div>
+</div>
+
+<!-- 손금 섹션 -->
+<div id="view-palm" class="card" style="display:none;">
+<h3 style="margin-bottom: 20px; text-align: center; color: #667eea;">🖐️ 손금 보기</h3>
+<p style="text-align: center; color: #666; margin-bottom: 25px; font-style: italic;">
+✨ 관심 있는 손금 유형을 선택하세요
+</p>
+
+<div class="palm-types-grid">
+<div class="palm-type-card" data-palm-type="life">
+<div class="palm-image">
+<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #4CAF50, #8BC34A);">
+<defs>
+<!-- 더 자연스러운 손바닥 모양 -->
+<path id="hand" d="M25,75 Q20,70 22,60 Q25,50 30,40 Q35,30 45,25 Q50,20 60,22 Q65,18 70,20 Q75,15 80,18 Q85,15 90,20 Q95,25 92,35 Q95,45 90,55 Q85,65 75,70 Q65,75 50,75 Q37,75 25,75 Z" fill="rgba(255,255,255,0.95)" stroke="rgba(255,255,255,0.8)" stroke-width="1"/>
+</defs>
+<use href="#hand"/>
+<!-- 생명선 -->
+<path d="M30,40 Q25,50 27,75" stroke="#2E7D32" stroke-width="4" fill="none" stroke-linecap="round"/>
+<text x="60" y="45" fill="white" font-size="12" font-weight="bold" text-anchor="middle">생명선</text>
+<text x="60" y="58" fill="white" font-size="16" text-anchor="middle">🌱</text>
+</svg>
+</div>
+<div class="palm-title">생명선 (生命線)</div>
+<div class="palm-description">건강과 생명력, 체력을 나타내는 선</div>
+</div>
+
+<div class="palm-type-card" data-palm-type="head">
+<div class="palm-image">
+<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #2196F3, #03A9F4);">
+<use href="#hand"/>
+<!-- 지혜선 -->
+<path d="M30,40 Q50,45 75,50 Q85,52 90,55" stroke="#1565C0" stroke-width="4" fill="none" stroke-linecap="round"/>
+<text x="60" y="35" fill="white" font-size="12" font-weight="bold" text-anchor="middle">지혜선</text>
+<text x="60" y="68" fill="white" font-size="16" text-anchor="middle">🧠</text>
+</svg>
+</div>
+<div class="palm-title">지혜선 (知慧線)</div>
+<div class="palm-description">지능과 사고력, 학습능력을 보여주는 선</div>
+</div>
+
+<div class="palm-type-card" data-palm-type="heart">
+<div class="palm-image">
+<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #E91E63, #F06292);">
+<use href="#hand"/>
+<!-- 감정선 -->
+<path d="M22,35 Q45,30 70,32 Q85,34 92,35" stroke="#AD1457" stroke-width="4" fill="none" stroke-linecap="round"/>
+<text x="60" y="50" fill="white" font-size="12" font-weight="bold" text-anchor="middle">감정선</text>
+<text x="60" y="63" fill="white" font-size="16" text-anchor="middle">💖</text>
+</svg>
+</div>
+<div class="palm-title">감정선 (感情線)</div>
+<div class="palm-description">사랑과 감정, 인간관계를 나타내는 선</div>
+</div>
+
+<div class="palm-type-card" data-palm-type="fate">
+<div class="palm-image">
+<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #FF9800, #FFC107);">
+<use href="#hand"/>
+<!-- 운명선 -->
+<path d="M60,75 Q58,60 60,45 Q62,30 65,22" stroke="#E65100" stroke-width="4" fill="none" stroke-linecap="round"/>
+<text x="40" y="45" fill="white" font-size="12" font-weight="bold" text-anchor="middle">운명선</text>
+<text x="80" y="58" fill="white" font-size="16" text-anchor="middle">🌟</text>
+</svg>
+</div>
+<div class="palm-title">운명선 (運命線)</div>
+<div class="palm-description">직업운과 사회적 성취를 보여주는 선</div>
+</div>
+
+<div class="palm-type-card" data-palm-type="sun">
+<div class="palm-image">
+<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #FFC107, #FFD54F);">
+<use href="#hand"/>
+<!-- 태양선 -->
+<path d="M75,70 Q73,55 75,40 Q77,30 80,20" stroke="#F57F17" stroke-width="4" fill="none" stroke-linecap="round"/>
+<text x="45" y="45" fill="white" font-size="12" font-weight="bold" text-anchor="middle">태양선</text>
+<text x="45" y="58" fill="white" font-size="16" text-anchor="middle">☀️</text>
+</svg>
+</div>
+<div class="palm-title">태양선 (太陽線)</div>
+<div class="palm-description">명예와 인기, 예술적 재능을 나타내는 선</div>
+</div>
+
+<div class="palm-type-card" data-palm-type="marriage">
+<div class="palm-image">
+<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #9C27B0, #BA68C8);">
+<use href="#hand"/>
+<!-- 결혼선 -->
+<path d="M90,25 Q93,27 95,30" stroke="#6A1B9A" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M90,30 Q93,32 95,35" stroke="#6A1B9A" stroke-width="3" fill="none" stroke-linecap="round"/>
+<text x="45" y="45" fill="white" font-size="12" font-weight="bold" text-anchor="middle">결혼선</text>
+<text x="45" y="58" fill="white" font-size="16" text-anchor="middle">💕</text>
+</svg>
+</div>
+<div class="palm-title">결혼선 (結婚線)</div>
+<div class="palm-description">결혼과 연애, 배우자운을 보여주는 선</div>
+</div>
+
+<div class="palm-type-card" data-palm-type="health">
+<div class="palm-image">
+<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #00BCD4, #4DD0E1);">
+<use href="#hand"/>
+<!-- 건강선 -->
+<path d="M45,75 Q48,60 50,45 Q52,30 55,22" stroke="#00838F" stroke-width="4" fill="none" stroke-linecap="round"/>
+<text x="70" y="45" fill="white" font-size="12" font-weight="bold" text-anchor="middle">건강선</text>
+<text x="70" y="58" fill="white" font-size="16" text-anchor="middle">⚕️</text>
+</svg>
+</div>
+<div class="palm-title">건강선 (健康線)</div>
+<div class="palm-description">건강상태와 질병 예방을 나타내는 선</div>
+</div>
+
+<div class="palm-type-card" data-palm-type="intuition">
+<div class="palm-image">
+<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #673AB7, #9575CD);">
+<use href="#hand"/>
+<!-- 직감선 -->
+<path d="M25,75 Q22,65 25,55 Q28,45 32,35" stroke="#4527A0" stroke-width="4" fill="none" stroke-linecap="round"/>
+<text x="70" y="45" fill="white" font-size="12" font-weight="bold" text-anchor="middle">직감선</text>
+<text x="70" y="58" fill="white" font-size="16" text-anchor="middle">🔮</text>
+</svg>
+</div>
+<div class="palm-title">직감선 (直感線)</div>
+<div class="palm-description">직감력과 영감, 초능력을 보여주는 선</div>
+</div>
+
+<div class="palm-type-card" data-palm-type="venus">
+<div class="palm-image">
+<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #795548, #A1887F);">
+<use href="#hand"/>
+<!-- 금성대 -->
+<path d="M45,25 Q60,22 75,25 Q85,27 92,35" stroke="#5D4037" stroke-width="4" fill="none" stroke-linecap="round"/>
+<text x="45" y="50" fill="white" font-size="12" font-weight="bold" text-anchor="middle">금성대</text>
+<text x="75" y="63" fill="white" font-size="16" text-anchor="middle">💫</text>
+</svg>
+</div>
+<div class="palm-title">금성대 (金星帶)</div>
+<div class="palm-description">예술성과 감수성, 창조력을 나타내는 선</div>
+</div>
+</div>
+
+<div class="palm-actions">
+<button id="btnRandomPalm" class="btn" style="background: linear-gradient(135deg, #4CAF50, #8BC34A);">
+🍀 랜덤 손금 보기
+</button>
+</div>
+</div>
+<div id="view-tarot" class="card" style="display:none;">
+<h3 style="margin-bottom: 20px; text-align: center; color: #667eea;">🔮 타로 카드 점</h3>
+<p style="text-align: center; color: #666; margin-bottom: 25px; font-style: italic;">
+🌟 마음을 집중하고 카드를 선택하세요
+</p>
+<!-- 7장 카드 선택 영역 -->
+<div class="tarot-card-selection">
+<div class="tarot-row">
+<div class="tarot-card-back" data-card-index="0">
+<div class="card-back-design">🌟</div>
+</div>
+<div class="tarot-card-back" data-card-index="1">
+<div class="card-back-design">🌟</div>
+</div>
+<div class="tarot-card-back" data-card-index="2">
+<div class="card-back-design">🌟</div>
+</div>
+<div class="tarot-card-back" data-card-index="3">
+<div class="card-back-design">🌟</div>
+</div>
+</div>
+<div class="tarot-row">
+<div class="tarot-card-back" data-card-index="4">
+<div class="card-back-design">🌟</div>
+</div>
+<div class="tarot-card-back" data-card-index="5">
+<div class="card-back-design">🌟</div>
+</div>
+<div class="tarot-card-back" data-card-index="6">
+<div class="card-back-design">🌟</div>
+</div>
+</div>
+</div>
+<div class="tarot-actions">
+<button id="btnRandomTarot" class="btn" style="background: linear-gradient(135deg, #8e44ad, #9b59b6);">
+🎲 랜덤 뽑기
+</button>
+<button id="btnResetTarot" class="btn btn-ghost">🔄 다시 시작</button>
+</div>
+</div>
+
+<div id="view-match" class="card" style="display:none;">
+<div class="field">
+<div class="label">당신의 생년월일</div>
+<input class="input" type="date" id="match-a" />
+</div>
+<div class="field">
+<div class="label">상대의 생년월일</div>
+<input class="input" type="date" id="match-b" />
+</div>
+<button class="btn" id="btnMatch">궁합 확인</button>
+</div>
+
+<div id="view-year" class="card" style="display:none;">
+<div class="field">
+<div class="label">생년월일</div>
+<input class="input" type="date" id="year-birth" />
+</div>
+<button class="btn" id="btnYear">2025 신년 운세</button>
+</div>
+</section>
+
+<section id="page-chat" class="page">
+<div class="card">
+<div class="label" style="margin-bottom:8px;">상담 준비중</div>
+<div style="font-size:14px;color:#555;">곧 전문가와 1:1 상담 기능이 열립니다.</div>
+</div>
+</section>
+
+<section id="page-me" class="page">
+<div class="card">
+<div class="label" style="margin-bottom:8px;">마이 페이지(로컬)</div>
+<div style="font-size:14px;color:#555;">최근 결과가 이 기기(브라우저)에 저장됩니다.</div>
+<button class="btn" id="btnClear" style="margin-top:12px;">최근 결과 모두 삭제</button>
+</div>
+</section>
+
+<div class="spacer"></div>
+</div>
+
+<!-- 하단 네비 -->
+<div class="bottom-nav" id="bottomNav">
+<div class="nav-item active" data-tab="home">
+<div class="nav-icon">🏠</div>
+<div class="nav-text">홈</div>
+</div>
+<div class="nav-item" data-tab="fortune">
+<div class="nav-icon">🔮</div>
+<div class="nav-text">운세</div>
+</div>
+<div class="nav-item" data-tab="chat">
+<div class="nav-icon">💬</div>
+<div class="nav-text">상담</div>
+</div>
+<div class="nav-item" data-tab="me">
+<div class="nav-icon">👤</div>
+<div class="nav-text">마이</div>
+</div>
+</div>
+
+<!-- 결과 시트(모달) - 개선된 디자인 -->
+<div class="sheet-backdrop" id="sheetBackdrop" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+<div class="sheet" role="document">
+<div class="sheet-header">
+<div class="sheet-title" id="sheetTitle">결과</div>
+<button class="sheet-close-btn" id="btnClose">✕</button>
+</div>
+<div class="sheet-content" id="sheetContent">내용</div>
+<div class="sheet-actions">
+<button class="btn" id="btnSave">최근 결과 저장</button>
+</div>
+</div>
+</div>
+
+<!-- 타로 모달 -->
+<div class="tarot-modal-overlay" id="tarotModalOverlay">
+<div class="tarot-modal" id="tarotModal">
+<button class="tarot-close-btn" id="tarotCloseBtn">✕</button>
+<div class="tarot-modal-content" id="tarotModalContent">
+<!-- 모달 내용이 JavaScript로 채워짐 -->
+</div>
+</div>
+</div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
