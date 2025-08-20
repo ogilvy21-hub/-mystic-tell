@@ -546,58 +546,68 @@ mainCrystal.innerHTML='구슬 속 미래를<br>확인해보세요';
 mainCrystal?.addEventListener('click',()=>reactCrystal('🔮 신비로운 힘을 느껴보세요'));
 
 // ===== 운세 뷰 =====
-const fortuneTitle=$('#fortuneTitle');
-const views={
-'fortune-today':$('#view-today'),
-'fortune-saju':$('#view-saju'),
-'fortune-tarot':$('#view-tarot'),
-'fortune-palm':$('#view-palm'),
-'fortune-match':$('#view-match'),
-'fortune-year':$('#view-year')
-'fortune-lotto': $('#view-lotto'), 
+const fortuneTitle = $('#fortuneTitle');
+const views = {
+  'fortune-today': $('#view-today'),
+  'fortune-saju':  $('#view-saju'),
+  'fortune-tarot': $('#view-tarot'),
+  'fortune-palm':  $('#view-palm'),
+  'fortune-match': $('#view-match'),
+  'fortune-year':  $('#view-year'),
+  'fortune-lotto': $('#view-lotto'),
 };
 
 function showFortuneView(route){
-closeAllOverlays();
-Object.values(views).forEach(v=>v&&(v.style.display='none'));
-switch(route){
-case 'fortune-today': 
-fortuneTitle.textContent='오늘의 운세'; 
-views['fortune-today'].style.display='block';
-bindCalToggle('today');
-break;
-case 'fortune-saju': 
-fortuneTitle.textContent='정통 사주'; 
-views['fortune-saju'].style.display='block';
-bindCalToggle('saju');
-break;
-case 'fortune-tarot':
-fortuneTitle.textContent='타로 점';
-views['fortune-tarot'].style.display='block';
-initializeTarot();
-break;
-case 'fortune-palm':
-fortuneTitle.textContent='손금 보기';
-views['fortune-palm'].style.display='block';
-setTimeout(() => initializePalmReading(), 50);
-break;
-case 'fortune-match': 
-fortuneTitle.textContent='궁합 보기'; 
-views['fortune-match'].style.display='block'; 
-break;
-case 'fortune-year': 
-fortuneTitle.textContent='신년 운세 (2025)'; 
-views['fortune-year'].style.display='block'; 
-break;
-default: 
-case 'fortune-lotto':                          // ✅ 추가
-fortuneTitle.textContent = '행운번호';
-views['fortune-lotto'].style.display = 'block';
-break;
-fortuneTitle.textContent='준비중'; 
-reactCrystal('✨ 준비중입니다...');
-}
-reactCrystal(`${fortuneTitle.textContent}을(를) 준비합니다…`);
+  closeAllOverlays();
+  Object.values(views).forEach(v => v && (v.style.display='none'));
+
+  switch(route){
+    case 'fortune-today':
+      fortuneTitle.textContent = '오늘의 운세';
+      views['fortune-today'].style.display = 'block';
+      bindCalToggle('today');
+      break;
+
+    case 'fortune-saju':
+      fortuneTitle.textContent = '정통 사주';
+      views['fortune-saju'].style.display = 'block';
+      bindCalToggle('saju');
+      break;
+
+    case 'fortune-tarot':
+      fortuneTitle.textContent = '타로 점';
+      views['fortune-tarot'].style.display = 'block';
+      initializeTarot();
+      break;
+
+    case 'fortune-palm':
+      fortuneTitle.textContent = '손금 보기';
+      views['fortune-palm'].style.display = 'block';
+      setTimeout(() => initializePalmReading(), 50);
+      break;
+
+    case 'fortune-match':
+      fortuneTitle.textContent = '궁합 보기';
+      views['fortune-match'].style.display = 'block';
+      break;
+
+    case 'fortune-year':
+      fortuneTitle.textContent = '신년 운세 (2025)';
+      views['fortune-year'].style.display = 'block';
+      break;
+
+    case 'fortune-lotto':
+      fortuneTitle.textContent = '행운번호';
+      views['fortune-lotto'].style.display = 'block';
+      break;
+
+    default:
+      fortuneTitle.textContent = '준비중';
+      reactCrystal('✨ 준비중입니다...');
+      break;
+  }
+
+  reactCrystal(`${fortuneTitle.textContent}을(를) 준비합니다…`);
 }
 
 // ===== 간단 운세 =====
@@ -2383,7 +2393,7 @@ function showCard(which) {
         'tarot': 'fortune-tarot',
         'palm': 'fortune-palm',
         'match': 'fortune-match',
-        'year': 'fortune-year'
+        'year': 'fortune-year',
         'lotto': 'fortune-lotto', 
       };
       showFortuneView(viewMap[sub] || 'fortune-today');
