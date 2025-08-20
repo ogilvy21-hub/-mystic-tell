@@ -2128,22 +2128,23 @@ function showComingSoonNotification() {
   }, 2500);
 }
 
-// DOM이 로드되면 손금 메뉴를 "준비중"으로 설정
-document.addEventListener('DOMContentLoaded', function() {
+// DOM이 로드되면 손금 메뉴를 "준비중"으로 표시 + (예정) 라벨
+document.addEventListener('DOMContentLoaded', function () {
   setPalmAsComingSoon();
   showPalmComingSoonAlert();
-  // 필요한 초기화가 더 있으면 여기서 호출
-}); // ← 반드시 닫기
-  
+
   // 손금 관련 제목에 (예정) 추가
   setTimeout(() => {
-    const palmTitles = document.querySelectorAll('[data-route="fortune-palm"] h3, [data-route="fortune-palm"] .title');
-    palmTitles.forEach(title => {
+    const palmTitles = document.querySelectorAll(
+      '[data-route="fortune-palm"] h3, [data-route="fortune-palm"] .title'
+    );
+    palmTitles.forEach((title) => {
       if (title && !title.textContent.includes('(예정)')) {
         title.textContent = title.textContent.replace('손금 보기', '손금 보기 (예정)');
       }
     });
   }, 100);
+}); // ← 여기서 'DOMContentLoaded' 딱 한 번만 닫습니다.
 
 // 운세 스타일 추가
 (function addEnhancedFortuneStyles(){
