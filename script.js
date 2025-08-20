@@ -1,3 +1,11 @@
+// lunar-javascript 글로벌 보정
+if (typeof window.Solar === "undefined" && typeof window.Lunar !== "undefined") {
+  window.Solar = window.Lunar.Solar;
+}
+if (typeof window.LunarMonth === "undefined" && typeof window.Lunar !== "undefined") {
+  window.LunarMonth = window.Lunar.LunarMonth;
+}
+
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 const LS_KEY="mystictell:recent";
