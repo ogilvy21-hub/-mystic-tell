@@ -566,11 +566,6 @@ fortuneTitle.textContent='오늘의 운세';
 views['fortune-today'].style.display='block';
 bindCalToggle('today');
 break;
-case 'fortune-lotto':
-  fortuneTitle.textContent = '행운번호';
-  views['fortune-lotto'].style.display = 'block';
-  if (typeof initLotto === 'function') initLotto(); // 있으면 초기화 호출
-  break;
 case 'fortune-saju': 
 fortuneTitle.textContent='정통 사주'; 
 views['fortune-saju'].style.display='block';
@@ -595,6 +590,10 @@ fortuneTitle.textContent='신년 운세 (2025)';
 views['fortune-year'].style.display='block'; 
 break;
 default: 
+case 'fortune-lotto':                          // ✅ 추가
+fortuneTitle.textContent = '행운번호';
+views['fortune-lotto'].style.display = 'block';
+break;
 fortuneTitle.textContent='준비중'; 
 reactCrystal('✨ 준비중입니다...');
 }
