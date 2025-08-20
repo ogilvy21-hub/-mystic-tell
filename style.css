@@ -1015,4 +1015,11 @@ html{scroll-behavior:smooth;}
   .feature-grid{grid-template-columns:repeat(2,1fr);}
   .mt-hero-left h1{font-size:30px}
 }
+/* Splash가 숨겨졌을 때는 클릭을 통과시키기 */
+#splashScreen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none; /* 중요: 아래 요소 클릭 가능 */
+  transition: opacity .3s ease, visibility .3s ease;
+}
 
