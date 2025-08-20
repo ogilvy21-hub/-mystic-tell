@@ -2310,117 +2310,20 @@ window.addEventListener('load', function () {
   });
 })();
 
-// 🚨 GitHub Pages 전용 수정 코드
-// 기존 스플래시 코드를 찾아서 이것으로 교체하세요
+(function (){
+  const splash  = document.getElementById('splashScreen');
+  const hideSplash = () => splash?.classList.add('hidden');
 
-(function fixGitHubSplash() {
-  console.log('🔧 GitHub Pages 스플래시 수정 시작');
-  
-  let splashFixed = false;
-  
-  const forceSplashHide = () => {
-    if (splashFixed) return;
-    splashFixed = true;
-    
-    console.log('💫 스플래시 강제 숨김 실행');
-    
-    const splash = document.getElementById('splashScreen');
-    if (splash) {
-      splash.style.opacity = '0';
-      splash.style.pointerEvents = 'none';
-      splash.classList.add('hidden');
-      
-      setTimeout(() => {
-        splash.style.display = 'none';
-        console.log('✅ 스플래시 완전 제거됨');
-      }, 500);
-    }
-    
-    // 메인 콘텐츠 강제 표시
-    const mainContent = document.getElementById('mainContent');
-    const bottomNav = document.getElementById('bottomNav');
-    
-    if (mainContent) {
-      mainContent.style.display = 'block';
-      mainContent.classList.add('show');
-      console.log('✅ 메인 콘텐츠 표시됨');
-    }
-    
-    if (bottomNav) {
-      bottomNav.style.display = 'flex';
-      bottomNav.classList.add('show');
-      console.log('✅ 하단 네비 표시됨');
-    }
-  };
-  
-  // 🎯 다중 트리거로 스플래시 제거 (GitHub Pages 대응)
-  
-  // 1) 즉시 실행 (DOM 준비되면)
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(forceSplashHide, 100);
-    });
-  } else {
-    setTimeout(forceSplashHide, 100);
-  }
-  
-  // 2) 페이지 로드 완료시
-  window.addEventListener('load', () => {
-    setTimeout(forceSplashHide, 200);
+  // 페이지 로드 후 자동 닫기(원하면 시간 조절)
+  window.addEventListener('load', () => setTimeout(hideSplash, 600));
+
+  // Start 버튼이 있으면 클릭 시 닫기
+  document.getElementById('startBtn')?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    hideSplash();
   });
-  
-  // 3) 강제 타이머 (최후의 수단)
-  setTimeout(forceSplashHide, 1000);
-  
-  // 4) 클릭 이벤트로도 제거
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('#startBtn, .start-btn, .start-image-btn, #splashScreen')) {
-      e.preventDefault();
-      forceSplashHide();
-    }
-  });
-  
-  // 5) 키보드 이벤트로도 제거 (Enter, Space, Escape)
-  document.addEventListener('keydown', (e) => {
-    if (['Enter', 'Space', 'Escape'].includes(e.code)) {
-      forceSplashHide();
-    }
-  });
-  
-  console.log('🎯 GitHub Pages 스플래시 수정 완료');
 })();
-
-// 🔧 추가: GitHub Pages 라우팅 안정화
-(function fixGitHubRouting() {
-  // URL 해시 정리
-  if (!location.hash || location.hash === '#') {
-    location.hash = '#/home';
-  }
-  
-  // 강제 홈페이지 이동 (응급용)
-  const forceHome = () => {
-    setActiveTab('home');
-    const homeTab = document.querySelector('.nav-item[data-tab="home"]');
-    if (homeTab) homeTab.classList.add('active');
-  };
-  
-  // 3초 후에도 아무것도 안 보이면 강제 홈으로
-  setTimeout(() => {
-    const mainContent = document.getElementById('mainContent');
-    if (mainContent && mainContent.style.display === 'none') {
-      console.log('🚨 긴급 복구: 강제 홈 이동');
-      forceHome();
-    }
-  }, 3000);
-})();
-
-// 🛠️ GitHub Pages 디버깅 헬퍼
-console.log('📍 현재 환경:', {
-  host: location.host,
-  pathname: location.pathname,
-  hash: location.hash,
-  readyState: document.readyState
-});
+// 고정 헤더에 가려지지 않도록 CSS도 함께 참고: .mt-section { scroll-margin-top: var(--header-h); }
 
 function showCard(which) {
   const today = document.getElementById('view-today');
@@ -2630,108 +2533,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 500);
   }
 });
-
-(() => {
-  // 0) 기본 스타일(밑줄 제거)
-  const st = document.createElement('style');
-  st.textContent = `
-    a.btn, .btn, .mt-nav a { text-decoration: none !important; }
-  `;
-  document.head.appendChild(st);
-
-  // 1) 스플래시 끄고 메인 표시
-  const splash = document.getElementById('splashScreen');
-  if (splash) splash.style.display = 'none';
-  const main = document.getElementById('mainContent');
-  if (main) { main.style.display = 'block'; main.classList.add('show'); }
-
-  // 2) 헬퍼
-  const $ = (s, r = document) => r.querySelector(s);
-  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
-
-  // 3) 잘못된 링크 보정(혹시 #/lotto 로 되어있으면 교정)
-  document.querySelectorAll('a[href="#/lotto"], a[href="#lotto"]').forEach(a => {
-    a.setAttribute('href', '#/fortune/lotto');
-  });
-
-  // 4) 페이지 탭 전환
-  const pages = {
-    home:   $('#page-home'),
-    fortune:$('#page-fortune'),
-    chat:   $('#page-chat'),
-    me:     $('#page-me')
-  };
-
-  function setActiveTab(tab) {
-    Object.entries(pages).forEach(([k, el]) => {
-      if (!el) return;
-      if (k === tab) { el.style.display = 'block'; el.classList.add('show'); }
-      else { el.style.display = 'none'; el.classList.remove('show'); }
-    });
-    // 상단 네비 활성화 표시(있으면)
-    $$('.mt-nav a,[data-tab]').forEach(a => {
-      const t = a.dataset.tab || ((a.getAttribute('href')||'').match(/^#\/([^/]+)/)?.[1] ?? '');
-      a.classList.toggle('active', t === tab);
-    });
-  }
-
-  // 5) 운세 서브뷰 전환
-  const titleEl = $('#fortuneTitle');
-  const views = {
-    'fortune-today': $('#view-today'),
-    'fortune-saju' : $('#view-saju'),
-    'fortune-tarot': $('#view-tarot'),
-    'fortune-palm' : $('#view-palm'),
-    'fortune-match': $('#view-match'),
-    'fortune-year' : $('#view-year'),
-    'fortune-lotto': $('#view-lotto')
-  };
-  const viewTitle = {
-    'fortune-today':'오늘의 운세',
-    'fortune-saju':'정통 사주',
-    'fortune-tarot':'타로 점',
-    'fortune-palm':'손금 보기',
-    'fortune-match':'궁합 보기',
-    'fortune-year':'신년 운세 (2025)',
-    'fortune-lotto':'행운번호'
-  };
-
-  function showFortuneView(key) {
-    Object.values(views).forEach(v => v && (v.style.display = 'none'));
-    const el = views[key] || views['fortune-today'];
-    if (el) el.style.display = 'block';
-    if (titleEl) titleEl.textContent = viewTitle[key] || viewTitle['fortune-today'];
-  }
-
-  // 6) 라우터
-  function routeFromHash() {
-    const m = location.hash.match(/^#\/([^/]+)(?:\/([^/]+))?/);
-    const tab = m?.[1] || 'home';
-    const sub = m?.[2] || '';
-    setActiveTab(['home','fortune','chat','me'].includes(tab) ? tab : 'home');
-    if (tab === 'fortune') {
-      const map = {
-        today:'fortune-today', saju:'fortune-saju', tarot:'fortune-tarot',
-        palm:'fortune-palm', match:'fortune-match', year:'fortune-year', lotto:'fortune-lotto'
-      };
-      showFortuneView(map[sub] || 'fortune-today');
-    }
-  }
-
-  // 7) data-route 전역 클릭 핸들러(네비/버튼 공통)
-  document.addEventListener('click', e => {
-    const el = e.target.closest('[data-route]');
-    if (!el) return;
-    const r = el.dataset.route;
-    if (!r) return;
-    e.preventDefault();
-    location.hash = r.startsWith('fortune-')
-      ? '#/fortune/' + r.replace('fortune-', '')
-      : '#/' + r;
-  }, true);
-
-  // 8) 시작
-  window.addEventListener('hashchange', routeFromHash);
-  if (!location.hash) location.hash = '#/home';
-  routeFromHash();
-})();
