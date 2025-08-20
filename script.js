@@ -549,19 +549,19 @@ mainCrystal?.addEventListener('click',()=>reactCrystal('🔮 신비로운 힘을
 const fortuneTitle = $('#fortuneTitle');
 const views = {
   'fortune-today': $('#view-today'),
-  'fortune-saju':  $('#view-saju'),
+  'fortune-saju' : $('#view-saju'),
   'fortune-tarot': $('#view-tarot'),
-  'fortune-palm':  $('#view-palm'),
+  'fortune-palm' : $('#view-palm'),
   'fortune-match': $('#view-match'),
-  'fortune-year':  $('#view-year'),
-  'fortune-lotto': $('#view-lotto'),
+  'fortune-year' : $('#view-year'),
+  'fortune-lotto': $('#view-lotto')   // ← 마지막 항목, 쉼표 없음(정상)
 };
 
 function showFortuneView(route){
   closeAllOverlays();
-  Object.values(views).forEach(v => v && (v.style.display='none'));
+  Object.values(views).forEach(v => v && (v.style.display = 'none'));
 
-  switch(route){
+  switch (route) {
     case 'fortune-today':
       fortuneTitle.textContent = '오늘의 운세';
       views['fortune-today'].style.display = 'block';
@@ -2394,70 +2394,48 @@ function showCard(which) {
         'palm': 'fortune-palm',
         'match': 'fortune-match',
         'year': 'fortune-year',
-        'lotto': 'fortune-lotto', 
+        'lotto': 'fortune-lotto'
       };
       showFortuneView(viewMap[sub] || 'fortune-today');
     }
   }
 
-  // 버튼 클릭 처리
-  document.addEventListener('click', (e) => {
-    // data-route 처리
-    const routeEl = e.target.closest('[data-route]');
-    if (routeEl) {
-      e.preventDefault();
-      hideSplash();
-      const route = routeEl.dataset.route;
-      if (route.startsWith('fortune-')) {
-        location.hash = `#/fortune/${route.replace('fortune-', '')}`;
-      } else {
-        location.hash = `#/${route}`;
-      }
-      return;
-    }
+  // ===================== 라우팅 훅 (최종본) =====================
 
-    // CTA 버튼들 처리
-    const btn = e.target.closest('#ctaToday, #ctaSaju, #ctaStart, .start-btn');
-    if (btn) {
-      e.preventDefault();
-      hideSplash();
-      if (btn.id === 'ctaSaju') {
-        location.hash = '#/fortune/saju';
-      } else {
-        location.hash = '#/fortune/today';
-      }
-      return;
-    }
-  });
+// 1) 전역 클릭 위임: data-route, CTA, 스플래시 Start 모두 처리
+document.addEventListener('click', (e) => {
+  // data-route 또는 CTA/Start 버튼들을 한 번에 캐치
+  const el = e.target.closest('[data-route], #ctaToday, #ctaSaju, #ctaStart, #ctaLotto, .start-btn');
+  if (!el) return;
 
- // === 라우팅 이벤트 (최종본) ===
+  e.preventDefault();
+  try { hideSplash?.(); } catch (_) {}
+
+  // data-route가 있으면 그 값을 우선 사용
+  const r = el.dataset?.route;
+  if (r) {
+    location.hash = r.startsWith('fortune-')
+      ? '#/fortune/' + r.replace('fortune-', '')
+      : '#/' + r;
+    return;
+  }
+
+  // data-route 없는 CTA 대비 (구형 마크업 호환)
+  if (el.id === 'ctaSaju') {
+    location.hash = '#/fortune/saju';
+  } else {
+    // 기본은 오늘의 운세로
+    location.hash = '#/fortune/today';
+  }
+});
+
+// 2) 해시 변경 시 라우팅
 window.addEventListener('hashchange', handleRoute);
 
+// 3) 최초 진입 시 라우팅
 window.addEventListener('load', () => {
-  // 1) 스플래시 닫기(있으면)
-  try { hideSplash?.(); } catch(e) {}
-
-  // 2) data-route 공통 클릭 바인딩
-  document.querySelectorAll('[data-route]').forEach(el => {
-    if (el.__routeBound) return;          // 중복 바인딩 방지
-    el.__routeBound = true;
-
-    el.addEventListener('click', e => {
-      const r = el.dataset.route;
-      if (!r) return;
-      e.preventDefault();
-
-      // fortune-* 는 하위 라우트로, 그 외는 탭 루트로
-      location.hash = r.startsWith('fortune-')
-        ? '#/fortune/' + r.replace('fortune-', '')
-        : '#/' + r;
-    });
-  });
-
-  // 3) 기본 해시 보정
+  try { hideSplash?.(); } catch (_) {}
   if (!location.hash) location.hash = '#/home';
-
-  // 4) 최초 라우팅 실행
   handleRoute();
 });
 
