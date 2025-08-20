@@ -696,12 +696,11 @@ const LUCKY_ITEMS = {
 function calcEnhancedDailyFortune(birthdate) {
   const today = new Date();
   const dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-  const timeBonus = today.getHours() + today.getMinutes();
   
   const results = {};
   
   Object.keys(FORTUNE_CATEGORIES).forEach((category, index) => {
-    const seed = (birthdate || '').replaceAll('-', '') + dateStr + category + timeBonus + index;
+    const seed = (birthdate || '').replaceAll('-', '') + dateStr + category + index;
     let hash = 0;
     for (let i = 0; i < seed.length; i++) {
       hash = (hash * 37 + seed.charCodeAt(i)) % 100000;
