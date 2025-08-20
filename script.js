@@ -2272,5 +2272,59 @@ window.addEventListener('load', function() {
     hideSplash();
   });
 })();
+// 고정 헤더에 가려지지 않도록 CSS도 함께 참고: .mt-section { scroll-margin-top: var(--header-h); }
+
+function showCard(which) {
+  const today = document.getElementById('view-today');
+  const saju  = document.getElementById('view-saju');
+  if (!today || !saju) return;
+
+  if (which === 'today') {
+    today.style.display = 'block';
+    saju.style.display  = 'none';
+  } else {
+    saju.style.display  = 'block';
+    today.style.display = 'none';
+  }
+}
+
+function smoothScrollTo(sel) {
+  const el = document.querySelector(sel);
+  if (!el) return;
+  // 혹시 스플래시 남아있으면 닫기
+  document.getElementById('splashScreen')?.classList.add('hidden');
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // 주소창에 #today/#saju 안 남기고 싶으면:
+  history.replaceState(null, '', location.pathname + location.search);
+}
+
+// 오늘의 운세로 이동하는 모든 트리거
+[
+  'a[href="#today"]',   // 상단 네비
+  '#ctaToday',          // 히어로 왼쪽 버튼(있다면)
+  '#ctaStart'           // 오른쪽 카드 "바로 시작"(있다면)
+].forEach(sel => {
+  document.querySelectorAll(sel).forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      showCard('today');
+      smoothScrollTo('#today');
+    });
+  });
+});
+
+// 정통 사주로 이동하는 트리거
+[
+  'a[href="#saju"]',    // 상단 네비
+  '#ctaSaju'            // 히어로 왼쪽 버튼(있다면)
+].forEach(sel => {
+  document.querySelectorAll(sel).forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      showCard('saju');
+      smoothScrollTo('#saju');
+    });
+  });
+});
 
 
