@@ -565,6 +565,11 @@ fortuneTitle.textContent='오늘의 운세';
 views['fortune-today'].style.display='block';
 bindCalToggle('today');
 break;
+case 'fortune-lotto':  // 👈 이 부분 추가
+  fortuneTitle.textContent='행운의 로또번호';
+  views['fortune-lotto'] = $('#view-lotto');
+  views['fortune-lotto'].style.display='block';
+  break;
 case 'fortune-saju': 
 fortuneTitle.textContent='정통 사주'; 
 views['fortune-saju'].style.display='block';
