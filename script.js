@@ -1474,49 +1474,43 @@ window.__tarotEscBound = true;
 }
 
 function initializeTarot() {
-if (!ensureTarotReady()) return;
-const tarotCards = $$('.tarot-card-back');
-tarotCards.forEach(card => {
-if (card.__bound) return;
-card.addEventListener('click', () => selectTarotCard(card));
-card.__bound = true;
-});
+  if (!ensureTarotReady()) return;
 
-  // 타로: 클래스 변동 대비 전역 위임(중복 방지)
-if (!window.__mtTarotDelegation) {
-  document.addEventListener('click', (e) => {
-    const back = e.target.closest('.tarot-card-back, .tarot-card');
-    if (!back || back.classList.contains('revealed')) return;
-    selectTarotCard(back);
-  }, true); // 캡처 단계로 조기 가로채기
-  window.__mtTarotDelegation = true;
-}
+  const tarotCards = $$('.tarot-card-back');
+  tarotCards.forEach(card => {
+    if (card.__bound) return;
+    card.addEventListener('click', () => selectTarotCard(card));
+    card.__bound = true;
+  });
 
-const randomBtn = $('#btnRandomTarot');
-if (randomBtn && !randomBtn.__bound) { 
-randomBtn.addEventListener('click', drawRandomTarotCard); 
-randomBtn.__bound = true; 
-}
+  // ✅ 안정성 보강: DOM에 카드가 없으면 더 진행하지 않음
+  if (!tarotCards || tarotCards.length === 0) return;
 
-const resetBtn = $('#btnResetTarot');
-if (resetBtn && !resetBtn.__bound) { 
-resetBtn.addEventListener('click', resetTarotCards); 
-resetBtn.__bound = true; 
-}
+  const randomBtn = $('#btnRandomTarot');
+  if (randomBtn && !randomBtn.__bound) {
+    randomBtn.addEventListener('click', drawRandomTarotCard);
+    randomBtn.__bound = true;
+  }
 
-const closeBtn = $('#tarotCloseBtn');
-if (closeBtn && !closeBtn.__bound) { 
-closeBtn.addEventListener('click', closeTarotModal); 
-closeBtn.__bound = true; 
-}
+  const resetBtn = $('#btnResetTarot');
+  if (resetBtn && !resetBtn.__bound) {
+    resetBtn.addEventListener('click', resetTarotCards);
+    resetBtn.__bound = true;
+  }
 
-const overlay = $('#tarotModalOverlay');
-if (overlay && !overlay.__bound) { 
-overlay.addEventListener('click', e=>{ if(e.target===overlay) closeTarotModal(); }); 
-overlay.__bound = true; 
-}
+  const closeBtn = $('#tarotCloseBtn');
+  if (closeBtn && !closeBtn.__bound) {
+    closeBtn.addEventListener('click', closeTarotModal);
+    closeBtn.__bound = true;
+  }
 
-resetTarotCards();
+  const overlay = $('#tarotModalOverlay');
+  if (overlay && !overlay.__bound) {
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeTarotModal(); });
+    overlay.__bound = true;
+  }
+
+  resetTarotCards();
 }
 
 let selectedCards = new Set();
@@ -2241,6 +2235,7 @@ document.head.appendChild(styleTag);
 // 페이지 로드 후에도 재확인
 window.addEventListener('load', function () {
   setPalmAsComingSoon();
+  showPalmComingSoonAlert();
 
   // 동적으로 추가되는 손금 요소들도 "준비중" 처리
   const observer = new MutationObserver(function (mutations) {
