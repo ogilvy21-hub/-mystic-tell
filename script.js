@@ -2420,14 +2420,36 @@ function showCard(which) {
     }
   });
 
-  // 라우팅 이벤트
-  window.addEventListener('hashchange', handleRoute);
-  window.addEventListener('load', () => {
-    hideSplash();
-    if (!location.hash) location.hash = '#/home';
-    handleRoute();
+ // === 라우팅 이벤트 (최종본) ===
+window.addEventListener('hashchange', handleRoute);
+
+window.addEventListener('load', () => {
+  // 1) 스플래시 닫기(있으면)
+  try { hideSplash?.(); } catch(e) {}
+
+  // 2) data-route 공통 클릭 바인딩
+  document.querySelectorAll('[data-route]').forEach(el => {
+    if (el.__routeBound) return;          // 중복 바인딩 방지
+    el.__routeBound = true;
+
+    el.addEventListener('click', e => {
+      const r = el.dataset.route;
+      if (!r) return;
+      e.preventDefault();
+
+      // fortune-* 는 하위 라우트로, 그 외는 탭 루트로
+      location.hash = r.startsWith('fortune-')
+        ? '#/fortune/' + r.replace('fortune-', '')
+        : '#/' + r;
+    });
   });
-})();
+
+  // 3) 기본 해시 보정
+  if (!location.hash) location.hash = '#/home';
+
+  // 4) 최초 라우팅 실행
+  handleRoute();
+});
 
 function smoothScrollTo(selector) {
 const element = document.querySelector(selector);
