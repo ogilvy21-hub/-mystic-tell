@@ -1083,3 +1083,11 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 .main-content {
   padding-bottom: 80px !important;
 }
+
+/* 버튼/네비 앵커 기본 밑줄 제거 */
+a.btn, .btn,
+.mt-nav a { text-decoration: none; }
+a.btn:hover, .btn:hover { text-decoration: none; }
+
+/* 필요시 강제 */
+.mt-nav a, a.btn, .btn { text-decoration: none !important; }
