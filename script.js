@@ -2502,3 +2502,20 @@ $('#btnLotto')?.addEventListener('click', ()=>{
   openSheet('🍀 행운의 로또번호', html, {type:'lotto', numbers:result.numbers, bonus:result.bonus});
   reactCrystal('행운의 번호를 생성했습니다! 🍀');
 });
+
+// 🎲 로또 페이지 강제 표시 (임시 해결)
+document.addEventListener('DOMContentLoaded', function() {
+  if (location.hash.includes('lotto')) {
+    setTimeout(() => {
+      const lottoView = document.querySelector('#view-lotto');
+      if (lottoView) {
+        lottoView.style.background = 'white';
+        lottoView.style.padding = '20px';
+        lottoView.style.border = '1px solid #ddd';
+        lottoView.style.borderRadius = '10px';
+        lottoView.style.margin = '20px auto';
+        lottoView.style.maxWidth = '500px';
+      }
+    }, 500);
+  }
+});
