@@ -2259,4 +2259,18 @@ window.addEventListener('load', function() {
   });
 })();
 
+(function (){
+  const splash  = document.getElementById('splashScreen');
+  const hideSplash = () => splash?.classList.add('hidden');
+
+  // 페이지 로드 후 자동 닫기(원하면 시간 조절)
+  window.addEventListener('load', () => setTimeout(hideSplash, 600));
+
+  // Start 버튼이 있으면 클릭 시 닫기
+  document.getElementById('startBtn')?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    hideSplash();
+  });
+})();
+
 
