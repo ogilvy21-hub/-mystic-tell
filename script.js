@@ -507,18 +507,18 @@ closeAllOverlays();
 }
 
 $$('.nav-item').forEach(item=>{
-item.addEventListener('click', ()=>{
-setActiveTab(item.dataset.tab);
-reactCrystal(`${item.dataset.tab} 페이지로 이동합니다! ✨`);
-});
+  item.addEventListener('click', ()=>{
+    const tab = item.dataset.tab || 'home';
+    location.hash = '#/' + tab;      // 주소표시줄과 동기화
+    reactCrystal(`${tab} 페이지로 이동합니다! ✨`);
+  });
 });
 
 $$('.service-item,.special-item').forEach(card=>{
-card.addEventListener('click', ()=>{
-const route=card.dataset.route||'fortune-today';
-setActiveTab('fortune');
-showFortuneView(route);
-});
+  card.addEventListener('click', ()=>{
+    const r = card.dataset.route || 'fortune-today';
+    location.hash = '#/fortune/' + r.replace('fortune-','');
+  });
 });
 
 // ===== 크리스탈 =====
@@ -1921,33 +1921,59 @@ alert('최근 결과가 모두 삭제되었습니다.');
 }
 });
 
-// ===== 초기화 =====
-window.addEventListener('hashchange', closeAllOverlays);
+// ===== 초기화 & 경량 라우터 =====
+
+// 뒤로가기/탭 전환 때 열려있던 오버레이 닫기
 document.addEventListener('visibilitychange', ()=>{ if (document.hidden) closeAllOverlays(); });
 
-window.addEventListener('load', ()=>{
-bindCalToggle('today'); 
-bindCalToggle('saju');
+// 1) data-route 클릭을 SPA 라우팅으로 처리
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-route]');
+  if (!el) return;
 
-const hash=location.hash.replace(/^#\//,'');
-if(['home','fortune','chat','me'].includes(hash)){ setActiveTab(hash); }
-else { setActiveTab('home'); }
-closeAllOverlays();
+  const route = el.dataset.route;  // e.g. "fortune-today" | "home"
+  e.preventDefault();
+
+  if (route && route.startsWith('fortune-')) {
+    const view = route.replace('fortune-', ''); // today | saju | tarot | ...
+    location.hash = '#/fortune/' + view;
+  } else if (route === 'home') {
+    location.hash = '#/home';
+  }
 });
 
-// 스플래시 화면 이벤트 등록
-document.addEventListener('DOMContentLoaded', () => {
-const startBtn = $('#startBtn');
-if (startBtn) {
-startBtn.addEventListener('click', (e) => {
-e.stopPropagation();
-startApp();
-});
-console.log('Start button event listener added');
-} else {
-console.error('Start button not found');
+// 2) 해시를 읽어 탭/뷰 전환
+function routeFromHash() {
+  const m = location.hash.match(/^#\/([^/]+)(?:\/([^/]+))?/);
+  const tab = m?.[1] || 'home';
+  const sub = m?.[2] || '';
+
+  // 탭 보여주기
+  setActiveTab(['home','fortune','chat','me'].includes(tab) ? tab : 'home');
+
+  // 서브뷰 선택
+  if (tab === 'fortune') {
+    const view =
+      sub === 'saju'  ? 'fortune-saju'  :
+      sub === 'tarot' ? 'fortune-tarot' :
+      sub === 'palm'  ? 'fortune-palm'  :
+      sub === 'match' ? 'fortune-match' :
+      sub === 'year'  ? 'fortune-year'  :
+                        'fortune-today';
+    showFortuneView(view);
+  }
+  closeAllOverlays();
 }
+
+// 3) 진입/해시변경 시 적용
+window.addEventListener('hashchange', routeFromHash);
+window.addEventListener('load', () => {
+  bindCalToggle('today');
+  bindCalToggle('saju');
+  if (!location.hash) location.hash = '#/home';
+  routeFromHash();
 });
+
 // ===== 손금보기 메뉴 "준비중" 처리 =====
 
 // 손금보기 메뉴를 "준비중"으로 표시하고 비활성화
@@ -2286,16 +2312,6 @@ function showCard(which) {
     saju.style.display  = 'block';
     today.style.display = 'none';
   }
-}
-
-function smoothScrollTo(sel) {
-  const el = document.querySelector(sel);
-  if (!el) return;
-  // 혹시 스플래시 남아있으면 닫기
-  document.getElementById('splashScreen')?.classList.add('hidden');
-  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  // 주소창에 #today/#saju 안 남기고 싶으면:
-  history.replaceState(null, '', location.pathname + location.search);
 }
 
 // 오늘의 운세로 이동하는 모든 트리거
