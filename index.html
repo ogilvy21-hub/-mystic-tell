@@ -26,14 +26,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <header class="mt-header">
   <div class="mt-wrap">
-    <a href="#home" class="mt-logo">MysticTell</a>
+    <!-- 로고도 라우팅 패턴을 맞추면 더 안전 -->
+    <a href="#/home" class="mt-logo">MysticTell</a>
+
     <nav class="mt-nav">
-  <a href="#/home">홈</a>
-  <a href="#/fortune/today">오늘의 운세</a>
-  <a href="#/fortune/saju">정통 사주</a>
-  <a href="#/guide">이용 가이드</a>
-  <a href="#/contact">문의</a>
-  <a href="#lotto">행운번호</a>
+      <a href="#/home">홈</a>
+      <a href="#/fortune/today">오늘의 운세</a>
+      <a href="#/fortune/saju">정통 사주</a>
+      <a href="#/guide">이용 가이드</a>
+      <a href="#/contact">문의</a>
+      <a class="nav-item" data-route="fortune-lotto">행운번호</a>
 </nav>
   </div>
 </header>
@@ -51,6 +53,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="cta-row">
         <a id="ctaToday" class="btn" href="#/fortune/today" data-route="fortune-today">오늘의 운세 보기</a>
         <a id="ctaSaju" class="btn ghost" href="#/fortune/saju"  data-route="fortune-saju">정통 사주</a>
+        <a id="ctaLotto" class="btn ghost" href="#/fortune/lotto" data-route="fortune-lotto">행운번호</a>
         <a id="ctaStart" class="btn lite"  href="#/fortune/today" data-route="fortune-today">바로 시작</a>
       </div>
     </div>
