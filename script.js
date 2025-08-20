@@ -2310,20 +2310,117 @@ window.addEventListener('load', function () {
   });
 })();
 
-(function (){
-  const splash  = document.getElementById('splashScreen');
-  const hideSplash = () => splash?.classList.add('hidden');
+// 🚨 GitHub Pages 전용 수정 코드
+// 기존 스플래시 코드를 찾아서 이것으로 교체하세요
 
-  // 페이지 로드 후 자동 닫기(원하면 시간 조절)
-  window.addEventListener('load', () => setTimeout(hideSplash, 600));
-
-  // Start 버튼이 있으면 클릭 시 닫기
-  document.getElementById('startBtn')?.addEventListener('click', (e)=>{
-    e.preventDefault();
-    hideSplash();
+(function fixGitHubSplash() {
+  console.log('🔧 GitHub Pages 스플래시 수정 시작');
+  
+  let splashFixed = false;
+  
+  const forceSplashHide = () => {
+    if (splashFixed) return;
+    splashFixed = true;
+    
+    console.log('💫 스플래시 강제 숨김 실행');
+    
+    const splash = document.getElementById('splashScreen');
+    if (splash) {
+      splash.style.opacity = '0';
+      splash.style.pointerEvents = 'none';
+      splash.classList.add('hidden');
+      
+      setTimeout(() => {
+        splash.style.display = 'none';
+        console.log('✅ 스플래시 완전 제거됨');
+      }, 500);
+    }
+    
+    // 메인 콘텐츠 강제 표시
+    const mainContent = document.getElementById('mainContent');
+    const bottomNav = document.getElementById('bottomNav');
+    
+    if (mainContent) {
+      mainContent.style.display = 'block';
+      mainContent.classList.add('show');
+      console.log('✅ 메인 콘텐츠 표시됨');
+    }
+    
+    if (bottomNav) {
+      bottomNav.style.display = 'flex';
+      bottomNav.classList.add('show');
+      console.log('✅ 하단 네비 표시됨');
+    }
+  };
+  
+  // 🎯 다중 트리거로 스플래시 제거 (GitHub Pages 대응)
+  
+  // 1) 즉시 실행 (DOM 준비되면)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(forceSplashHide, 100);
+    });
+  } else {
+    setTimeout(forceSplashHide, 100);
+  }
+  
+  // 2) 페이지 로드 완료시
+  window.addEventListener('load', () => {
+    setTimeout(forceSplashHide, 200);
   });
+  
+  // 3) 강제 타이머 (최후의 수단)
+  setTimeout(forceSplashHide, 1000);
+  
+  // 4) 클릭 이벤트로도 제거
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#startBtn, .start-btn, .start-image-btn, #splashScreen')) {
+      e.preventDefault();
+      forceSplashHide();
+    }
+  });
+  
+  // 5) 키보드 이벤트로도 제거 (Enter, Space, Escape)
+  document.addEventListener('keydown', (e) => {
+    if (['Enter', 'Space', 'Escape'].includes(e.code)) {
+      forceSplashHide();
+    }
+  });
+  
+  console.log('🎯 GitHub Pages 스플래시 수정 완료');
 })();
-// 고정 헤더에 가려지지 않도록 CSS도 함께 참고: .mt-section { scroll-margin-top: var(--header-h); }
+
+// 🔧 추가: GitHub Pages 라우팅 안정화
+(function fixGitHubRouting() {
+  // URL 해시 정리
+  if (!location.hash || location.hash === '#') {
+    location.hash = '#/home';
+  }
+  
+  // 강제 홈페이지 이동 (응급용)
+  const forceHome = () => {
+    setActiveTab('home');
+    const homeTab = document.querySelector('.nav-item[data-tab="home"]');
+    if (homeTab) homeTab.classList.add('active');
+  };
+  
+  // 3초 후에도 아무것도 안 보이면 강제 홈으로
+  setTimeout(() => {
+    const mainContent = document.getElementById('mainContent');
+    if (mainContent && mainContent.style.display === 'none') {
+      console.log('🚨 긴급 복구: 강제 홈 이동');
+      forceHome();
+    }
+  }, 3000);
+})();
+
+// 🛠️ GitHub Pages 디버깅 헬퍼
+console.log('📍 현재 환경:', {
+  host: location.host,
+  pathname: location.pathname,
+  hash: location.hash,
+  readyState: document.readyState
+});
 
 function showCard(which) {
   const today = document.getElementById('view-today');
