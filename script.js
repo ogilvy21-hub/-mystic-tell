@@ -2237,5 +2237,26 @@ window.addEventListener('load', function() {
     if(e.key === 'Escape') closeAll();
   });
 })();
+(function () {
+  const splash = document.getElementById('splashScreen');
+  if (!splash) return;
+
+  // 버튼 id가 다르면 아래 셀렉터를 바꿔주세요.
+  const startBtn = document.getElementById('startBtn') 
+                || splash.querySelector('.start-image-btn');
+
+  const hideSplash = () => splash.classList.add('hidden');
+
+  // ① 페이지 로드 후 자동 닫기 (원하면 시간 조절)
+  window.addEventListener('load', () => {
+    setTimeout(hideSplash, 800); // 0.8초 뒤 자동 닫기
+  });
+
+  // ② Start 버튼 클릭으로 닫기(둘 다 유지해도 됨)
+  startBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    hideSplash();
+  });
+})();
 
 
