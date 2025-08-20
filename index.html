@@ -108,51 +108,56 @@
 <div class="section-title" id="fortuneTitle">운세</div>
 
 <!-- 오늘의 운세 -->
-<section id="today" class="mt-section"><div class="mt-wrap">
-<div id="view-today" class="card" style="display:none;">
-<div class="field">
-<div class="label">생년월일</div>
-<input class="input" type="date" id="today-birth" />
-</div>
-<label class="field-label">달력</label>
-<div class="seg">
-<label><input type="radio" name="today-cal" id="today-cal-solar" value="solar" checked> 양력</label>
-<label><input type="radio" name="today-cal" id="today-cal-lunar" value="lunar"> 음력</label>
-<label style="margin-left:8px;"><input type="checkbox" id="today-leap"> 윤달</label>
-</div>
-<button class="btn" id="btnToday">오늘의 운세 보기</button>
-</div>
-</div>
+<section id="today" class="mt-section">
+  <div class="mt-wrap">
+    <div id="view-today" class="card" style="display:none;">
+      <div class="field">
+        <div class="label">생년월일</div>
+        <input class="input" type="date" id="today-birth" />
+      </div>
+      <label class="field-label">달력</label>
+      <div class="seg">
+        <label><input type="radio" name="today-cal" id="today-cal-solar" value="solar" checked> 양력</label>
+        <label><input type="radio" name="today-cal" id="today-cal-lunar" value="lunar"> 음력</label>
+        <label style="margin-left:8px;"><input type="checkbox" id="today-leap"> 윤달</label>
+      </div>
+      <button class="btn" id="btnToday">오늘의 운세 보기</button>
+    </div>
+  </div>
 </section>
 
 <!-- 정통 사주 -->
-<div id="view-saju" class="card" style="display:none;">
-<div class="field">
-<div class="label">생년월일</div>
-<input class="input" type="date" id="saju-birth" />
-</div>
-<label class="field-label">달력</label>
-<div class="seg">
-<label><input type="radio" name="saju-cal" id="saju-cal-solar" value="solar" checked> 양력</label>
-<label><input type="radio" name="saju-cal" id="saju-cal-lunar" value="lunar"> 음력</label>
-<label style="margin-left:8px;"><input type="checkbox" id="saju-leap"> 윤달</label>
-</div>
-<!-- 이름 (선택) -->
-<label for="saju-name" class="field-label">이름 (선택)</label>
-<input id="saju-name" type="text" placeholder="이름을 입력하세요" class="input" />
-<div class="field">
-<div class="label">성별</div>
-<select id="saju-gender" class="input">
-<option value="F">여성</option>
-<option value="M">남성</option>
-</select>
-</div>
-<div class="field">
-<div class="label">태어난 시간 (선택)</div>
-<input class="input" type="time" id="saju-time" step="900" placeholder="예: 13:30" />
-</div>
-<button class="btn" id="btnSaju">사주 해석 보기</button>
-</div>
+<section id="saju" class="mt-section">
+  <div class="mt-wrap">
+    <div id="view-saju" class="card" style="display:none;">
+      <div class="field">
+        <div class="label">생년월일</div>
+        <input class="input" type="date" id="saju-birth" />
+      </div>
+      <label class="field-label">달력</label>
+      <div class="seg">
+        <label><input type="radio" name="saju-cal" id="saju-cal-solar" value="solar" checked> 양력</label>
+        <label><input type="radio" name="saju-cal" id="saju-cal-lunar" value="lunar"> 음력</label>
+        <label style="margin-left:8px;"><input type="checkbox" id="saju-leap"> 윤달</label>
+      </div>
+      <!-- 이름 (선택) -->
+      <label for="saju-name" class="field-label">이름 (선택)</label>
+      <input id="saju-name" type="text" placeholder="이름을 입력하세요" class="input" />
+      <div class="field">
+        <div class="label">성별</div>
+        <select id="saju-gender" class="input">
+          <option value="F">여성</option>
+          <option value="M">남성</option>
+        </select>
+      </div>
+      <div class="field">
+        <div class="label">태어난 시간 (선택)</div>
+        <input class="input" type="time" id="saju-time" step="900" placeholder="예: 13:30" />
+      </div>
+      <button class="btn" id="btnSaju">사주 해석 보기</button>
+    </div>
+  </div>
+</section>
 
 <!-- 타로 섹션 -->
 <div id="view-tarot" class="card" style="display:none;">
