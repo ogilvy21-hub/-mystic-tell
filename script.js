@@ -2535,85 +2535,106 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 (() => {
-  // 스타일(번호 공 모양)
-  if (!document.getElementById('mt-lotto-style')) {
-    const st = document.createElement('style');
-    st.id = 'mt-lotto-style';
-    st.textContent = `
-      #view-lotto .lotto-box { text-align:center; margin:16px 0 6px; }
-      #view-lotto .ball{
-        display:inline-flex; width:44px; height:44px; border-radius:50%;
-        align-items:center; justify-content:center; margin:6px;
-        background:#667eea; color:#fff; font-weight:700; box-shadow:0 3px 8px rgba(0,0,0,.2);
-      }
-      #view-lotto .lotto-ctrl { text-align:center; margin:8px 0 4px; }
-      #view-lotto .lotto-ctrl .btn {
-        padding:8px 14px; border-radius:10px; background:#eef2ff; color:#3949ab;
-        border:1px solid #e0e7ff; cursor:pointer; font-weight:600;
-      }
-    `;
-    document.head.appendChild(st);
+  // 0) 기본 스타일(밑줄 제거)
+  const st = document.createElement('style');
+  st.textContent = `
+    a.btn, .btn, .mt-nav a { text-decoration: none !important; }
+  `;
+  document.head.appendChild(st);
+
+  // 1) 스플래시 끄고 메인 표시
+  const splash = document.getElementById('splashScreen');
+  if (splash) splash.style.display = 'none';
+  const main = document.getElementById('mainContent');
+  if (main) { main.style.display = 'block'; main.classList.add('show'); }
+
+  // 2) 헬퍼
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  // 3) 잘못된 링크 보정(혹시 #/lotto 로 되어있으면 교정)
+  document.querySelectorAll('a[href="#/lotto"], a[href="#lotto"]').forEach(a => {
+    a.setAttribute('href', '#/fortune/lotto');
+  });
+
+  // 4) 페이지 탭 전환
+  const pages = {
+    home:   $('#page-home'),
+    fortune:$('#page-fortune'),
+    chat:   $('#page-chat'),
+    me:     $('#page-me')
+  };
+
+  function setActiveTab(tab) {
+    Object.entries(pages).forEach(([k, el]) => {
+      if (!el) return;
+      if (k === tab) { el.style.display = 'block'; el.classList.add('show'); }
+      else { el.style.display = 'none'; el.classList.remove('show'); }
+    });
+    // 상단 네비 활성화 표시(있으면)
+    $$('.mt-nav a,[data-tab]').forEach(a => {
+      const t = a.dataset.tab || ((a.getAttribute('href')||'').match(/^#\/([^/]+)/)?.[1] ?? '');
+      a.classList.toggle('active', t === tab);
+    });
   }
 
-  // 간단 시드 랜덤 (하루 고정 생성용)
-  function seededRand(seed){
-    // mulberry32
-    let t = seed + 0x6D2B79F5;
-    return () => {
-      t = Math.imul(t ^ (t >>> 15), t | 1);
-      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-  function pick6(seed){
-    const rnd = seededRand(seed);
-    const set = new Set();
-    while (set.size < 6) set.add(1 + Math.floor(rnd() * 45)); // 1~45
-    return [...set].sort((a,b)=>a-b);
-  }
-  function todaySeed(){
-    const d = new Date(); // YYYYMMDD 기준 고정
-    return d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate();
+  // 5) 운세 서브뷰 전환
+  const titleEl = $('#fortuneTitle');
+  const views = {
+    'fortune-today': $('#view-today'),
+    'fortune-saju' : $('#view-saju'),
+    'fortune-tarot': $('#view-tarot'),
+    'fortune-palm' : $('#view-palm'),
+    'fortune-match': $('#view-match'),
+    'fortune-year' : $('#view-year'),
+    'fortune-lotto': $('#view-lotto')
+  };
+  const viewTitle = {
+    'fortune-today':'오늘의 운세',
+    'fortune-saju':'정통 사주',
+    'fortune-tarot':'타로 점',
+    'fortune-palm':'손금 보기',
+    'fortune-match':'궁합 보기',
+    'fortune-year':'신년 운세 (2025)',
+    'fortune-lotto':'행운번호'
+  };
+
+  function showFortuneView(key) {
+    Object.values(views).forEach(v => v && (v.style.display = 'none'));
+    const el = views[key] || views['fortune-today'];
+    if (el) el.style.display = 'block';
+    if (titleEl) titleEl.textContent = viewTitle[key] || viewTitle['fortune-today'];
   }
 
-  function ensureLottoUI(){
-    const v = document.getElementById('view-lotto');
-    if (!v) return;
-    if (!v.querySelector('.lotto-box')) {
-      v.style.display = 'block'; // 혹시 숨김이면 보이게
-      v.insertAdjacentHTML('beforeend', `
-        <div class="lotto-box" id="lottoNums"></div>
-        <div class="lotto-ctrl">
-          <button class="btn" id="btnLottoAgain">다시 뽑기</button>
-        </div>
-        <p style="text-align:center;color:#666;margin-top:6px;font-size:13px;">
-          * 기본은 오늘 날짜로 고정 생성, "다시 뽑기"는 랜덤입니다.
-        </p>
-      `);
+  // 6) 라우터
+  function routeFromHash() {
+    const m = location.hash.match(/^#\/([^/]+)(?:\/([^/]+))?/);
+    const tab = m?.[1] || 'home';
+    const sub = m?.[2] || '';
+    setActiveTab(['home','fortune','chat','me'].includes(tab) ? tab : 'home');
+    if (tab === 'fortune') {
+      const map = {
+        today:'fortune-today', saju:'fortune-saju', tarot:'fortune-tarot',
+        palm:'fortune-palm', match:'fortune-match', year:'fortune-year', lotto:'fortune-lotto'
+      };
+      showFortuneView(map[sub] || 'fortune-today');
     }
   }
 
-  function renderLotto(seed = todaySeed()){
-    const nums = pick6(seed);
-    const box = document.getElementById('lottoNums');
-    if (box) box.innerHTML = nums.map(n => `<span class="ball">${String(n).padStart(2,'0')}</span>`).join('');
-  }
+  // 7) data-route 전역 클릭 핸들러(네비/버튼 공통)
+  document.addEventListener('click', e => {
+    const el = e.target.closest('[data-route]');
+    if (!el) return;
+    const r = el.dataset.route;
+    if (!r) return;
+    e.preventDefault();
+    location.hash = r.startsWith('fortune-')
+      ? '#/fortune/' + r.replace('fortune-', '')
+      : '#/' + r;
+  }, true);
 
-  function initLottoNow(){
-    ensureLottoUI();
-    renderLotto();
-    const again = document.getElementById('btnLottoAgain');
-    if (again && !again.__bound) {
-      again.__bound = true;
-      again.addEventListener('click', () => renderLotto(Math.floor(Math.random()*1e9)));
-    }
-  }
-
-  // 라우팅으로 이동했을 때 자동 주입
-  function onHash(){
-    if (/^#\/fortune\/lotto$/.test(location.hash)) initLottoNow();
-  }
-  window.addEventListener('hashchange', onHash);
-  onHash(); // 현재 해시가 이미 lotto면 즉시 실행
+  // 8) 시작
+  window.addEventListener('hashchange', routeFromHash);
+  if (!location.hash) location.hash = '#/home';
+  routeFromHash();
 })();
- 
