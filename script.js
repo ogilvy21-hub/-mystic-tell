@@ -2326,5 +2326,51 @@ function smoothScrollTo(sel) {
     });
   });
 });
+/* === NAV/CTA FIX: today/saju/바로 시작 동작, 스무스 스크롤, 스플래시 정리 === */
+(function () {
+  const hideSplash = () => document.getElementById('splashScreen')?.classList.add('hidden');
+
+  function smoothScrollTo(sel) {
+    const el = document.querySelector(sel);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function goToFortune(which) {
+    hideSplash();
+    setActiveTab('fortune');
+    showFortuneView(which === 'saju' ? 'fortune-saju' : 'fortune-today');
+    // 렌더 직후 스크롤
+    requestAnimationFrame(() => smoothScrollTo('#' + (which === 'saju' ? 'saju' : 'today')));
+  }
+
+  // 히어로 CTA(id가 있는 경우 처리)
+  document.getElementById('ctaToday')?.addEventListener('click', (e) => { e.preventDefault(); goToFortune('today'); });
+  document.getElementById('ctaSaju') ?.addEventListener('click', (e) => { e.preventDefault(); goToFortune('saju');  });
+  document.getElementById('ctaStart')?.addEventListener('click', (e) => { e.preventDefault(); goToFortune('today'); });
+
+  // 모든 #앵커 공통 처리
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const hash = a.getAttribute('href');
+
+    if (hash === '#today') { e.preventDefault(); goToFortune('today'); }
+    else if (hash === '#saju') { e.preventDefault(); goToFortune('saju'); }
+    else if (hash === '#home' || hash === '#guide' || hash === '#contact') {
+      // 홈에 있는 섹션으로 점프
+      e.preventDefault();
+      hideSplash();
+      setActiveTab('home');
+      requestAnimationFrame(() => smoothScrollTo(hash));
+    }
+  });
+
+  // 해시로 직접 유입 시 처리
+  window.addEventListener('load', () => {
+    if (location.hash === '#today')      goToFortune('today');
+    else if (location.hash === '#saju')  goToFortune('saju');
+  });
+})();
 
 
