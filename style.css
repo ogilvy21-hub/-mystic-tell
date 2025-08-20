@@ -1063,31 +1063,15 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   top: -9999px !important;
 }
 
-/* 왼쪽 세 개 버튼 밑줄 제거 */
-button, 
-.button,
-.btn,
-button a,
-.service-item a {
-  text-decoration: none !important;
-}
+// 모든 버튼 텍스트 밑줄 제거
+document.querySelectorAll('button, .button, .btn, .cta-button, a.button').forEach(btn => {
+  btn.style.textDecoration = 'none';
+  const links = btn.querySelectorAll('a');
+  links.forEach(link => link.style.textDecoration = 'none');
+});
 
-/* 버튼 내부 모든 요소 밑줄 제거 */
-button *, 
-.button *, 
-.btn * {
-  text-decoration: none !important;
-}
-
-/* 호버 상태에서도 밑줄 제거 */
-button:hover,
-.button:hover,
-.btn:hover,
-button a:hover {
-  text-decoration: none !important;
-}
-
-/* data-route 속성 가진 요소들 밑줄 제거 */
-[data-route] {
-  text-decoration: none !important;
-}
+// 바로시작 버튼 특별 처리
+document.querySelectorAll('[data-route], .cta-start').forEach(btn => {
+  btn.style.textDecoration = 'none';
+});
+undefined
