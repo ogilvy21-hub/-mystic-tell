@@ -2424,3 +2424,15 @@ element.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 }
 
+// 모든 버튼 텍스트 밑줄 제거
+document.addEventListener('DOMContentLoaded', function() {
+document.querySelectorAll('button, .button, .btn, .cta-button, a.button').forEach(btn => {
+  btn.style.textDecoration = 'none';
+  const links = btn.querySelectorAll('a');
+  links.forEach(link => link.style.textDecoration = 'none');
+});
+
+// 바로시작 버튼 특별 처리
+document.querySelectorAll('[data-route], .cta-start').forEach(btn => {
+  btn.style.textDecoration = 'none';
+});
