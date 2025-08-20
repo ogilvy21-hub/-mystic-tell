@@ -2534,215 +2534,86 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
- // 👆 기존 코드는 그대로 두고, 맨 마지막에 이것만 추가하세요
-
-// ===== 🎯 로또 기능 수정 =====
-(function fixLotto() {
-  // 로또 스타일 추가
-  const addLottoStyles = () => {
-    if (document.getElementById('lotto-styles')) return;
-    
-    const css = `
-      .lotto-numbers {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        margin: 30px 0;
-        flex-wrap: wrap;
+(() => {
+  // 스타일(번호 공 모양)
+  if (!document.getElementById('mt-lotto-style')) {
+    const st = document.createElement('style');
+    st.id = 'mt-lotto-style';
+    st.textContent = `
+      #view-lotto .lotto-box { text-align:center; margin:16px 0 6px; }
+      #view-lotto .ball{
+        display:inline-flex; width:44px; height:44px; border-radius:50%;
+        align-items:center; justify-content:center; margin:6px;
+        background:#667eea; color:#fff; font-weight:700; box-shadow:0 3px 8px rgba(0,0,0,.2);
       }
-      
-      .lotto-ball {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 16px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      }
-      
-      .lotto-ball.bonus {
-        background: linear-gradient(135deg, #ff6b35, #f7931e);
-      }
-      
-      .bonus-separator {
-        font-size: 24px;
-        font-weight: bold;
-        color: #666;
-        margin: 0 10px;
-      }
-      
-      .lotto-info {
-        background: #f8f9ff;
-        padding: 20px;
-        border-radius: 10px;
-        margin: 20px 0;
-      }
-      
-      .info-item {
-        display: flex;
-        justify-content: space-between;
-        margin: 8px 0;
-      }
-      
-      .info-label {
-        color: #666;
-        font-weight: 500;
-      }
-      
-      .info-value {
-        color: #333;
-        font-weight: bold;
+      #view-lotto .lotto-ctrl { text-align:center; margin:8px 0 4px; }
+      #view-lotto .lotto-ctrl .btn {
+        padding:8px 14px; border-radius:10px; background:#eef2ff; color:#3949ab;
+        border:1px solid #e0e7ff; cursor:pointer; font-weight:600;
       }
     `;
-    
-    const style = document.createElement('style');
-    style.id = 'lotto-styles';
-    style.textContent = css;
-    document.head.appendChild(style);
-  };
+    document.head.appendChild(st);
+  }
 
-  // 개선된 로또 생성
-  window.generateEnhancedLotto = function(birthdate = '') {
-    const today = new Date();
-    const dateStr = `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`;
-    const seed = (birthdate || 'random') + dateStr;
-    
-    let hash = 0;
-    for(let i = 0; i < seed.length; i++) {
-      hash = (hash * 37 + seed.charCodeAt(i)) % 1000000;
-    }
-    
-    const numbers = new Set();
-    while(numbers.size < 6) {
-      const randomIndex = Math.abs(hash + numbers.size * 13) % 45;
-      const num = randomIndex + 1;
-      numbers.add(num);
-    }
-    
-    const finalNumbers = Array.from(numbers).sort((a,b) => a-b);
-    const bonus = (Math.abs(hash + 777) % 45) + 1;
-    
-    return {
-      numbers: finalNumbers,
-      bonus: bonus,
-      generated: dateStr,
-      personalized: !!birthdate
+  // 간단 시드 랜덤 (하루 고정 생성용)
+  function seededRand(seed){
+    // mulberry32
+    let t = seed + 0x6D2B79F5;
+    return () => {
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
-  };
+  }
+  function pick6(seed){
+    const rnd = seededRand(seed);
+    const set = new Set();
+    while (set.size < 6) set.add(1 + Math.floor(rnd() * 45)); // 1~45
+    return [...set].sort((a,b)=>a-b);
+  }
+  function todaySeed(){
+    const d = new Date(); // YYYYMMDD 기준 고정
+    return d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate();
+  }
 
-  // 로또 결과 표시
-  window.showLottoResult = function(result, name = '') {
-    const nameText = name ? `${name}님의 ` : '';
-    
-    return `
-      <div class="result-section">
-        <div class="section-title-result">🎲 ${nameText}행운의 로또번호</div>
-        
-        <div class="lotto-numbers">
-          ${result.numbers.map(n => `<span class="lotto-ball">${String(n).padStart(2,'0')}</span>`).join('')}
-          <span class="bonus-separator">+</span>
-          <span class="lotto-ball bonus">${String(result.bonus).padStart(2,'0')}</span>
+  function ensureLottoUI(){
+    const v = document.getElementById('view-lotto');
+    if (!v) return;
+    if (!v.querySelector('.lotto-box')) {
+      v.style.display = 'block'; // 혹시 숨김이면 보이게
+      v.insertAdjacentHTML('beforeend', `
+        <div class="lotto-box" id="lottoNums"></div>
+        <div class="lotto-ctrl">
+          <button class="btn" id="btnLottoAgain">다시 뽑기</button>
         </div>
-        
-        <div class="lotto-info">
-          <div class="info-item">
-            <span class="info-label">생성일:</span>
-            <span class="info-value">${result.generated}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">유형:</span>
-            <span class="info-value">${result.personalized ? '🔮 개인맞춤' : '🎲 랜덤생성'}</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="info-box">
-        <div class="info-title">🍀 행운번호 안내</div>
-        <div class="info-content">
-          <strong>생성방식:</strong> 생년월일 + 오늘 날짜를 기반으로 개인화된 번호를 생성합니다.<br/>
-          <strong>특징:</strong> 통계적으로 자주 나오는 번호와 개인화 알고리즘을 조합했습니다.<br/>
-          <strong>유효기간:</strong> 하루 단위로 새로운 번호가 생성됩니다.<br/>
-          ※ 로또는 순전히 운의 게임입니다. 재미로만 참고하세요! 🎯
-        </div>
-      </div>
-    `;
-  };
-
-  // 로또 버튼 이벤트 수정
-  const fixLottoButton = () => {
-    const btnLotto = document.getElementById('btnLotto');
-    if (!btnLotto) return;
-    
-    btnLotto.onclick = function() {
-      try {
-        const birth = document.getElementById('lotto-birth')?.value?.trim() || '';
-        const name = document.getElementById('lotto-name')?.value?.trim() || '';
-        
-        const result = generateEnhancedLotto(birth);
-        const htmlResult = showLottoResult(result, name);
-        
-        openSheet('🎲 행운의 로또번호', htmlResult, {
-          type: 'lotto',
-          birth: birth,
-          name: name,
-          numbers: result.numbers,
-          bonus: result.bonus,
-          generated: result.generated
-        });
-        
-        reactCrystal('행운의 번호를 생성했습니다! 🍀');
-        
-        pushRecent({
-          type: 'lotto',
-          numbers: result.numbers.join(', '),
-          bonus: result.bonus,
-          personalized: result.personalized
-        });
-        
-      } catch (error) {
-        console.error('로또 생성 오류:', error);
-        alert('번호 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
-      }
-    };
-  };
-
-  // 로또 뷰 표시 강제 수정
-  const showLottoView = () => {
-    const lottoView = document.getElementById('view-lotto');
-    if (lottoView) {
-      lottoView.style.display = 'block';
-      lottoView.style.background = 'white';
-      lottoView.style.minHeight = '400px';
-      lottoView.style.padding = '20px';
-      lottoView.style.borderRadius = '10px';
-      lottoView.style.margin = '20px auto';
-      lottoView.style.maxWidth = '500px';
+        <p style="text-align:center;color:#666;margin-top:6px;font-size:13px;">
+          * 기본은 오늘 날짜로 고정 생성, "다시 뽑기"는 랜덤입니다.
+        </p>
+      `);
     }
-  };
+  }
 
-  // 초기화
-  document.addEventListener('DOMContentLoaded', () => {
-    addLottoStyles();
-    setTimeout(fixLottoButton, 100);
-    
-    // 로또 페이지로 이동할 때
-    if (location.hash.includes('lotto')) {
-      setTimeout(showLottoView, 200);
+  function renderLotto(seed = todaySeed()){
+    const nums = pick6(seed);
+    const box = document.getElementById('lottoNums');
+    if (box) box.innerHTML = nums.map(n => `<span class="ball">${String(n).padStart(2,'0')}</span>`).join('');
+  }
+
+  function initLottoNow(){
+    ensureLottoUI();
+    renderLotto();
+    const again = document.getElementById('btnLottoAgain');
+    if (again && !again.__bound) {
+      again.__bound = true;
+      again.addEventListener('click', () => renderLotto(Math.floor(Math.random()*1e9)));
     }
-  });
+  }
 
-  // 해시 변경 감지
-  window.addEventListener('hashchange', () => {
-    if (location.hash.includes('lotto')) {
-      setTimeout(showLottoView, 100);
-    }
-  });
-
-  console.log('🎲 로또 기능이 수정되었습니다!');
+  // 라우팅으로 이동했을 때 자동 주입
+  function onHash(){
+    if (/^#\/fortune\/lotto$/.test(location.hash)) initLottoNow();
+  }
+  window.addEventListener('hashchange', onHash);
+  onHash(); // 현재 해시가 이미 lotto면 즉시 실행
 })();
+ 
