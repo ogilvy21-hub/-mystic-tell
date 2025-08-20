@@ -1048,5 +1048,13 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   });
 });
 
+/* ===== MysticTell 수정사항 ===== */
+.main-content {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
 
+.splash-screen.hidden {
+  display: none !important;
+}
 
