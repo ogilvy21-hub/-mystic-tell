@@ -570,6 +570,11 @@ fortuneTitle.textContent='정통 사주';
 views['fortune-saju'].style.display='block';
 bindCalToggle('saju');
 break;
+case 'fortune-lotto':
+fortuneTitle.textContent = '행운의 로또번호';
+views['fortune-lotto'] = $('#view-lotto');
+views['fortune-lotto'].style.display = 'block';
+break;
 case 'fortune-tarot':
 fortuneTitle.textContent='타로 점';
 views['fortune-tarot'].style.display='block';
@@ -1965,6 +1970,7 @@ function routeFromHash() {
       sub === 'palm'  ? 'fortune-palm'  :
       sub === 'match' ? 'fortune-match' :
       sub === 'year'  ? 'fortune-year'  :
+      sub === 'lotto' ? 'fortune-lotto' :
                         'fortune-today';
     showFortuneView(view);
   }
