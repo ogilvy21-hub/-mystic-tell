@@ -937,3 +937,36 @@ margin: 10px;
   width: 100%;
   height: auto;
 }
+
+/* ===== MysticTell Policy/Footer (scoped with .mt-*) ===== */
+.mt-footer{
+  background:#f8f9fa; padding:24px 0; text-align:center;
+  margin-top:48px; border-top:1px solid #e2e8f0;
+}
+.mt-footer-links{ margin-bottom:8px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+.mt-footer-links a{ color:#667eea; text-decoration:none; }
+.mt-footer-links a:hover{ text-decoration:underline; }
+.mt-footer-info{ color:#718096; font-size:.9rem; }
+
+.mt-sheet-backdrop{
+  position:fixed; inset:0; display:none;
+  align-items:center; justify-content:center;
+  background:rgba(0,0,0,.45); opacity:0;
+  transition:opacity .25s ease; z-index:1000;
+}
+.mt-sheet-backdrop.mt-show{ display:flex; opacity:1; }
+.mt-sheet{
+  background:#fff; border-radius:16px; width:min(92vw,800px);
+  max-height:80vh; overflow:auto; box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+.mt-sheet-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 20px; border-bottom:1px solid #eee;
+}
+.mt-sheet-title{ font-size:1.2rem; font-weight:700; margin:0; }
+.mt-sheet-close{ background:none; border:0; font-size:24px; line-height:1; cursor:pointer; }
+.mt-sheet-content{ padding:20px; }
+
+.mt-policy-content{ line-height:1.7; color:#2d3748; }
+.mt-policy-section{ margin-bottom:20px; }
+.mt-policy-section h4{ font-size:1rem; margin:0 0 .5rem; color:#4a5568; font-weight:700; }
