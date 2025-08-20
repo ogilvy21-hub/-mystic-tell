@@ -2446,3 +2446,53 @@ observer.observe(document.body, {
   subtree: true
 });
                           
+// 🎲 로또 번호 생성기
+const LOTTO_STATS = {
+  hot: [40, 22, 34, 17, 10, 37, 27, 43, 33, 39, 12, 23],
+  lucky: [7, 14, 21, 28, 35, 42]
+};
+
+function generateLotto(birthdate = '') {
+  const today = new Date().toDateString();
+  const seed = (birthdate || 'random') + today;
+  let hash = 0;
+  
+  for(let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) % 100000;
+  }
+  
+  const numbers = [];
+  const hotNums = [...LOTTO_STATS.hot];
+  
+  // 통계 기반 4개
+  for(let i = 0; i < 4; i++) {
+    const idx = Math.abs(hash + i) % hotNums.length;
+    numbers.push(hotNums.splice(idx, 1)[0]);
+  }
+  
+  // 개인화 랜덤 2개
+  while(numbers.length < 6) {
+    const num = (Math.abs(hash + numbers.length * 7) % 45) + 1;
+    if(!numbers.includes(num)) numbers.push(num);
+  }
+  
+  const bonus = (Math.abs(hash + 99) % 45) + 1;
+  return { numbers: numbers.sort((a,b) => a-b), bonus };
+}
+
+// 로또 버튼 이벤트
+$('#btnLotto')?.addEventListener('click', ()=>{
+  const birth = $('#lotto-birth')?.value || '';
+  const result = generateLotto(birth);
+  const html = `
+    🎲 행운의 로또번호
+    
+    ${result.numbers.map(n => `[${String(n).padStart(2,'0')}]`).join(' ')}
+    보너스: [${String(result.bonus).padStart(2,'0')}]
+    
+    ${birth ? '🔮 개인맞춤' : '🎲 랜덤'} 생성
+    📊 통계 기반 + 행운 조합
+  `;
+  openSheet('🍀 행운의 로또번호', html, {type:'lotto', numbers:result.numbers, bonus:result.bonus});
+  reactCrystal('행운의 번호를 생성했습니다! 🍀');
+});
