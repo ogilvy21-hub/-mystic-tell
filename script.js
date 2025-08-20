@@ -2385,6 +2385,7 @@ function showCard(which) {
         'palm': 'fortune-palm',
         'match': 'fortune-match',
         'year': 'fortune-year'
+        'lotto': 'fortune-lotto', 
       };
       showFortuneView(viewMap[sub] || 'fortune-today');
     }
