@@ -505,7 +505,7 @@ const pages = {
 };
 
 function setActiveTab(tab){
-// 메인 컨테이너 보이게 만들기
+// 메인 컨테이너 보이게 만들기  
 const mainContent = document.getElementById('mainContent');
 if (mainContent) mainContent.style.display = 'block';
 
@@ -2418,13 +2418,11 @@ function showCard(which) {
     handleRoute();
   });
 })();
+
 function smoothScrollTo(selector) {
 const element = document.querySelector(selector);
 if (element) {
-element.scrollIntoView({ 
-behavior: 'smooth', 
-block: 'start' 
-});
+element.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 }
 
