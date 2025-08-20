@@ -2194,9 +2194,40 @@ window.addEventListener('load', function() {
   });
 });
 
-// ===== 사용법 =====
-// 이 코드를 기존 자바스크립트 파일 끝에 추가하면:
-// 1. 손금보기 메뉴가 "🚧 준비중" 배지와 함께 표시됨
-// 2. 클릭하면 "곧 만나보실 수 있습니다!" 알림이 나타남  
-// 3. 메뉴 제목에 "(예정)" 텍스트 자동 추가
-// 4. 나중에 이 코드만 제거하면 손금 기능 바로 활성화!
+// ===== MysticTell: Policy modal controls (scoped) =====
+(function(){
+  const $ = (s,r=document)=>r.querySelector(s);
+  const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+
+  const open = (which)=>{
+    const el = $(`#${which}`);
+    if(!el) return;
+    el.classList.add('mt-show');
+  };
+  const closeAll = ()=>{
+    $$('.mt-sheet-backdrop').forEach(el=>{
+      el.classList.remove('mt-show');
+    });
+  };
+
+  // open triggers
+  $('#mt-link-privacy')?.addEventListener('click', (e)=>{ e.preventDefault(); open('mt-privacy'); });
+  $('#mt-link-terms')?.addEventListener('click', (e)=>{ e.preventDefault(); open('mt-terms'); });
+
+  // close triggers (X 버튼, 배경 클릭)
+  $$('.mt-sheet-close').forEach(btn=>{
+    btn.addEventListener('click', closeAll);
+  });
+  $$('.mt-sheet-backdrop').forEach(bg=>{
+    bg.addEventListener('click', (e)=>{
+      if(e.target === bg) closeAll();
+    });
+  });
+
+  // Esc 닫기
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') closeAll();
+  });
+})();
+
+
