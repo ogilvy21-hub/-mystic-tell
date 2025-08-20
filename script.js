@@ -2424,15 +2424,25 @@ element.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 }
 
-// 모든 버튼 텍스트 밑줄 제거
-document.addEventListener('DOMContentLoaded', function() {
-document.querySelectorAll('button, .button, .btn, .cta-button, a.button').forEach(btn => {
-  btn.style.textDecoration = 'none';
-  const links = btn.querySelectorAll('a');
-  links.forEach(link => link.style.textDecoration = 'none');
-});
+// 🔥 강력한 밑줄 완전 제거 (영구적용)
+function removeAllUnderlines() {
+  document.querySelectorAll('*').forEach(el => {
+    el.style.setProperty('text-decoration', 'none', 'important');
+    el.style.setProperty('text-decoration-line', 'none', 'important');
+    el.style.setProperty('border-bottom', 'none', 'important');
+  });
+}
 
-// 바로시작 버튼 특별 처리
-document.querySelectorAll('[data-route], .cta-start').forEach(btn => {
-  btn.style.textDecoration = 'none';
+// DOM 로드 후 실행
+document.addEventListener('DOMContentLoaded', removeAllUnderlines);
+
+// 페이지 로드 완료 후에도 실행 (혹시 모르니까)
+window.addEventListener('load', removeAllUnderlines);
+
+// 동적으로 추가되는 요소에도 적용
+const observer = new MutationObserver(removeAllUnderlines);
+observer.observe(document.body, {
+  childList: true,
+  subtree: true
 });
+                          
