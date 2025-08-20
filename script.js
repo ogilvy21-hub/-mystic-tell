@@ -2226,33 +2226,31 @@ document.head.appendChild(styleTag);
 })();
 
 // 페이지 로드 후에도 재확인
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
   setPalmAsComingSoon();
-  
+
   // 동적으로 추가되는 손금 요소들도 "준비중" 처리
-  const observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-      mutation.addedNodes.forEach(function(node) {
-        if (node.nodeType === 1) { // Element node
-          // 손금 관련 요소 찾아서 준비중 처리
-          if (node.matches && node.matches('[data-route="fortune-palm"]')) {
-            setPalmAsComingSoon();
-          }
-          
-          // 자식 요소 중에서도 찾기
-          const palmElements = node.querySelectorAll && node.querySelectorAll('[data-route="fortune-palm"]');
-          if (palmElements && palmElements.length > 0) {
-            setPalmAsComingSoon();
-          }
+  const observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+      mutation.addedNodes.forEach(function (node) {
+        if (node.nodeType !== 1) return; // Element 노드만
+
+        // 자신이 손금 요소인 경우
+        if (node.matches && node.matches('[data-route="fortune-palm"]')) {
+          setPalmAsComingSoon();
+        }
+
+        // 자식 중에 손금 요소가 추가된 경우
+        const palmElements =
+          node.querySelectorAll && node.querySelectorAll('[data-route="fortune-palm"]');
+        if (palmElements && palmElements.length) {
+          setPalmAsComingSoon();
         }
       });
     });
   });
-  
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
 });
 
 // ===== MysticTell: Policy modal controls (scoped) =====
