@@ -1064,6 +1064,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
 }
 
 // 모든 버튼 텍스트 밑줄 제거
+document.addEventListener('DOMContentLoaded', function() {
 document.querySelectorAll('button, .button, .btn, .cta-button, a.button').forEach(btn => {
   btn.style.textDecoration = 'none';
   const links = btn.querySelectorAll('a');
