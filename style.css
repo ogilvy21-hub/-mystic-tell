@@ -970,3 +970,49 @@ margin: 10px;
 .mt-policy-content{ line-height:1.7; color:#2d3748; }
 .mt-policy-section{ margin-bottom:20px; }
 .mt-policy-section h4{ font-size:1rem; margin:0 0 .5rem; color:#4a5568; font-weight:700; }
+:root{--max:1040px;--gap:20px;--brand:#667eea;--ink:#1f2937;}
+html{scroll-behavior:smooth;}
+/* 앵커 이동 시 헤더 높이 보정 */
+.mt-section, .mt-hero-split{scroll-margin-top:72px;}
+
+.mt-wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gap);}
+.mt-section{padding:48px 0;border-top:1px solid #f1f5f9;background:#fff;}
+.mt-section h2{margin:0 0 16px;color:var(--ink)}
+
+/* Header */
+.mt-header{position:sticky;top:0;background:#ffffffcc;backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid #eef2f7;z-index:50}
+.mt-header .mt-wrap{display:flex;align-items:center;justify-content:space-between;height:56px;}
+.mt-logo{font-weight:700;color:#2b2f36;text-decoration:none}
+.mt-nav a{margin-left:14px;color:#4b5563;text-decoration:none}
+.mt-nav a:hover{text-decoration:underline}
+
+/* Hero split */
+.mt-hero-split{padding:56px 0;background:linear-gradient(180deg,#f6f8ff,#ffffff);}
+.mt-hero-split .mt-wrap{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;}
+.mt-hero-left .eyebrow{color:#6b7280;margin:0 0 8px}
+.mt-hero-left h1{margin:0 0 10px;font-size:40px;line-height:1.2}
+.mt-hero-left .accent{color:var(--brand)}
+.ticks{margin:12px 0 18px;padding-left:20px}
+.ticks li{margin:6px 0}
+.btn-primary{display:inline-block;background:var(--brand);color:#fff;padding:12px 18px;border-radius:999px}
+.btn-ghost{display:inline-block;margin-left:8px;padding:12px 16px;border-radius:999px;border:1px solid #d1d5db;color:#374151}
+
+.mt-hero-right .hero-card{border:1px solid #e5e7eb;border-radius:16px;padding:18px;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.06);}
+.hero-card h3{margin:0 0 6px}
+.btn-sm{display:inline-block;margin-top:10px;font-size:14px;border:1px solid #d1d5db;border-radius:999px;padding:8px 12px}
+
+/* 기능 그리드(필요 시) */
+.feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.feature{display:flex;align-items:center;gap:8px;border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fff}
+
+/* 기타 */
+.mt-ad{margin:20px 0}
+.howto ol{margin:0;padding-left:20px}
+.faq details{border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;margin:10px 0;background:#fcfcff}
+
+@media (max-width:900px){
+  .mt-hero-split .mt-wrap{grid-template-columns:1fr;}
+  .feature-grid{grid-template-columns:repeat(2,1fr);}
+  .mt-hero-left h1{font-size:30px}
+}
+
