@@ -696,7 +696,6 @@ const LUCKY_ITEMS = {
 function calcEnhancedDailyFortune(birthdate) {
   const today = new Date();
   const dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-  
   const results = {};
   
   Object.keys(FORTUNE_CATEGORIES).forEach((category, index) => {
@@ -716,7 +715,7 @@ function calcEnhancedDailyFortune(birthdate) {
     else if (score >= 35) messageKey = 40;
     
     const messages = FORTUNE_CATEGORIES[category].messages[messageKey];
-    const messageIndex = Math.abs(hash + index) % messages.length;
+    const messageIndex = Math.abs(hash) % messages.length;
     
     results[category] = {
       name: FORTUNE_CATEGORIES[category].name,
