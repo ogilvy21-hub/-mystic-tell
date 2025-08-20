@@ -502,7 +502,6 @@ const pages={home:$('#page-home'),fortune:$('#page-fortune'),chat:$('#page-chat'
 function setActiveTab(tab){
 $$('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.tab===tab));
 Object.entries(pages).forEach(([k,el])=>el?.classList.toggle('show',k===tab));
-location.hash=`#/${tab}`;
 closeAllOverlays();
 }
 
@@ -2342,50 +2341,72 @@ function showCard(which) {
     });
   });
 });
-/* === NAV/CTA FIX: today/saju/바로 시작 동작, 스무스 스크롤, 스플래시 정리 === */
-(function () {
-  const hideSplash = () => document.getElementById('splashScreen')?.classList.add('hidden');
 
-  function smoothScrollTo(sel) {
-    const el = document.querySelector(sel);
-    if (!el) return;
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+// ===== 통합 라우팅 및 버튼 이벤트 시스템 =====
+(function() {
+  const hideSplash = () => {
+    const splash = document.getElementById('splashScreen');
+    if (splash) splash.classList.add('hidden');
+  };
+
+  // 통합 라우팅 처리
+  function handleRoute() {
+    const hash = location.hash || '#/home';
+    const match = hash.match(/^#\/([^/]+)(?:\/([^/]+))?/);
+    const tab = match?.[1] || 'home';
+    const sub = match?.[2] || '';
+
+    setActiveTab(tab);
+    
+    if (tab === 'fortune') {
+      const viewMap = {
+        'today': 'fortune-today',
+        'saju': 'fortune-saju', 
+        'tarot': 'fortune-tarot',
+        'palm': 'fortune-palm',
+        'match': 'fortune-match',
+        'year': 'fortune-year'
+      };
+      showFortuneView(viewMap[sub] || 'fortune-today');
+    }
   }
 
-  function goToFortune(which) {
-    hideSplash();
-    setActiveTab('fortune');
-    showFortuneView(which === 'saju' ? 'fortune-saju' : 'fortune-today');
-    // 렌더 직후 스크롤
-    requestAnimationFrame(() => smoothScrollTo('#' + (which === 'saju' ? 'saju' : 'today')));
-  }
-
-  // 히어로 CTA(id가 있는 경우 처리)
-  document.getElementById('ctaToday')?.addEventListener('click', (e) => { e.preventDefault(); goToFortune('today'); });
-  document.getElementById('ctaSaju') ?.addEventListener('click', (e) => { e.preventDefault(); goToFortune('saju');  });
-  document.getElementById('ctaStart')?.addEventListener('click', (e) => { e.preventDefault(); goToFortune('today'); });
-
-  // 모든 #앵커 공통 처리
+  // 버튼 클릭 처리
   document.addEventListener('click', (e) => {
-    const a = e.target.closest('a[href^="#"]');
-    if (!a) return;
-    const hash = a.getAttribute('href');
-
-    if (hash === '#today') { e.preventDefault(); goToFortune('today'); }
-    else if (hash === '#saju') { e.preventDefault(); goToFortune('saju'); }
-    else if (hash === '#home' || hash === '#guide' || hash === '#contact') {
-      // 홈에 있는 섹션으로 점프
+    // data-route 처리
+    const routeEl = e.target.closest('[data-route]');
+    if (routeEl) {
       e.preventDefault();
       hideSplash();
-      setActiveTab('home');
-      requestAnimationFrame(() => smoothScrollTo(hash));
+      const route = routeEl.dataset.route;
+      if (route.startsWith('fortune-')) {
+        location.hash = `#/fortune/${route.replace('fortune-', '')}`;
+      } else {
+        location.hash = `#/${route}`;
+      }
+      return;
+    }
+
+    // CTA 버튼들 처리
+    const btn = e.target.closest('#ctaToday, #ctaSaju, #ctaStart, .start-btn');
+    if (btn) {
+      e.preventDefault();
+      hideSplash();
+      if (btn.id === 'ctaSaju') {
+        location.hash = '#/fortune/saju';
+      } else {
+        location.hash = '#/fortune/today';
+      }
+      return;
     }
   });
 
-  // 해시로 직접 유입 시 처리
+  // 라우팅 이벤트
+  window.addEventListener('hashchange', handleRoute);
   window.addEventListener('load', () => {
-    if (location.hash === '#today')      goToFortune('today');
-    else if (location.hash === '#saju')  goToFortune('saju');
+    hideSplash();
+    if (!location.hash) location.hash = '#/home';
+    handleRoute();
   });
 })();
 
