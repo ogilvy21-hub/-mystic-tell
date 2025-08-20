@@ -514,10 +514,10 @@ Object.entries(pages).forEach(([k,el])=>el?.classList.toggle('show',k===tab));
 closeAllOverlays();
 }
 
-$$('.nav-item').forEach(item=>{
+$$('.nav-item[data-tab]').forEach(item=>{
   item.addEventListener('click', ()=>{
     const tab = item.dataset.tab || 'home';
-    location.hash = '#/' + tab;      // 주소표시줄과 동기화
+    location.hash = '#/' + tab;      // 주소표시줄 동기화
     reactCrystal(`${tab} 페이지로 이동합니다! ✨`);
   });
 });
@@ -554,6 +554,7 @@ const views={
 'fortune-palm':$('#view-palm'),
 'fortune-match':$('#view-match'),
 'fortune-year':$('#view-year')
+'fortune-lotto': $('#view-lotto'), 
 };
 
 function showFortuneView(route){
@@ -565,10 +566,10 @@ fortuneTitle.textContent='오늘의 운세';
 views['fortune-today'].style.display='block';
 bindCalToggle('today');
 break;
-case 'fortune-lotto':  // 👈 이 부분 추가
-  fortuneTitle.textContent='행운의 로또번호';
-  views['fortune-lotto'] = $('#view-lotto');
-  views['fortune-lotto'].style.display='block';
+case 'fortune-lotto':
+  fortuneTitle.textContent = '행운번호';
+  views['fortune-lotto'].style.display = 'block';
+  if (typeof initLotto === 'function') initLotto(); // 있으면 초기화 호출
   break;
 case 'fortune-saju': 
 fortuneTitle.textContent='정통 사주'; 
