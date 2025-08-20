@@ -2144,7 +2144,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }, 100);
-});
 
 // 운세 스타일 추가
 (function addEnhancedFortuneStyles(){
