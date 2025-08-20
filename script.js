@@ -1955,6 +1955,11 @@ document.addEventListener('click', (e) => {
 
 // 2) 해시를 읽어 탭/뷰 전환
 function routeFromHash() {
+   if (location.hash === '#lotto') {
+    setActiveTab('fortune');
+    showFortuneView('fortune-lotto');
+    return;
+  }
   const m = location.hash.match(/^#\/([^/]+)(?:\/([^/]+))?/);
   const tab = m?.[1] || 'home';
   const sub = m?.[2] || '';
