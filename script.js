@@ -1468,6 +1468,88 @@ crystal.innerHTML = '구슬 속 미래를<br>확인해보세요';
 }, 3500);
 }
 
+// ===== 로또 (6/45) =====
+
+// 간단한 시드 랜덤 (LCG)
+function seededRandomFactory(seedStr='') {
+  let h = 2166136261 >>> 0; // FNV-1a 기반 해시 시드
+  for (let i = 0; i < seedStr.length; i++) {
+    h ^= seedStr.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  let state = h;
+  return function rnd() {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+    return (state >>> 0) / 0xFFFFFFFF;
+  };
+}
+
+// ISO 주차 키 (같은 주에는 같은 결과)
+function isoWeekKey(date = new Date()) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - day);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+  return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+}
+
+// 1세트(6개) 생성
+function generateLottoSet(seedStr) {
+  const rnd = seededRandomFactory(seedStr);
+  const picked = new Set();
+  while (picked.size < 6) {
+    const n = Math.floor(rnd() * 45) + 1; // 1~45
+    picked.add(n);
+  }
+  return Array.from(picked).sort((a, b) => a - b);
+}
+
+// 세트 3개 생성 (메인 + 보조 2개)
+function generateLottoSets(birthStr='') {
+  const b = (birthStr || '').trim();
+  const week = isoWeekKey(new Date());
+  const base = `${b}|${week}|mt-lotto-v1`;
+  return [
+    generateLottoSet(base + '|A'),
+    generateLottoSet(base + '|B'),
+    generateLottoSet(base + '|C'),
+  ];
+}
+
+// 렌더링
+function renderLottoResult(sets, birthStr='') {
+  const nameTitle = ''; // 필요 시 이름 연결 가능
+  let html = `
+    <div class="result-section">
+      <div class="section-title-result">🎲 ${nameTitle}이번 주 행운번호</div>
+  `;
+
+  const labels = ['추천 조합', '보조 조합 1', '보조 조합 2'];
+
+  sets.forEach((arr, i) => {
+    const value = arr.map(n => String(n).padStart(2, '0')).join(' · ');
+    const desc  = i === 0 
+      ? '메인 추천 조합입니다. 같은 주에는 동일한 결과가 나와요.'
+      : '대체로 함께 고려해볼 수 있는 조합이에요.';
+    html += createResultCard('🎯', labels[i], value, desc, i === 0, 'fortune-card');
+  });
+
+  html += `
+    </div>
+    <div class="info-box">
+      <div class="info-title">📌 안내</div>
+      <div class="info-content">
+        • 결과는 <strong>같은 주(ISO 주)</strong>에는 동일합니다.<br/>
+        • 입력한 생년월일이 같으면 같은 주에는 같은 추천이 나옵니다.<br/>
+        • 재미/참고용이며, 책임있는 구매를 권장해요. 🍀
+      </div>
+    </div>
+  `;
+
+  return html;
+}
+
 // ===== 타로 =====
 function ensureTarotReady(){
 return Array.isArray(TAROT_DETAILS) && TAROT_DETAILS.length === 22;
@@ -1946,6 +2028,25 @@ openSheet('2025 신년 운세',text,{type:'year',birth:b,idx,text});
 reactCrystal('올해의 흐름을 확인했습니다 ✨');
 });
 
+$('#btnLotto')?.addEventListener('click', () => {
+  const birth = document.getElementById('lotto-birth')?.value?.trim() || '';
+  try {
+    const sets = generateLottoSets(birth);
+    const html  = renderLottoResult(sets, birth);
+
+    openSheet('행운번호', html, {
+      type: 'lotto',
+      birth,
+      sets
+    });
+
+    reactCrystal('이번 주 행운번호를 뽑았어요! ✨');
+  } catch (e) {
+    console.error(e);
+    alert('행운번호 생성 중 오류가 발생했습니다.');
+  }
+});
+
 // ===== 마이페이지 - 최근 결과 삭제 =====
 $('#btnClear')?.addEventListener('click', ()=>{
 if(confirm('최근 결과를 모두 삭제하시겠습니까?')){
@@ -2006,11 +2107,36 @@ function routeFromHash() {
 
 // 3) 진입/해시변경 시 적용
 window.addEventListener('hashchange', routeFromHash);
+
 window.addEventListener('load', () => {
-document.getElementById('bottomNav')?.classList.add('show');
+  // 하단 네비 바로 노출
+  document.getElementById('bottomNav')?.classList.add('show');
+
+  // 캘린더 토글 바인딩
   bindCalToggle('today');
   bindCalToggle('saju');
+
+  // 첫 진입 해시
   if (!location.hash) location.hash = '#/home';
+
+  // --- lotto 뷰가 palm 안에 들어가 있으면 밖(#page-fortune)으로 빼는 런타임 패치 ---
+  (function fixLottoViewPosition(){
+    const lotto = document.getElementById('view-lotto');
+    const pageFortune = document.getElementById('page-fortune');
+    if (!lotto || !pageFortune) return;
+
+    // palm 내부에 있으면 이동 (래퍼가 있어도 탐지)
+    if (lotto.closest('#view-palm')) {
+      const anchor = document.getElementById('view-match'); // 있으면 그 앞, 없으면 맨 뒤
+      if (anchor) {
+        pageFortune.insertBefore(lotto, anchor);
+      } else {
+        pageFortune.appendChild(lotto);
+      }
+    }
+  })();
+
+  // 위치 조정 후 라우팅
   routeFromHash();
 });
 
