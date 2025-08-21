@@ -1060,15 +1060,19 @@ img, svg, video { max-width: 100%; height: auto; }
 }
 /* === Lotto / Sheet spacing overrides === */
 #view-lotto.card{
-  max-width:720px;
-  margin:28px auto 44px;
-  padding:24px;
+  max-width: 720px;
+  margin: 28px auto 44px;
+  padding: 24px;
 }
 
 .sheet-content{
-  padding-top:28px; /* 시트 내용 위쪽 여백 ↑ */
+  padding-top: 28px;   /* 시트 내용 위쪽 여백 */
 }
 
 #fortune-routes-section .mt-wrap{
-  padding-top:12px; /* 오늘의 운세 섹션과 다음 카드 사이 간격 */
+  padding-top: 12px;   /* '오늘의 운세' 블록과 다음 카드 사이 간격 */
 }
+
+/* 공 아래 공간이 너무 답답하면 */
+.result-section.lotto-wrap { margin-bottom: 18px; }
+
