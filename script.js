@@ -2296,24 +2296,100 @@ window.addEventListener('load', () => {
   // 섹션 위치 보정
   fixFortuneLayout();   // ✅ 선(구분선) 사이로 전부 복귀
 
-  // ====== ⬇⬇⬇ 여기부터 추가: 로또 바인딩(중복 방지) ======
+ // ====== ★ 여기 추가: 로또 입력/버튼 리스너 초기화 & 재바인딩 ======
   (function bindLottoOnce(){
-    if (window.__lottoBound) return;      // 중복 바인딩 방지
+    if (window.__lottoBound) return;     // 중복 방지
     window.__lottoBound = true;
-
-    const btn   = document.getElementById('btnLotto');
-    const birth = document.getElementById('lotto-birth');
-
-    // 자동실행(입력만으로 생성) 리스너가 있었다면 끊기
-    if (birth) { birth.oninput = null; birth.onchange = null; }
-
-    if (btn) btn.addEventListener('click', handleLottoClick); // ← 클릭 때만 생성
+    resetLottoListeners();               // ← 전역에 정의된 함수(아래 2번)
   })();
-  // ====== ⬆⬆⬆ 여기까지 추가 ======
+  // ============================================================
 
   // 라우팅
   routeFromHash();
 });
+
+// (A) 이전에 붙었을지 모르는 oninput/addEventListener를 "클론 치환"으로 제거하고
+//     버튼만 클릭 시에 생성되도록 다시 바인딩
+function resetLottoListeners(){
+  const birth = document.getElementById('lotto-birth');
+  if (birth && birth.parentNode) {
+    const birthClone = birth.cloneNode(true);              // 모든 리스너 제거
+    birth.parentNode.replaceChild(birthClone, birth);
+  }
+
+  const btn = document.getElementById('btnLotto');
+  if (btn && btn.parentNode) {
+    const btnClone = btn.cloneNode(true);                  // 기존 클릭 리스너 제거
+    btn.parentNode.replaceChild(btnClone, btn);
+    btnClone.addEventListener('click', handleLottoClick);  // ← 클릭 때만 번호 생성
+  }
+}
+
+// (B) 클릭 시 번호 생성(아주 가벼움)
+function handleLottoClick(e){
+  e?.preventDefault?.();
+  try {
+    const birthStr = (document.getElementById('lotto-birth')?.value || '').trim();
+    const clean    = birthStr.replace(/\D/g, '');
+    const seed     = clean ? parseInt(clean.slice(0,8), 10) : (Date.now() & 0x7fffffff);
+
+    // 간단/안전 PRNG + 셔플
+    let x = (seed >>> 0) || 123456789;
+    const rnd = () => (x = (x * 1664525 + 1013904223) >>> 0) / 4294967296;
+
+    const pool = Array.from({length:45}, (_,i)=>i+1);
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(rnd() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    const main  = pool.slice(0,6).sort((a,b)=>a-b);
+    const bonus = pool[6];
+
+    const result = {
+      main,
+      bonus,
+      seedInfo: clean ? `생년월일 기반(${clean})` : '랜덤 생성'
+    };
+
+    // (C) 렌더 → 시트 열기
+    const html = renderLottoResult(result);   // ← 기존 함수명 유지
+    showSheetSafe('🍀 행운의 로또번호', html);
+  } catch (err){
+    console.error('[Lotto] generate failed:', err);
+    closeSheetSafe(); // 혹시 열려있던 시트/백드롭 해제
+    // alert 대신 console에만 남겨 UI가 멈추지 않게 함
+  }
+}
+
+// (D) 안전한 시트 열기/닫기 (기존 showSheet가 있다면 이걸로 대체해도 됨)
+function showSheetSafe(title, html){
+  const bd   = document.getElementById('sheetBackdrop');
+  const h    = document.getElementById('sheetTitle');
+  const body = document.getElementById('sheetContent');
+  if (!bd || !h || !body) return;
+  h.textContent = title || '결과';
+  body.innerHTML = html || '';
+  bd.classList.add('show');
+  document.body.style.overflow = 'hidden';
+
+  // ESC/바깥클릭으로 닫기(먹통 방지)
+  const esc = (e)=>{ if (e.key === 'Escape'){ cleanup(); } };
+  const out = (e)=>{ if (e.target === bd){ cleanup(); } };
+  function cleanup(){
+    bd.classList.remove('show');
+    document.body.style.overflow = '';
+    window.removeEventListener('keydown', esc);
+    bd.removeEventListener('click', out);
+  }
+  window.addEventListener('keydown', esc);
+  bd.addEventListener('click', out);
+}
+
+function closeSheetSafe(){
+  const bd = document.getElementById('sheetBackdrop');
+  if (bd) bd.classList.remove('show');
+  document.body.style.overflow = '';
+}
 
 function handleLottoClick(e){
   e.preventDefault();
@@ -2348,13 +2424,6 @@ function handleLottoClick(e){
     alert('행운번호 생성 중 오류가 발생했습니다.');
   }
 }
-
-function closeSheetSafe(){
-  const bd = document.getElementById('sheetBackdrop');
-  if (bd) bd.classList.remove('show');
-  document.body.style.overflow = '';
-}
-
 // ===== 손금보기 메뉴 "준비중" 처리 =====
 
 // 손금보기 메뉴를 "준비중"으로 표시하고 비활성화
@@ -3262,29 +3331,26 @@ const showSheet = window.showSheet || ((title, html) => {
   b && b.classList.add('show');
 });
 
-function renderLottoResultSafe(res){
-  // 방어: 데이터 없으면 조용히 종료(알림 X)
-  if(!res || !Array.isArray(res.main)){
-    console.warn('Lotto: empty result', res);
-    return;
-  }
-  const main  = res.main.slice(0,6).map(n => Number(n)).filter(n => !isNaN(n)).sort((a,b)=>a-b);
-  const bonus = (typeof res.bonus === 'number') ? res.bonus : null;
-  if(main.length < 6){ console.warn('Lotto: invalid main length', main); return; }
+function renderLottoResult(res){
+  // 방어
+  const safe = res && Array.isArray(res.main) ? res : { main: [], bonus: null, seedInfo: '—' };
+  const balls = safe.main.map(n=>`<div class="ball">${String(n).padStart(2,'0')}</div>`).join('');
 
-  const html = `
-    <div class="result-card main-result" style="margin-top:16px">
-      <div class="card-header">
-        <div class="card-icon">🍀</div>
-        <div class="card-title">행운의 로또번호</div>
+  return `
+    <div class="result-section lotto-wrap">
+      <div class="section-title-result">🎲 행운번호</div>
+      <div class="lotto-balls">
+        ${balls}
+        <div style="align-self:center;font-weight:800;margin:0 4px">+</div>
+        <div class="ball bonus">${safe.bonus != null ? String(safe.bonus).padStart(2,'0') : '--'}</div>
       </div>
-      <div class="card-description">
-        🎲 행운의 로또번호 ${main.map(n=>`[${String(n).padStart(2,'0')}]`).join(' ')}
-        ${bonus!==null ? ` 보너스: [${String(bonus).padStart(2,'0')}]` : ''}
-        <br>🔮 개인맞춤 생성 📊 통계 기반 + 행운 조합
-      </div>
-    </div>`;
-  openSheet('행운의 로또번호', html);             // 기존 시트 오픈 함수 그대로 사용
+      <div class="lotto-meta">생성 기준: ${safe.seedInfo} · 참고용</div>
+    </div>
+    <div class="info-box">
+      <div class="info-title">📋 안내</div>
+      <div class="info-content">통계/개인화 시드를 가미한 추천 번호입니다. 재미로 참고하세요.</div>
+    </div>
+  `;
 }
 
 // ②-6: 버튼 클릭(반드시 결과 객체를 만들어서 렌더로 전달)
