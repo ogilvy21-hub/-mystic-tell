@@ -2128,24 +2128,23 @@ function showComingSoonNotification() {
   }, 2500);
 }
 
-// DOM이 로드되면 손금 메뉴를 "준비중"으로 표시 + (예정) 라벨
-document.addEventListener('DOMContentLoaded', function () {
+// --- DOM 준비 후 초기화 (단 하나만) ---
+document.addEventListener('DOMContentLoaded', () => {
+  // 손금: 준비중 처리
   setPalmAsComingSoon();
   showPalmComingSoonAlert();
 
-  // 손금 관련 제목에 (예정) 추가
+  // 손금 타이틀에 (예정) 붙이기
   setTimeout(() => {
-    const palmTitles = document.querySelectorAll(
-      '[data-route="fortune-palm"] h3, [data-route="fortune-palm"] .title'
-    );
-    palmTitles.forEach((title) => {
-      if (title && !title.textContent.includes('(예정)')) {
-        title.textContent = title.textContent.replace('손금 보기', '손금 보기 (예정)');
-      }
-    });
+    document
+      .querySelectorAll('[data-route="fortune-palm"] h3, [data-route="fortune-palm"] .title')
+      .forEach((title) => {
+        if (title && !title.textContent.includes('(예정)')) {
+          title.textContent = title.textContent.replace('손금 보기', '손금 보기 (예정)');
+        }
+      });
   }, 100);
-}); // ← 여기서 'DOMContentLoaded' 딱 한 번만 닫습니다.
-
+  
 // 운세 스타일 추가
 (function addEnhancedFortuneStyles(){
 if (document.getElementById('enhanced-fortune-styles')) return;
@@ -2525,19 +2524,18 @@ $('#btnLotto')?.addEventListener('click', ()=>{
   reactCrystal('행운의 번호를 생성했습니다! 🍀');
 });
 
-// 🎲 로또 페이지 강제 표시 (임시 해결)
-document.addEventListener('DOMContentLoaded', function() {
+// 로또 진입 시 스타일 보강
   if (location.hash.includes('lotto')) {
     setTimeout(() => {
       const lottoView = document.querySelector('#view-lotto');
       if (lottoView) {
-        lottoView.style.background = 'white';
-        lottoView.style.padding = '20px';
-        lottoView.style.border = '1px solid #ddd';
+        lottoView.style.background   = 'white';
+        lottoView.style.padding      = '20px';
+        lottoView.style.border       = '1px solid #ddd';
         lottoView.style.borderRadius = '10px';
-        lottoView.style.margin = '20px auto';
-        lottoView.style.maxWidth = '500px';
+        lottoView.style.margin       = '20px auto';
+        lottoView.style.maxWidth     = '500px';
       }
     }, 500);
   }
-});
+}); // ← 파일 말미에서 여기서 끝!
