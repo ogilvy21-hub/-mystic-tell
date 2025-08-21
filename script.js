@@ -3636,20 +3636,30 @@ window.addEventListener('error', () => closeSheetSafe()); // 시트/백드롭 �
 window.addEventListener('load', () => {
   // 1) 하단 네비 먼저 보여주고
   document.getElementById('bottomNav')?.classList.add('show');
-  forceHideSplash();   // ✅ 로드 직후 무조건 스플래시/백드롭 제거
 
-  // 2) fortune 섹션 DOM 위치/래핑 보정
-  ensureFortuneSectionWrap();
+  // 2) 스플래시 관련
+  initSplashFailsafe();
 
-  // 3) 캘린더 토글/로또 바인딩 (idempotent 권장)
+  // ✅ Start 버튼 눌렀을 때 스플래시 제거
+  const start = document.getElementById('startBtn');
+  start?.addEventListener('click', () => {
+    forceHideSplash();
+  });
+
+  // ✅ 안전장치 - 3초 후 강제 제거
+  setTimeout(() => forceHideSplash(), 3000);
+
+  // 3) fortune 섹션 DOM 위치/래핑 보정
+  ensureFortuneSectionWrap?.();
+
+  // 4) 캘린더 토글/로또 바인딩 (idempotent 권장)
   bindCalToggle?.('today');
   bindCalToggle?.('saju');
   bindLotto?.(); // 내부에서 중복 바인딩 방지: if (window.__lottoBound) return;
 
-  // 4) 해시 진입이면 스플래시 닫기
+  // 5) 해시 진입이면 스플래시 닫기
   if (location.hash && location.hash !== '#/home') hideSplash();
 
-  // 5) 마지막에 라우팅 실행 (DOM/리스너 준비 후)
+  // 6) 마지막에 라우팅 실행 (DOM/리스너 준비 후)
   routeFromHash();
 });
-
