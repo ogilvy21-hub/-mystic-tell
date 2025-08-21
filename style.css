@@ -1076,3 +1076,5 @@ img, svg, video { max-width: 100%; height: auto; }
 /* 공 아래 공간이 너무 답답하면 */
 .result-section.lotto-wrap { margin-bottom: 18px; }
 
+#splashScreen.hidden{ display:none !important; opacity:0 !important; pointer-events:none !important; }
+
