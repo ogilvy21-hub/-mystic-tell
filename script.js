@@ -1494,60 +1494,156 @@ function isoWeekKey(date = new Date()) {
   return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
 }
 
-// 1세트(6개) 생성
+// 1세트(6개) 생성 – 안전 버전 (기존 함수 "이름 유지"하고 교체)
 function generateLottoSet(seedStr) {
-  const rnd = seededRandomFactory(seedStr);
-  const picked = new Set();
-  while (picked.size < 6) {
-    const n = Math.floor(rnd() * 45) + 1; // 1~45
-    picked.add(n);
+  // 1) 문자열 씨드를 32비트 정수로 안전 변환
+  const s = String(seedStr ?? '');
+  // YYYYMMDD도 허용 → YYYY-MM-DD로 정규화
+  const digits = s.replace(/\D/g, '');
+  let seed = Number.isFinite(Date.parse(s)) ? Date.parse(s) : NaN;
+  if (!Number.isFinite(seed) && digits.length === 8) {
+    const norm = `${digits.slice(0,4)}-${digits.slice(4,6)}-${digits.slice(6,8)}`;
+    seed = Date.parse(norm);
   }
+  // 여전히 실패면 문자열 해시로 대체
+  if (!Number.isFinite(seed)) {
+    let h = 2166136261; // FNV-1a
+    for (let i = 0; i < s.length; i++) h = (h ^ s.charCodeAt(i)) * 16777619 >>> 0;
+    seed = (h || (Date.now() >>> 0));
+  }
+
+  // 2) LCG 기반 난수 (seededRandomFactory 대신 자체 RNG, 충돌 시 안전)
+  let state = seed >>> 0;
+  function rnd() {
+    state = (1664525 * state + 1013904223) >>> 0;
+    return state / 2 ** 32; // 0~1
+  }
+
+  // 3) 번호 6개 뽑기 + 무한루프 가드
+  const picked = new Set();
+  let guard = 0;
+  while (picked.size < 6 && guard++ < 4000) {
+    const n = Math.floor(rnd() * 45) + 1; // 1~45
+    if (n >= 1 && n <= 45) picked.add(n);
+  }
+
+  // 4) 혹시 모자라면 Math.random으로 채워서라도 종료
+  while (picked.size < 6) {
+    picked.add(Math.floor(Math.random() * 45) + 1);
+  }
+
   return Array.from(picked).sort((a, b) => a - b);
 }
 
-// 세트 3개 생성 (메인 + 보조 2개)
-function generateLottoSets(birthStr='') {
-  const b = (birthStr || '').trim();
-  const week = isoWeekKey(new Date());
-  const base = `${b}|${week}|mt-lotto-v1`;
-  return [
-    generateLottoSet(base + '|A'),
-    generateLottoSet(base + '|B'),
-    generateLottoSet(base + '|C'),
-  ];
+// 1세트(6개) 생성 – 안전 버전 (기존 함수 "이름 유지"하고 교체)
+function generateLottoSet(seedStr) {
+  // 1) 문자열 씨드를 32비트 정수로 안전 변환
+  const s = String(seedStr ?? '');
+  // YYYYMMDD도 허용 → YYYY-MM-DD로 정규화
+  const digits = s.replace(/\D/g, '');
+  let seed = Number.isFinite(Date.parse(s)) ? Date.parse(s) : NaN;
+  if (!Number.isFinite(seed) && digits.length === 8) {
+    const norm = `${digits.slice(0,4)}-${digits.slice(4,6)}-${digits.slice(6,8)}`;
+    seed = Date.parse(norm);
+  }
+  // 여전히 실패면 문자열 해시로 대체
+  if (!Number.isFinite(seed)) {
+    let h = 2166136261; // FNV-1a
+    for (let i = 0; i < s.length; i++) h = (h ^ s.charCodeAt(i)) * 16777619 >>> 0;
+    seed = (h || (Date.now() >>> 0));
+  }
+
+  // 2) LCG 기반 난수 (seededRandomFactory 대신 자체 RNG, 충돌 시 안전)
+  let state = seed >>> 0;
+  function rnd() {
+    state = (1664525 * state + 1013904223) >>> 0;
+    return state / 2 ** 32; // 0~1
+  }
+
+  // 3) 번호 6개 뽑기 + 무한루프 가드
+  const picked = new Set();
+  let guard = 0;
+  while (picked.size < 6 && guard++ < 4000) {
+    const n = Math.floor(rnd() * 45) + 1; // 1~45
+    if (n >= 1 && n <= 45) picked.add(n);
+  }
+
+  // 4) 혹시 모자라면 Math.random으로 채워서라도 종료
+  while (picked.size < 6) {
+    picked.add(Math.floor(Math.random() * 45) + 1);
+  }
+
+  return Array.from(picked).sort((a, b) => a - b);
 }
 
-// 렌더링
-function renderLottoResult(sets, birthStr='') {
-  const nameTitle = ''; // 필요 시 이름 연결 가능
-  let html = `
-    <div class="result-section">
-      <div class="section-title-result">🎲 ${nameTitle}이번 주 행운번호</div>
-  `;
+// 렌더링 (호환·방어 버전)
+function renderLottoResult(payload, birthStr = '') {
+  try {
+    // 1) 입력 정규화: sets = [ [6개], [6개], [6개] ... ]
+    let sets = [];
+    let seedInfo = '';
 
-  const labels = ['추천 조합', '보조 조합 1', '보조 조합 2'];
+    if (Array.isArray(payload)) {
+      sets = payload.filter(arr => Array.isArray(arr) && arr.length);
+    } else if (payload && typeof payload === 'object') {
+      if (Array.isArray(payload.main)) sets.push(payload.main);
+      // alts 또는 alt1/alt2 지원
+      if (Array.isArray(payload.alts)) {
+        sets = sets.concat(payload.alts.filter(arr => Array.isArray(arr) && arr.length));
+      } else {
+        if (Array.isArray(payload.alt1)) sets.push(payload.alt1);
+        if (Array.isArray(payload.alt2)) sets.push(payload.alt2);
+      }
+      seedInfo = payload.seedInfo || '';
+    }
 
-  sets.forEach((arr, i) => {
-    const value = arr.map(n => String(n).padStart(2, '0')).join(' · ');
-    const desc  = i === 0 
-      ? '메인 추천 조합입니다. 같은 주에는 동일한 결과가 나와요.'
-      : '대체로 함께 고려해볼 수 있는 조합이에요.';
-    html += createResultCard('🎯', labels[i], value, desc, i === 0, 'fortune-card');
-  });
+    if (!sets.length) {
+      return `
+        <div class="info-box">
+          <div class="info-title">⚠️ 생성 실패</div>
+          <div class="info-content">번호 생성에 실패했어요. 다시 시도해 주세요.</div>
+        </div>`;
+    }
 
-  html += `
-    </div>
-    <div class="info-box">
-      <div class="info-title">📌 안내</div>
-      <div class="info-content">
-        • 결과는 <strong>같은 주(ISO 주)</strong>에는 동일합니다.<br/>
-        • 입력한 생년월일이 같으면 같은 주에는 같은 추천이 나옵니다.<br/>
-        • 재미/참고용이며, 책임있는 구매를 권장해요. 🍀
+    // 2) 카드 렌더
+    const nameTitle = ''; // 필요 시 이름 붙이기
+    let html = `
+      <div class="result-section">
+        <div class="section-title-result">🎲 ${nameTitle}이번 주 행운번호</div>
+    `;
+
+    const labels = ['추천 조합', '보조 조합 1', '보조 조합 2'];
+
+    sets.slice(0, 3).forEach((arr, i) => {
+      const value = arr.map(n => String(n).padStart(2, '0')).join(' · ');
+      const desc  = i === 0
+        ? '메인 추천 조합입니다. 같은 주에는 동일한 결과가 나와요.'
+        : '대체로 함께 고려해볼 수 있는 조합이에요.';
+      html += createResultCard('🎯', labels[i] || `보조 조합 ${i}`, value, desc, i === 0, 'fortune-card');
+    });
+
+    html += `
       </div>
-    </div>
-  `;
+      <div class="info-box">
+        <div class="info-title">📌 안내</div>
+        <div class="info-content">
+          • 결과는 <strong>같은 주(ISO 주)</strong>에는 동일합니다.<br/>
+          • 입력한 생년월일이 같으면 같은 주에는 같은 추천이 나옵니다.<br/>
+          • 재미/참고용이며, 책임있는 구매를 권장해요. 🍀
+          ${seedInfo ? `<br/>• 생성 기준: ${seedInfo}` : ''}
+        </div>
+      </div>
+    `;
 
-  return html;
+    return html;
+  } catch (e) {
+    console.error('renderLottoResult error:', e);
+    return `
+      <div class="info-box">
+        <div class="info-title">⚠️ 렌더 오류</div>
+        <div class="info-content">화면 구성 중 문제가 발생했어요. 새로고침 후 다시 시도해 주세요.</div>
+      </div>`;
+  }
 }
 
 // ===== 타로 =====
@@ -2065,6 +2161,38 @@ function seededRandom(seedStr){
   };
 }
 
+// ==== Lotto utils ====
+// (예) generateLottoSetSafe(...) 아래쪽
+
+function generateBonusNumber(seedStr, main) {
+  const set = new Set(main);
+  const salted = String(seedStr ?? '') + '#bonus';
+
+  let state = (function seedFromString(str){
+    const d = str.replace(/\D/g,'');
+    let sd = Number.isFinite(Date.parse(str)) ? Date.parse(str) : NaN;
+    if (!Number.isFinite(sd) && d.length === 8) {
+      const n = `${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}`;
+      sd = Date.parse(n);
+    }
+    if (!Number.isFinite(sd)) {
+      let h = 2166136261; for (let i=0;i<str.length;i++) h = (h ^ str.charCodeAt(i)) * 16777619 >>> 0;
+      sd = h || (Date.now() >>> 0);
+    }
+    return sd >>> 0;
+  })(salted);
+
+  function rnd() { state = (1664525 * state + 1013904223) >>> 0; return state / 2**32; }
+
+  let guard = 0, b = 0;
+  while (guard++ < 2000) {
+    b = Math.floor(rnd() * 45) + 1;
+    if (!set.has(b)) return b;
+  }
+  do { b = Math.floor(Math.random() * 45) + 1; } while (set.has(b));
+  return b;
+}
+
 function generateLottoNumbers(birthStr){
   const today = new Date();
   const y = today.getFullYear();
@@ -2308,6 +2436,22 @@ window.addEventListener('load', () => {
   routeFromHash();
 });
 
+/* ==== Lotto: 클릭 핸들러 ==== */
+function onClickLotto(e) {
+  e.preventDefault();
+  try {
+    const birth = document.getElementById('lotto-birth')?.value || '';
+    const result = safeLottoFromBirth(birth);        // ← 안전 생성기
+    const html   = renderLottoResult(result);        // ← 방어 렌더
+    openSheet('🍀 행운의 로또번호', html);          // 결과 시트 열기
+  } catch (err) {
+    console.error('[LOTTO]', err);
+    // 얼럿 후에도 백드롭이 남아 막히지 않도록 확실히 닫아줌
+    try { closeSheetSafe(); } catch(_) {}
+    alert('행운번호 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+  }
+}
+
 // (A) 이전에 붙었을지 모르는 oninput/addEventListener를 "클론 치환"으로 제거하고
 //     버튼만 클릭 시에 생성되도록 다시 바인딩
 function resetLottoListeners(){
@@ -2325,31 +2469,51 @@ function resetLottoListeners(){
   }
 }
 
-// (B) 클릭 시 번호 생성(아주 가벼움)
+// (B) 클릭 시 번호 생성(안전 버전) — 기존 handleLottoClick(e) 통째로 교체
 function handleLottoClick(e){
   e?.preventDefault?.();
   try {
     const birthStr = (document.getElementById('lotto-birth')?.value || '').trim();
-    const clean    = birthStr.replace(/\D/g, '');
-    const seed     = clean ? parseInt(clean.slice(0,8), 10) : (Date.now() & 0x7fffffff);
 
-    // 간단/안전 PRNG + 셔플
-    let x = (seed >>> 0) || 123456789;
-    const rnd = () => (x = (x * 1664525 + 1013904223) >>> 0) / 4294967296;
+    // 주간 고정 시드(ISO week) — 같은 주에는 같은 조합이 나오게
+    const now = new Date();
+    const utc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+    const day = utc.getUTCDay() || 7;                 // 1(월)~7(일)
+    utc.setUTCDate(utc.getUTCDate() + 4 - day);       // 해당 주의 목요일
+    const yearStart = new Date(Date.UTC(utc.getUTCFullYear(), 0, 1));
+    const isoWeek = Math.ceil((((utc - yearStart) / 86400000) + 1) / 7);
+    const seed = `${utc.getUTCFullYear()}-W${String(isoWeek).padStart(2,'0')}:${birthStr}`;
 
-    const pool = Array.from({length:45}, (_,i)=>i+1);
-    for (let i = pool.length - 1; i > 0; i--) {
-      const j = Math.floor(rnd() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
+    // 번호 생성 (안전 RNG 사용)
+    const main  = generateLottoSet(seed);            // ← safe 버전
+    const bonus = generateBonusNumber(seed, main);   // ← 앞서 추가한 함수
+
+    // 렌더 + 시트 오픈
+    const html = renderLottoResult({
+      main, bonus,
+      seedInfo: `주 ${isoWeek}${birthStr ? ` · ${birthStr}` : ''}`
+    });
+
+    if (typeof openSheet === 'function') {
+      openSheet('🍀 행운의 로또번호', html);
+    } else {
+      // fallback(프로젝트에 openSheet 없을 때)
+      const bd = document.getElementById('sheetBackdrop');
+      const ct = document.getElementById('sheetContent');
+      const tt = document.getElementById('sheetTitle');
+      if (bd && ct && tt) {
+        tt.textContent = '🍀 행운의 로또번호';
+        ct.innerHTML = html;
+        bd.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      }
     }
-    const main  = pool.slice(0,6).sort((a,b)=>a-b);
-    const bonus = pool[6];
-
-    const result = {
-      main,
-      bonus,
-      seedInfo: clean ? `생년월일 기반(${clean})` : '랜덤 생성'
-    };
+  } catch (err) {
+    console.error('[Lotto] generate error:', err);
+    closeSheetSafe?.(); // 중복 정의 없이 1개만 존재하도록 유지
+    alert('행운번호 생성 중 오류가 발생했습니다.');
+  }
+}
 
     // (C) 렌더 → 시트 열기
     const html = renderLottoResult(result);   // ← 기존 함수명 유지
@@ -2385,45 +2549,14 @@ function showSheetSafe(title, html){
   bd.addEventListener('click', out);
 }
 
+// ===== Sheet utils: 단 하나만 유지 =====
 function closeSheetSafe(){
   const bd = document.getElementById('sheetBackdrop');
-  if (bd) bd.classList.remove('show');
+  if (bd && bd.classList.contains('show')) bd.classList.remove('show');
+  // 혹시 다른 곳에서 overflow를 막았었다면 원복
   document.body.style.overflow = '';
 }
 
-function handleLottoClick(e){
-  e.preventDefault();
-  try {
-    const birthStr = (document.getElementById('lotto-birth')?.value || '').trim();
-    const clean    = birthStr.replace(/\D/g, '');
-    const seed     = clean ? parseInt(clean.slice(0,8), 10) : (Date.now() & 0x7fffffff);
-
-    // 고정 시간 PRNG + Fisher–Yates
-    let x = (seed >>> 0) || 123456789;
-    const rnd = () => (x = (x * 1664525 + 1013904223) >>> 0) / 4294967296;
-
-    const pool = Array.from({length:45}, (_,i)=>i+1);
-    for (let i = pool.length - 1; i > 0; i--) {
-      const j = Math.floor(rnd() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
-    }
-    const main  = pool.slice(0,6).sort((a,b)=>a-b);
-    const bonus = pool[6];
-
-    const result = {
-      main,
-      bonus,
-      seedInfo: clean ? `생년월일 기반(${clean})` : '랜덤 생성'
-    };
-
-    const html = renderLottoResult(result);   // 기존 이름 유지한 렌더 함수
-    showSheet('🍀 행운의 로또번호', html);
-  } catch(err){
-    console.error('[Lotto] generate failed:', err);
-    closeSheetSafe();
-    alert('행운번호 생성 중 오류가 발생했습니다.');
-  }
-}
 // ===== 손금보기 메뉴 "준비중" 처리 =====
 
 // 손금보기 메뉴를 "준비중"으로 표시하고 비활성화
@@ -3410,8 +3543,10 @@ window.addEventListener('hashchange', routeFromHash);
 window.addEventListener('load', () => {
   document.getElementById('bottomNav')?.classList.add('show');
   ensureFortuneSectionWrap();   // ★ 추가
-  bindLotto();                  // ★ 추가
+  bindLotto();     
+
+// ★ 추가
   routeFromHash();
 });
 
-window.addEventListener('error', () => closeSheetSafe());
+  window.addEventListener('error', () => closeSheetSafe());
