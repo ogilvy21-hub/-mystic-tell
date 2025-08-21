@@ -2128,7 +2128,7 @@ function showComingSoonNotification() {
   }, 2500);
 }
 
-/ --- DOM 준비 후 초기화 (딱 한 번만) ---
+// --- DOM 준비 후 초기화 (딱 한 번만) ---
 document.addEventListener('DOMContentLoaded', () => {
   // 손금 메뉴 비활성 처리
   setPalmAsComingSoon();
