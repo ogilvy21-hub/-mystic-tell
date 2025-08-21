@@ -1,4 +1,4 @@
-// ✅ 어디서든 호출 가능한 강제 스플래시 종료
+// 어디서든 호출 가능: 강제 스플래시 종료
 function forceHideSplash(){
   const splash = document.getElementById('splashScreen') || document.getElementById('splash');
   const main   = document.getElementById('mainContent');
@@ -8,12 +8,13 @@ function forceHideSplash(){
   if (splash) { splash.classList.add('hidden'); splash.style.display = 'none'; }
   if (main)   { main.style.display = 'block';   main.classList.add('show'); }
   if (nav)    { nav.classList.add('show'); }
-  if (bd)     { bd.classList.remove('show'); }     // 혹시 남아있는 백드롭 제거
-  document.body.style.overflow = '';               // 스크롤 잠금 해제
+  if (bd)     { bd.classList.remove('show'); }  // 혹시 남아있던 백드롭 제거
+  document.body.style.overflow = '';
 }
 
-// ✅ 과거 코드 호환: hideSplash가 불릴 때도 강제 종료
+// 과거 코드 호환: hideSplash가 불릴 때도 강제 종료
 function hideSplash(){ forceHideSplash(); }
+
 
 // === Splash Failsafe ===
 function initSplashFailsafe(){
@@ -2480,6 +2481,7 @@ function fixFortuneLayout() {
 window.addEventListener('hashchange', routeFromHash);
 
 window.addEventListener('load', () => {
+   if (location.hash && location.hash !== '#/home') hideSplash();
   // 하단 네비 바로 노출
   document.getElementById('bottomNav')?.classList.add('show');
   initSplashFailsafe(); 
@@ -2492,6 +2494,8 @@ window.addEventListener('load', () => {
 
   // 섹션 위치 보정
   fixFortuneLayout();   // ✅ 선(구분선) 사이로 전부 복귀
+  routeFromHash();
+});
 
  // ====== ★ 여기 추가: 로또 입력/버튼 리스너 초기화 & 재바인딩 ======
   (function bindLottoOnce(){
