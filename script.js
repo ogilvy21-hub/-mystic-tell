@@ -2285,14 +2285,75 @@ window.addEventListener('hashchange', routeFromHash);
 window.addEventListener('load', () => {
   // 하단 네비 바로 노출
   document.getElementById('bottomNav')?.classList.add('show');
+
+  // 캘린더 토글
   bindCalToggle('today');
   bindCalToggle('saju');
+
   // 첫 진입 해시
   if (!location.hash) location.hash = '#/home';
+
+  // 섹션 위치 보정
   fixFortuneLayout();   // ✅ 선(구분선) 사이로 전부 복귀
-  // 위치 조정 후 라우팅
+
+  // ====== ⬇⬇⬇ 여기부터 추가: 로또 바인딩(중복 방지) ======
+  (function bindLottoOnce(){
+    if (window.__lottoBound) return;      // 중복 바인딩 방지
+    window.__lottoBound = true;
+
+    const btn   = document.getElementById('btnLotto');
+    const birth = document.getElementById('lotto-birth');
+
+    // 자동실행(입력만으로 생성) 리스너가 있었다면 끊기
+    if (birth) { birth.oninput = null; birth.onchange = null; }
+
+    if (btn) btn.addEventListener('click', handleLottoClick); // ← 클릭 때만 생성
+  })();
+  // ====== ⬆⬆⬆ 여기까지 추가 ======
+
+  // 라우팅
   routeFromHash();
 });
+
+function handleLottoClick(e){
+  e.preventDefault();
+  try {
+    const birthStr = (document.getElementById('lotto-birth')?.value || '').trim();
+    const clean    = birthStr.replace(/\D/g, '');
+    const seed     = clean ? parseInt(clean.slice(0,8), 10) : (Date.now() & 0x7fffffff);
+
+    // 고정 시간 PRNG + Fisher–Yates
+    let x = (seed >>> 0) || 123456789;
+    const rnd = () => (x = (x * 1664525 + 1013904223) >>> 0) / 4294967296;
+
+    const pool = Array.from({length:45}, (_,i)=>i+1);
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(rnd() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    const main  = pool.slice(0,6).sort((a,b)=>a-b);
+    const bonus = pool[6];
+
+    const result = {
+      main,
+      bonus,
+      seedInfo: clean ? `생년월일 기반(${clean})` : '랜덤 생성'
+    };
+
+    const html = renderLottoResult(result);   // 기존 이름 유지한 렌더 함수
+    showSheet('🍀 행운의 로또번호', html);
+  } catch(err){
+    console.error('[Lotto] generate failed:', err);
+    closeSheetSafe();
+    alert('행운번호 생성 중 오류가 발생했습니다.');
+  }
+}
+
+function closeSheetSafe(){
+  const bd = document.getElementById('sheetBackdrop');
+  if (bd) bd.classList.remove('show');
+  document.body.style.overflow = '';
+}
 
 // ===== 손금보기 메뉴 "준비중" 처리 =====
 
@@ -3287,3 +3348,4 @@ window.addEventListener('load', () => {
   routeFromHash();
 });
 
+window.addEventListener('error', () => closeSheetSafe());
