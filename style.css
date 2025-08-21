@@ -1014,34 +1014,19 @@ html{scroll-behavior:smooth;}
   transition: opacity .3s ease, visibility .3s ease;
 }
 
-/* ===== MysticTell 수정사항 ===== */
+/* ===== MysticTell 수정사항 (정리본) ===== */
+
+/* 메인 콘텐츠 보정 */
 .main-content {
   padding-top: 0 !important;
   margin-top: 0 !important;
+  padding-bottom: 80px !important; /* 하단 네비 여백 */
 }
-
-.splash-screen.hidden {
-  display: none !important;
-  height: 0 !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  position: absolute !important;
-  top: -9999px !important;
-}
-
-/* 메인 콘텐츠에 하단 여백 추가 */
-#mainContent,
-.main-content {
-  padding-bottom: 80px !important;
-}
+#mainContent { display: block !important; }
 
 /* 버튼/네비 앵커 기본 밑줄 제거 */
-a.btn, .btn,
-.mt-nav a { text-decoration: none; }
+a.btn, .btn, .mt-nav a { text-decoration: none !important; }
 a.btn:hover, .btn:hover { text-decoration: none; }
-
-/* 필요시 강제 */
-.mt-nav a, a.btn, .btn { text-decoration: none !important; }
 
 /* 전역 애니메이션 접근성 */
 @media (prefers-reduced-motion: reduce){
@@ -1058,70 +1043,43 @@ img, svg, video { max-width: 100%; height: auto; }
   outline: 3px solid rgba(102,126,234,.45);
   outline-offset: 2px;
 }
+
 /* === Lotto / Sheet spacing overrides === */
 #view-lotto.card{
   max-width: 720px;
   margin: 28px auto 44px;
   padding: 24px;
 }
-
-.sheet-content{
-  padding-top: 28px;   /* 시트 내용 위쪽 여백 */
-}
-
-#fortune-routes-section .mt-wrap{
-  padding-top: 12px;   /* '오늘의 운세' 블록과 다음 카드 사이 간격 */
-}
-
-/* 공 아래 공간이 너무 답답하면 */
+.sheet-content{ padding-top: 28px; }
+#fortune-routes-section .mt-wrap{ padding-top: 12px; }
 .result-section.lotto-wrap { margin-bottom: 18px; }
 
-#splashScreen.hidden{ display:none !important; opacity:0 !important; pointer-events:none !important; }
-
-/* --- Splash failsafe --- */
-#splashScreen, #splash{
-  position: fixed; inset: 0;
-  z-index: 99999;                 /* 항상 최상단 */
-  display: block;
-  pointer-events: auto;
-}
-#splashScreen.hidden, #splash.hidden{
-  opacity: 0; transition: opacity .25s ease;
-  pointer-events: none;           /* 숨길 때는 클릭 막힘 제거 */
-}
-#startBtn{ cursor: pointer; }
-/* 스플래시가 화면을 덮지 않도록 강제 */
+/* --- Splash --- */
 #splashScreen, #splash {
-  position: static !important;
-  inset: auto !important;
-  width: 100% !important;
-  height: auto !important;
-  max-height: 560px;           /* 필요 시 조절 */
-  overflow: hidden !important;
-  z-index: 1 !important;
-  pointer-events: none;        /* 클릭 방해 금지 */
+  position: fixed;      /* 화면 전체 덮기 */
+  inset: 0;
+  z-index: 99999;
+  display: block;
+  background: #fff;     /* 필요 시 배경 */
+  pointer-events: auto; /* 처음에는 클릭 막음 */
 }
 
-/* 숨김 상태 강제 */
+/* 숨김 상태 */
 #splashScreen.hidden, #splash.hidden {
   display: none !important;
-}
-
-/* Start 버튼만 클릭 가능하게 */
-#splashScreen .splashStart, #splash .splashStart {
-  pointer-events: auto;
-  position: absolute;
-  top: 16px; left: 18px;
-  cursor: pointer;
-}
-
-/* 메인은 기본적으로 보여지게(혹시 display:none 되어있다면 해제) */
-#mainContent { display: block !important; }
-
-/* 스플래시가 숨김일 때 완전 비활성 */
-#splashScreen.hidden, #splash.hidden {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
+  transition: opacity .25s ease;
 }
 
+/* Start 버튼만 클릭 가능 */
+#startBtn, 
+#splashScreen .splashStart, 
+#splash .splashStart {
+  pointer-events: auto !important;
+  cursor: pointer;
+  position: absolute;
+  top: 16px;
+  left: 18px;
+}
