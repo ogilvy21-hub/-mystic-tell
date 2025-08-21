@@ -262,6 +262,10 @@ if (main) main.classList.add('show');
 if (nav) nav.classList.add('show'); 
 },600);
 }
+// ✅ 없던 함수: startApp을 그대로 호출
+function hideSplash(){ startApp(); }
+
+function ensureFortuneSectionWrap(){ /* 필요 없으면 비워둬도 됨 */ }
 
 // ===== 손금 이모지 매핑 =====
 const PALM_TYPE_EMOJIS = {
