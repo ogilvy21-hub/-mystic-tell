@@ -5,7 +5,7 @@ const LS_KEY = 'mystictell_recent_results';
 
 // lunar-javascript 글로벌 보정 (보강)
 (function fixLunarGlobals(){
-  try {
+  try { 
     if (typeof window.Lunar !== "undefined") {
       if (typeof window.Solar === "undefined")      window.Solar = window.Lunar.Solar;
       if (typeof window.LunarYear === "undefined")  window.LunarYear = window.Lunar.LunarYear;
@@ -2083,16 +2083,43 @@ function generateLottoNumbers(birthStr){
   return { main, bonus, seedInfo: `${y}년 ${weekIdx+1}주 기준` };
 }
 
+// (script.js) ─ 기존 renderLottoResult 정의를 이걸로 교체
 function renderLottoResult(res){
+  const data = (res && typeof res === 'object') ? res : {};
+  const main = Array.isArray(data.main) ? data.main.slice(0, 6) : [];
+  const bonus = Number.isFinite(data.bonus) ? data.bonus : null;
+  const seedInfo = data.seedInfo || '랜덤 생성';
+
+  // 데이터가 없을 때도 에러 없이 안내만 보여주기
+  if (main.length === 0) {
+    return `
+      <div class="result-section lotto-wrap">
+        <div class="section-title-result">🎲 행운번호</div>
+        <div class="info-box">
+          <div class="info-title">ℹ️ 안내</div>
+          <div class="info-content">아직 생성된 번호가 없어요. "행운번호 생성하기" 버튼을 눌러주세요.</div>
+        </div>
+      </div>
+    `;
+  }
+
+  const ballsHtml = main
+    .map(n => `<div class="ball">${String(n).padStart(2,'0')}</div>`)
+    .join('');
+
+  const bonusHtml = bonus == null ? '' : `
+    <div style="align-self:center;font-weight:800;margin:0 2px">+</div>
+    <div class="ball bonus">${String(bonus).padStart(2,'0')}</div>
+  `;
+
   return `
     <div class="result-section lotto-wrap">
       <div class="section-title-result">🎲 행운번호</div>
       <div class="lotto-balls">
-        ${res.main.map(n=>`<div class="ball">${String(n).padStart(2,'0')}</div>`).join('')}
-        <div style="align-self:center;font-weight:800;margin:0 2px">+</div>
-        <div class="ball bonus">${String(res.bonus).padStart(2,'0')}</div>
+        ${ballsHtml}
+        ${bonusHtml}
       </div>
-      <div class="lotto-meta">생성 기준: ${res.seedInfo} · 참고용</div>
+      <div class="lotto-meta">생성 기준: ${seedInfo} · 참고용</div>
     </div>
     <div class="info-box">
       <div class="info-title">📋 안내</div>
