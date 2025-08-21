@@ -2187,37 +2187,82 @@ function routeFromHash() {
   closeAllOverlays();
 }
 
+/* ---------- MysticTell: fortune 섹션 뷰 재정렬 패치 ---------- */
+
+/** 같은 id가 중복된 경우(예: #view-tarot 두 번) 2번째 이후 id를 변경 */
+function dedupeIds(idList) {
+  idList.forEach((id) => {
+    const nodes = document.querySelectorAll(`[id="${id}"]`);
+    if (nodes.length > 1) {
+      for (let i = 1; i < nodes.length; i++) {
+        nodes[i].id = `${id}--dup${i}`; // 중복 id 무력화
+      }
+    }
+  });
+}
+
+/** ref 다음에 el을 꽂는 헬퍼 */
+function insertAfter(ref, el) {
+  if (!ref || !ref.parentNode) return;
+  ref.parentNode.insertBefore(el, ref.nextSibling);
+}
+
+/** 오늘의 운세를 제외한 나머지 뷰들을 #page-fortune 안, 제목/오늘의운세 뒤에 순서대로 배치 */
+function fixFortuneLayout() {
+  const pageFortune = document.getElementById('page-fortune');
+  if (!pageFortune) return;
+
+  // 중복 id 정리(현재 html에 #view-tarot가 2번 있음)
+  dedupeIds(['view-tarot']);
+
+  // 앵커(순서 기준): 1) 섹션 제목 → 2) 오늘의 운세
+  let anchor = document.getElementById('fortuneTitle') || pageFortune.firstElementChild;
+  const today = document.getElementById('view-today');
+  if (today) {
+    // today가 fortune 밖에 있거나 순서가 앞쪽이면 제목 뒤로 보정
+    if (today.parentElement !== pageFortune) {
+      insertAfter(anchor, today);
+    } else if (today.previousElementSibling !== anchor) {
+      insertAfter(anchor, today);
+    }
+    anchor = today; // 이후 요소들을 today 뒤에 순차 배치
+  }
+
+  // 오늘의 운세를 제외한 나머지 뷰들(원하는 노출 순서로 나열)
+  const order = [
+    'view-saju',
+    'view-tarot',   // 중복인 경우 첫 번째만 대상
+    'view-palm',
+    'view-lotto',
+    'view-match',
+    'view-year'
+  ];
+
+  order.forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    // palm 안에 lotto가 들어있는 등 잘못된 부모일 수 있으므로 무조건 reparent
+    if (el.parentElement !== pageFortune || el.previousElementSibling !== anchor) {
+      // 앵커 바로 뒤에 꽂아서 흐름 보장
+      insertAfter(anchor, el);
+    }
+    anchor = el; // 다음 요소의 앵커 갱신
+  });
+}
+/* ---------- /fortune 섹션 뷰 재정렬 패치 ---------- */
+
 // 3) 진입/해시변경 시 적용
 window.addEventListener('hashchange', routeFromHash);
 
 window.addEventListener('load', () => {
   // 하단 네비 바로 노출
   document.getElementById('bottomNav')?.classList.add('show');
-
-  // 캘린더 토글 바인딩
   bindCalToggle('today');
   bindCalToggle('saju');
-
   // 첫 진입 해시
   if (!location.hash) location.hash = '#/home';
-
-  // --- lotto 뷰가 palm 안에 들어가 있으면 밖(#page-fortune)으로 빼는 런타임 패치 ---
-  (function fixLottoViewPosition(){
-    const lotto = document.getElementById('view-lotto');
-    const pageFortune = document.getElementById('page-fortune');
-    if (!lotto || !pageFortune) return;
-
-    // palm 내부에 있으면 이동 (래퍼가 있어도 탐지)
-    if (lotto.closest('#view-palm')) {
-      const anchor = document.getElementById('view-match'); // 있으면 그 앞, 없으면 맨 뒤
-      if (anchor) {
-        pageFortune.insertBefore(lotto, anchor);
-      } else {
-        pageFortune.appendChild(lotto);
-      }
-    }
-  })();
-
+  fixFortuneLayout();   // ✅ 선(구분선) 사이로 전부 복귀
   // 위치 조정 후 라우팅
   routeFromHash();
 });
