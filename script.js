@@ -2128,13 +2128,15 @@ function showComingSoonNotification() {
   }, 2500);
 }
 
-// --- DOM 준비 후 초기화 (단 하나만) ---
+// --- DOM 준비 후 초기화 (한 번만 실행) ---
 document.addEventListener('DOMContentLoaded', () => {
-  // 손금: 준비중 처리
+  console.log('📋 DOM 초기화 시작');
+  
+  // 손금 메뉴 비활성화 처리
   setPalmAsComingSoon();
   showPalmComingSoonAlert();
-
-  // 손금 타이틀에 (예정) 붙이기
+  
+  // 손금 타이틀에 (예정) 표시 추가
   setTimeout(() => {
     document
       .querySelectorAll('[data-route="fortune-palm"] h3, [data-route="fortune-palm"] .title')
@@ -2144,6 +2146,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
   }, 100);
+  
+  console.log('✅ DOM 초기화 완료');
+});
   
 // 운세 스타일 추가
 (function addEnhancedFortuneStyles(){
@@ -2522,18 +2527,42 @@ $('#btnLotto')?.addEventListener('click', ()=>{
   reactCrystal('행운의 번호를 생성했습니다! 🍀');
 });
 
-// 로또 진입 시 스타일 보강
+// ===== 🎲 로또 페이지 스타일링 (올바른 위치) =====
+function applyLottoPageStyling() {
+  const lottoView = document.querySelector('#view-lotto');
+  if (!lottoView) return;
+  
+  // 이미 스타일이 적용되었는지 체크
+  if (lottoView.dataset.styled === 'true') return;
+  
+  console.log('🎲 로또 페이지 스타일 적용');
+  
+  // 스타일 적용
+  Object.assign(lottoView.style, {
+    background: 'white',
+    padding: '20px',
+    border: '1px solid #ddd',
+    borderRadius: '10px',
+    margin: '20px auto',
+    maxWidth: '500px'
+    // 🗑️ cursor: 'pointer' 제거 (불필요함)
+  });
+  
+  // 스타일 적용 완료 표시
+  lottoView.dataset.styled = 'true';
+}
+
+// ===== 🔄 라우팅 시 로또 페이지 처리 =====
+// 해시 변경 감지
+window.addEventListener('hashchange', () => {
   if (location.hash.includes('lotto')) {
-    setTimeout(() => {
-      const lottoView = document.querySelector('#view-lotto');
-      if (lottoView) {
-        lottoView.style.background   = 'white';
-        lottoView.style.padding      = '20px';
-        lottoView.style.border       = '1px solid #ddd';
-        lottoView.style.borderRadius = '10px';
-        lottoView.style.margin       = '20px auto';
-        lottoView.style.maxWidth     = '500px';
-      }
-    }, 500);
+    setTimeout(applyLottoPageStyling, 100);
   }
-}); // ← 파일 말미에서 여기서 끝!
+});
+
+// 페이지 로드 시에도 체크
+window.addEventListener('load', () => {
+  if (location.hash.includes('lotto')) {
+    setTimeout(applyLottoPageStyling, 200);
+  }
+});
