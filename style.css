@@ -1055,23 +1055,20 @@ img, svg, video { max-width: 100%; height: auto; }
 .result-section.lotto-wrap { margin-bottom: 18px; }
 
 /* ===== Splash ===== */
+/* --- Splash failsafe --- */
 #splashScreen, #splash {
-  position: fixed;
+  position: fixed;     /* ← 다시 fixed 로 복구 */
   inset: 0;
   z-index: 99999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;       /* 필요시 투명/이미지 가능 */
+  display: block;
   pointer-events: auto;
-  transition: opacity .3s ease;
 }
 
 #splashScreen.hidden, #splash.hidden {
+  opacity: 0;
+  visibility: hidden;
   display: none !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  visibility: hidden !important;
+  pointer-events: none;
 }
 
 /* Start 버튼 */
