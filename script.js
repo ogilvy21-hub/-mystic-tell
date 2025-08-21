@@ -2372,9 +2372,10 @@ function showCard(which) {
   });
 });
 
-// 🔧 MysticTell 영구 수정 코드 - 실제 파일에 적용하세요!
+// 🔧 MysticTell 최종 영구 수정 코드
+// ⚠️ 버튼을 복제하지 말고 스타일만 수정하여 원래 기능 보존
 
-// 1️⃣ 기존 2377~2380줄의 hideSplash 함수를 이것으로 교체:
+// 1️⃣ 기존 hideSplash 함수 교체 (2377~2380줄)
 const hideSplash = () => {
     const splash = document.getElementById('splashScreen');
     const main = document.getElementById('mainContent');
@@ -2402,77 +2403,60 @@ const hideSplash = () => {
     
     if (!location.hash) location.hash = '#/home';
     
-    // 즉시 버튼 수정 실행
-    setTimeout(fixAllButtons, 100);
+    // 즉시 버튼 수정 (복제하지 않고 스타일만)
+    setTimeout(fixButtonStyles, 100);
 };
 
-// 2️⃣ 이 전체 코드를 앱 초기화 부분에 추가:
-const fixAllButtons = () => {
-    console.log('🔧 버튼 수정 시작...');
+// 2️⃣ 버튼 수정 함수 (복제하지 않고 스타일만 강화)
+const fixButtonStyles = () => {
+    console.log('🔧 버튼 스타일 수정 시작...');
     
-    const buttons = document.querySelectorAll('button, .btn, [onclick]');
-    console.log(`📊 찾은 버튼 개수: ${buttons.length}`);
+    const allButtons = document.querySelectorAll('button, .btn, [onclick]');
+    console.log(`📊 찾은 버튼 개수: ${allButtons.length}`);
     
-    buttons.forEach((btn, i) => {
-        // 기존 버튼 복제하여 이벤트 리스너 초기화
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
+    allButtons.forEach((btn, i) => {
+        // ⚠️ 복제하지 말고 스타일만 강화 - 원래 기능 보존
+        btn.style.pointerEvents = 'auto !important';
+        btn.style.zIndex = '1000 !important';
+        btn.style.position = 'relative !important';
+        btn.style.cursor = 'pointer !important';
         
-        // 스타일 강화
-        newBtn.style.pointerEvents = 'auto';
-        newBtn.style.zIndex = '1000';
-        newBtn.style.position = 'relative';
-        newBtn.style.cursor = 'pointer';
+        // 터치 이벤트도 활성화
+        btn.style.touchAction = 'manipulation';
         
-        // 새 클릭 이벤트 추가
-        newBtn.addEventListener('click', function(e) {
-            console.log(`🎯 버튼 클릭: ${this.textContent?.trim() || this.innerText?.trim()}`);
-            
-            // 원래 기능을 위한 특별 처리
-            const btnId = this.id;
-            const btnText = this.textContent?.trim();
-            
-            if (btnId || btnText) {
-                console.log(`버튼 정보: ID=${btnId}, 텍스트=${btnText}`);
-                
-                // 기존 onclick 속성이 있다면 실행
-                const onclickAttr = this.getAttribute('onclick');
-                if (onclickAttr) {
-                    try {
-                        eval(onclickAttr);
-                    } catch (err) {
-                        console.log('onclick 실행 오류:', err);
-                    }
-                }
-            }
-        }, { passive: false });
-        
-        console.log(`✅ 버튼 ${i+1} 수정 완료: ${newBtn.textContent?.trim() || newBtn.innerText?.trim()}`);
+        console.log(`✅ 버튼 ${i+1} 스타일 수정: ${btn.textContent?.trim() || btn.id || 'unnamed'}`);
     });
     
-    console.log('🎉 모든 버튼 수정 완료!');
+    console.log('🎉 모든 버튼 스타일 수정 완료!');
 };
 
 // 3️⃣ 하단 네비게이션 z-index 수정
-const fixBottomNav = () => {
-    const bottomNav = document.querySelector('.bottom-nav, #bottomNav');
-    if (bottomNav) {
-        bottomNav.style.zIndex = '1000'; // 9999에서 1000으로 변경
-        bottomNav.style.position = 'fixed';
-        bottomNav.style.bottom = '0';
-        bottomNav.style.left = '0';
-        bottomNav.style.right = '0';
-        console.log('✅ 하단 네비게이션 z-index 수정 완료');
-    }
+const fixBottomNavigation = () => {
+    const bottomNavSelectors = [
+        '.bottom-nav', 
+        '#bottomNav', 
+        '[class*="bottom"]', 
+        '[class*="nav"]'
+    ];
+    
+    bottomNavSelectors.forEach(selector => {
+        const navs = document.querySelectorAll(selector);
+        navs.forEach(nav => {
+            const style = window.getComputedStyle(nav);
+            if (style.position === 'fixed' && parseInt(style.zIndex) > 5000) {
+                nav.style.zIndex = '1000 !important'; // 9999에서 1000으로 변경
+                console.log('✅ 하단 네비 z-index 수정:', nav.className);
+            }
+        });
+    });
 };
 
-// 4️⃣ 전체 초기화 함수
-const initMysticTellComplete = () => {
-    console.log('🔮 MysticTell 완전 수정 시작...');
-    
-    // CSS 개선 추가
+// 4️⃣ CSS 개선 추가
+const addImprovedCSS = () => {
     const style = document.createElement('style');
+    style.id = 'mystictell-fix-styles';
     style.textContent = `
+        /* 스플래시 스크린 트랜지션 */
         #splashScreen {
             transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
         }
@@ -2484,6 +2468,7 @@ const initMysticTellComplete = () => {
             visibility: hidden !important;
         }
         
+        /* 메인 콘텐츠 트랜지션 */
         #mainContent, #bottomNav {
             transition: opacity 0.5s ease-in !important;
         }
@@ -2492,55 +2477,121 @@ const initMysticTellComplete = () => {
             opacity: 1 !important;
         }
         
-        button, .btn {
+        /* 모든 버튼 클릭 가능하게 */
+        button, .btn, [onclick] {
             pointer-events: auto !important;
             position: relative !important;
+            cursor: pointer !important;
+            touch-action: manipulation !important;
         }
         
-        .bottom-nav {
-            z-index: 1000 !important; /* 9999 대신 1000 사용 */
+        /* 하단 네비게이션 z-index 수정 */
+        .bottom-nav, #bottomNav, [class*="bottom"][class*="nav"] {
+            z-index: 1000 !important; /* 9999 대신 1000 */
+        }
+        
+        /* 버튼 호버 효과 */
+        button:hover, .btn:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+        
+        /* 터치 디바이스 대응 */
+        @media (hover: none) {
+            button:active, .btn:active {
+                opacity: 0.6;
+                transform: scale(0.98);
+            }
         }
     `;
-    document.head.appendChild(style);
     
-    // 스플래시 클릭 이벤트
+    // 기존 스타일이 있다면 제거 후 추가
+    const existingStyle = document.getElementById('mystictell-fix-styles');
+    if (existingStyle) existingStyle.remove();
+    
+    document.head.appendChild(style);
+    console.log('✅ CSS 개선 추가 완료');
+};
+
+// 5️⃣ 전체 초기화 함수
+const initMysticTellFinalFix = () => {
+    console.log('🔮 MysticTell 최종 수정 시작...');
+    
+    // CSS 먼저 추가
+    addImprovedCSS();
+    
+    // 하단 네비 z-index 수정
+    fixBottomNavigation();
+    
+    // 스플래시 클릭 이벤트 추가
     const splash = document.getElementById('splashScreen');
     if (splash) {
         splash.addEventListener('click', hideSplash);
         splash.style.cursor = 'pointer';
+        console.log('✅ 스플래시 클릭 이벤트 추가');
     }
     
-    // 3초 후 자동 숨김
+    // 3초 후 자동 스플래시 숨김
     setTimeout(hideSplash, 3000);
     
-    // 하단 네비 수정
-    fixBottomNav();
-    
-    // DOM 로드 시 버튼 수정
+    // DOM 로드 시 버튼 스타일 수정
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fixAllButtons);
+        document.addEventListener('DOMContentLoaded', fixButtonStyles);
     } else {
-        fixAllButtons();
+        fixButtonStyles();
     }
     
-    console.log('✅ MysticTell 완전 수정 완료!');
+    // 동적 콘텐츠 감시 (새 버튼이 추가될 때마다 수정)
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+                const addedNodes = Array.from(mutation.addedNodes);
+                const hasNewButtons = addedNodes.some(node => 
+                    node.nodeType === 1 && 
+                    (node.tagName === 'BUTTON' || node.querySelector?.('button, .btn, [onclick]'))
+                );
+                
+                if (hasNewButtons) {
+                    console.log('🔄 새 버튼 감지 - 스타일 재적용');
+                    setTimeout(fixButtonStyles, 100);
+                }
+            }
+        });
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    console.log('✅ MysticTell 최종 수정 완료!');
+    console.log('🎯 버튼 복제하지 않고 스타일만 수정하여 원래 기능 보존');
 };
 
 // 🚀 즉시 실행
-initMysticTellComplete();
+initMysticTellFinalFix();
 
 /* 
 📋 적용 방법:
 
 1️⃣ 기존 hideSplash 함수 (2377~2380줄) → 위의 새 버전으로 교체
 
-2️⃣ 앱 초기화 부분에 initMysticTellComplete() 추가
+2️⃣ 앱 초기화 부분에 전체 코드 추가
 
-3️⃣ 커밋 & 푸시
+3️⃣ 커밋 & 푸시:
+   git add .
+   git commit -m "🔧 버튼 기능 보존하면서 스플래시/클릭 문제 해결
+   
+   - 버튼 복제 대신 스타일만 수정하여 원래 기능 보존
+   - 스플래시 스크린 자동 숨김
+   - 하단 네비 z-index 수정 
+   - 동적 콘텐츠 감시 추가"
+   
+   git push origin main
 
 4️⃣ 배포 확인
 
-🎯 이제 영구적으로 해결됩니다!
+🎯 핵심: 버튼을 복제하지 않고 스타일만 수정하여 원래 기능 완전 보존!
 */
   
   // 통합 라우팅 처리
