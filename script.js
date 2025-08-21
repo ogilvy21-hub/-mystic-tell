@@ -2374,11 +2374,27 @@ function showCard(which) {
 
 // ===== 통합 라우팅 및 버튼 이벤트 시스템 =====
 (function() {
-  const hideSplash = () => {
-    const splash = document.getElementById('splashScreen');
-    if (splash) splash.classList.add('hidden');
-  };
-
+const hideSplash = () => {
+  const splash = document.getElementById('splashScreen');
+  const main = document.getElementById('mainContent');
+  const nav = document.getElementById('bottomNav');
+  
+  if (splash) {
+    splash.style.display = 'none';
+    splash.classList.add('hidden');
+  }
+  if (main) {
+    main.style.display = 'block';
+    main.classList.add('show');
+  }
+  if (nav) {
+    nav.style.display = 'flex';
+    nav.classList.add('show');
+  }
+  
+  if (!location.hash) location.hash = '#/home';
+};
+  
   // 통합 라우팅 처리
   function handleRoute() {
     const hash = location.hash || '#/home';
