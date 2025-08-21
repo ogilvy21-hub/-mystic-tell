@@ -2482,8 +2482,6 @@ window.addEventListener('load', () => {
 
   // 라우팅
   routeFromHash();
-}); // ✅ load 이벤트 닫기
-
 
 /* ==== Lotto: 클릭 핸들러 ==== */
 function onClickLotto(e) {
