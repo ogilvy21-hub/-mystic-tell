@@ -3618,48 +3618,38 @@ function routeFromHash() {
   }
 }
 
-// ========== 전역 리스너 (load 바깥) ==========
+// 전역 리스너
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href^="#/"]');
   if (!a) return;
   e.preventDefault();
   e.stopPropagation();
-  hideSplash();                         // 라우팅 전에 스플래시/네비 노출
+  hideSplash();
   const to = a.getAttribute('href');
-  if (to && location.hash !== to) location.hash = to; // → hashchange → routeFromHash()
+  if (to && location.hash !== to) location.hash = to;
 }, true);
 
 window.addEventListener('hashchange', routeFromHash);
-window.addEventListener('error', () => closeSheetSafe()); // 시트/백드롭 막힘 방지
+window.addEventListener('error', () => closeSheetSafe());
 
-// ========== 초기화 (load 안) ==========
+// 초기화
 window.addEventListener('load', () => {
-  // 1) 하단 네비 먼저 보여주고
   document.getElementById('bottomNav')?.classList.add('show');
 
-  // 2) 스플래시 관련
-  initSplashFailsafe();
-
-  // ✅ Start 버튼 눌렀을 때 스플래시 제거
+  // Start 버튼 이벤트
   const start = document.getElementById('startBtn');
-  start?.addEventListener('click', () => {
-    forceHideSplash();
-  });
+  start?.addEventListener('click', () => forceHideSplash());
 
-  // ✅ 안전장치 - 3초 후 강제 제거
-  setTimeout(() => forceHideSplash(), 3000);
+  // 로드 직후 스플래시 제거
+  forceHideSplash();
 
-  // 3) fortune 섹션 DOM 위치/래핑 보정
-  ensureFortuneSectionWrap?.();
-
-  // 4) 캘린더 토글/로또 바인딩 (idempotent 권장)
+  // 보정 함수 실행
+  ensureFortuneSectionWrap();
   bindCalToggle?.('today');
   bindCalToggle?.('saju');
-  bindLotto?.(); // 내부에서 중복 바인딩 방지: if (window.__lottoBound) return;
+  bindLotto?.();
 
-  // 5) 해시 진입이면 스플래시 닫기
   if (location.hash && location.hash !== '#/home') hideSplash();
 
-  // 6) 마지막에 라우팅 실행 (DOM/리스너 준비 후)
   routeFromHash();
 });
