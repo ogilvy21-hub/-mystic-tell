@@ -1078,3 +1078,17 @@ img, svg, video { max-width: 100%; height: auto; }
 
 #splashScreen.hidden{ display:none !important; opacity:0 !important; pointer-events:none !important; }
 
+/* --- Splash failsafe --- */
+#splashScreen, #splash{
+  position: fixed; inset: 0;
+  z-index: 99999;                 /* 항상 최상단 */
+  display: block;
+  pointer-events: auto;
+}
+#splashScreen.hidden, #splash.hidden{
+  opacity: 0; transition: opacity .25s ease;
+  pointer-events: none;           /* 숨길 때는 클릭 막힘 제거 */
+}
+#startBtn{ cursor: pointer; }
+
+
