@@ -2028,6 +2028,88 @@ openSheet('2025 신년 운세',text,{type:'year',birth:b,idx,text});
 reactCrystal('올해의 흐름을 확인했습니다 ✨');
 });
 
+// ===== 로또 번호 =====
+(function ensureLottoStyles(){
+  if (document.getElementById('lotto-style')) return;
+  const css = `
+    .lotto-wrap{ text-align:center; }
+    .lotto-balls{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:10px 0 6px; }
+    .ball{
+      width:44px; height:44px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800; color:#fff;
+      background:linear-gradient(135deg,#667eea,#764ba2);
+      box-shadow:0 6px 16px rgba(0,0,0,.18);
+    }
+    .ball.bonus{ background:linear-gradient(135deg,#ff9800,#ffc107); }
+    .lotto-meta{ color:#666; font-size:12px; margin-top:6px; }
+  `;
+  const s = document.createElement('style');
+  s.id = 'lotto-style';
+  s.textContent = css;
+  document.head.appendChild(s);
+})();
+
+function seededRandom(seedStr){
+  let h = 2166136261 >>> 0;
+  for (let i=0;i<seedStr.length;i++){
+    h ^= seedStr.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  return function(){
+    // xorshift
+    h ^= h << 13; h >>>= 0;
+    h ^= h >>> 17; h >>>= 0;
+    h ^= h << 5;  h >>>= 0;
+    return (h >>> 0) / 4294967296;
+  };
+}
+
+function generateLottoNumbers(birthStr){
+  const today = new Date();
+  const y = today.getFullYear();
+  const weekIdx = Math.floor((today - new Date(y,0,1)) / (7*24*60*60*1000)); // 년-주차 기준
+  const seed = (birthStr||'') + `|${y}-W${weekIdx}`;
+  const rnd = seededRandom(seed);
+
+  const nums = new Set();
+  while(nums.size < 6){
+    const n = 1 + Math.floor(rnd() * 45);
+    nums.add(n);
+  }
+  const main = [...nums].sort((a,b)=>a-b);
+  let bonus;
+  do { bonus = 1 + Math.floor(rnd() * 45); } while (nums.has(bonus));
+  return { main, bonus, seedInfo: `${y}년 ${weekIdx+1}주 기준` };
+}
+
+function renderLottoResult(res){
+  return `
+    <div class="result-section lotto-wrap">
+      <div class="section-title-result">🎲 행운번호</div>
+      <div class="lotto-balls">
+        ${res.main.map(n=>`<div class="ball">${String(n).padStart(2,'0')}</div>`).join('')}
+        <div style="align-self:center;font-weight:800;margin:0 2px">+</div>
+        <div class="ball bonus">${String(res.bonus).padStart(2,'0')}</div>
+      </div>
+      <div class="lotto-meta">생성 기준: ${res.seedInfo} · 참고용</div>
+    </div>
+    <div class="info-box">
+      <div class="info-title">📋 안내</div>
+      <div class="info-content">통계/개인화 시드를 가미한 추천 번호입니다. 재미로 참고하세요.</div>
+    </div>
+  `;
+}
+
+// 버튼 이벤트
+document.getElementById('btnLotto')?.addEventListener('click', ()=>{
+  const birth = document.getElementById('lotto-birth')?.value?.trim() || '';
+  const res   = generateLottoNumbers(birth);
+  const html  = renderLottoResult(res);
+  openSheet('행운번호', html, { type:'lotto', birth, ...res });
+  reactCrystal?.('행운번호를 뽑았어요! 🍀');
+});
+
 $('#btnLotto')?.addEventListener('click', () => {
   const birth = document.getElementById('lotto-birth')?.value?.trim() || '';
   try {
