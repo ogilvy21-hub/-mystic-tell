@@ -1118,4 +1118,10 @@ img, svg, video { max-width: 100%; height: auto; }
 /* 메인은 기본적으로 보여지게(혹시 display:none 되어있다면 해제) */
 #mainContent { display: block !important; }
 
+/* 스플래시가 숨김일 때 완전 비활성 */
+#splashScreen.hidden, #splash.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
 
