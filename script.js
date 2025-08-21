@@ -3316,6 +3316,21 @@ document.getElementById('ctaToday')?.addEventListener('click', ()=>smoothScrollT
 document.getElementById('ctaSaju') ?.addEventListener('click', ()=>smoothScrollTo('#saju'));
 document.getElementById('ctaStart')?.addEventListener('click', ()=>smoothScrollTo('#today'));
 
+// 라우터 링크(#/...)는 캡처 단계에서 가장 먼저 처리
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#/"]');
+  if (!a) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  hideSplash();                    // ★ 스플래시 즉시 숨김
+  const to = a.getAttribute('href');
+  if (to && location.hash !== to) {
+    location.hash = to;            // → hashchange → routeFromHash()
+  }
+}, true); // ← 캡처 단계
+
 // 라우터용 링크(#/...)는 절대 가로채지 않음
 document.querySelectorAll('a[href^="#"]:not([href^="#/"])').forEach(a=>{
   a.addEventListener('click',(e)=>{
@@ -3546,6 +3561,7 @@ function routeFromHash() {
 window.addEventListener('hashchange', routeFromHash);
 window.addEventListener('load', () => {
   document.getElementById('bottomNav')?.classList.add('show');
+  if (location.hash && location.hash !== '#/home') hideSplash();
   ensureFortuneSectionWrap();   // ★ 추가
   bindLotto();     
 
