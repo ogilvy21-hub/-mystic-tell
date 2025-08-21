@@ -3093,3 +3093,180 @@ document.getElementById('btnLotto')?.addEventListener('click', () => {
   reactCrystal?.('행운번호를 준비했어요! ✨');
 });
 
+// ①-1: #page-fortune 안에 공용 .mt-section/.mt-wrap 생성 후 view-* 카드들을 안으로 이동
+function ensureFortuneSectionWrap() {
+  const page = document.getElementById('page-fortune');
+  if (!page) return;
+
+  // 공용 섹션이 없으면 생성 (today 섹션 다음에 넣기)
+  let sec = document.getElementById('fortune-routes-section');
+  if (!sec) {
+    sec = document.createElement('section');
+    sec.id = 'fortune-routes-section';
+    sec.className = 'mt-section';
+    const wrap = document.createElement('div');
+    wrap.className = 'mt-wrap';
+    sec.appendChild(wrap);
+    const todaySec = document.getElementById('today');
+    page.insertBefore(sec, todaySec ? todaySec.nextSibling : null);
+  }
+
+  const wrap = sec.querySelector('.mt-wrap');
+  const ids = ['view-saju','view-lotto','view-tarot','view-palm','view-match','view-year'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.parentElement !== wrap) wrap.appendChild(el);
+  });
+}
+
+// ①-2: 라우팅 시 today 섹션(얇은 선 포함)도 같이 show/hide
+function showOnlyFortuneView(viewId) {
+  const all = ['view-today','view-saju','view-lotto','view-tarot','view-palm','view-match','view-year'];
+  all.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = (id === viewId ? 'block' : 'none');
+  });
+
+  // today 섹션(선 포함)은 오늘의 운세일 때만 보이게
+  const todaySection = document.getElementById('today');
+  if (todaySection) {
+    todaySection.style.display = (viewId === 'view-today' ? 'block' : 'none');
+  }
+}
+
+// ②-1: 시드용 간단 PRNG (xorshift32)
+function xorshift32(seed) {
+  let x = (seed || Date.now()) | 0;
+  return () => {
+    x ^= x << 13; x ^= x >>> 17; x ^= x << 5;
+    return (x >>> 0) / 0xFFFFFFFF;
+  };
+}
+
+// ②-2: 입력 'YYYY-MM-DD' 또는 'YYYYMMDD' 허용 → 정수 시드
+function seedFromBirth(birthStr) {
+  if (!birthStr) return Date.now();
+  const s = birthStr.replace(/\D/g, ''); // 숫자만
+  if (s.length < 8) return Date.now();
+  return parseInt(s.slice(0,8), 10);
+}
+
+// ②-3: 1~45 중 6개 + 보너스(중복X) 생성
+function generateLottoBySeed(birthStr) {
+  const rnd = xorshift32(seedFromBirth(birthStr));
+  const pool = Array.from({length:45}, (_,i)=>i+1);
+  for (let i=pool.length-1;i>0;i--) { // Fisher-Yates
+    const j = Math.floor(rnd()* (i+1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  const numbers = pool.slice(0,6).sort((a,b)=>a-b);
+  const bonus   = pool[6];
+  return { numbers, bonus, meta:{ strategy:'랜덤+시드', input:birthStr || '' } };
+}
+
+// ②-4: 시트 표시(프로젝트에 이미 있으면 기존 함수 사용)
+const showSheet = window.showSheet || ((title, html) => {
+  const b = document.getElementById('sheetBackdrop');
+  const t = document.getElementById('sheetTitle');
+  const c = document.getElementById('sheetContent');
+  if (t) t.textContent = title || '결과';
+  if (c) c.innerHTML = html || '';
+  b && b.classList.add('show');
+});
+
+// ②-5: 렌더 (인자 미전달/구조 변경에도 안전)
+function renderLottoResult(result) {
+  const safe = result || {};
+  const numbers = Array.isArray(safe.numbers) ? safe.numbers : [];
+  const bonus   = typeof safe.bonus === 'number' ? safe.bonus : null;
+
+  if (numbers.length !== 6) {
+    throw new Error('Lotto result invalid');
+  }
+  const fmt = n => String(n).padStart(2,'0');
+  const balls = numbers.map(n => `<span class="ball" style="
+      display:inline-flex;align-items:center;justify-content:center;
+      width:36px;height:36px;border-radius:999px;
+      background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;
+      font-weight:700;margin-right:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);
+    ">${fmt(n)}</span>`).join('');
+
+  const html = `
+    <div class="result-card" style="margin-top:10px">
+      <div class="card-header">
+        <div class="card-icon">🍀</div>
+        <div class="card-title">행운의 로또번호</div>
+      </div>
+      <div class="card-description" style="font-size:16px;margin-bottom:8px;">
+        ${balls}
+        ${bonus!=null ? `<span style="margin-left:10px;color:#888">보너스: <strong>${fmt(bonus)}</strong></span>` : ''}
+      </div>
+      <div class="info-box" style="margin-top:14px">
+        <div class="info-title">🎲 랜덤 생성 · 📊 시드 기반</div>
+        <div class="info-content">입력값: ${safe.meta?.input || '미입력'}</div>
+      </div>
+    </div>`;
+  showSheet('🍀 행운의 로또번호', html);
+}
+
+// ②-6: 버튼 클릭(반드시 결과 객체를 만들어서 렌더로 전달)
+function bindLotto() {
+  const btn   = document.getElementById('btnLotto');
+  const input = document.getElementById('lotto-birth');
+  if (!btn) return;
+
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    try {
+      const birth = (input?.value || '').trim();
+      const res = generateLottoBySeed(birth);
+      renderLottoResult(res);
+    } catch (err) {
+      console.error('[Lotto] error:', err);
+      alert('행운번호 생성 중 오류가 발생했습니다.');
+    }
+  });
+}
+
+// 기존 routeFromHash 내부의 보임/숨김 로직을 이 형태로 정리하세요.
+function routeFromHash() {
+  const h = (location.hash || '#/home').toLowerCase();
+
+  // 페이지 탭 show/hide (예시)
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
+  const pageFortune = document.getElementById('page-fortune');
+  const pageHome    = document.getElementById('page-home');
+
+  if (h.startsWith('#/fortune')) {
+    pageFortune?.classList.add('show');
+
+    if (h.includes('/today')) {
+      showOnlyFortuneView('view-today');
+    } else if (h.includes('/saju')) {
+      showOnlyFortuneView('view-saju');
+    } else if (h.includes('/lotto')) {
+      showOnlyFortuneView('view-lotto');
+    } else if (h.includes('/tarot')) {
+      showOnlyFortuneView('view-tarot');
+    } else if (h.includes('/match')) {
+      showOnlyFortuneView('view-match');
+    } else if (h.includes('/year')) {
+      showOnlyFortuneView('view-year');
+    } else {
+      // 기본: 오늘
+      showOnlyFortuneView('view-today');
+    }
+  } else {
+    pageHome?.classList.add('show');
+  }
+}
+
+// 초기화 연결 (load 안)
+window.addEventListener('hashchange', routeFromHash);
+window.addEventListener('load', () => {
+  document.getElementById('bottomNav')?.classList.add('show');
+  ensureFortuneSectionWrap();   // ★ 추가
+  bindLotto();                  // ★ 추가
+  routeFromHash();
+});
+
