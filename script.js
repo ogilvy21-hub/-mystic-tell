@@ -2372,28 +2372,181 @@ function showCard(which) {
   });
 });
 
-// ===== 통합 라우팅 및 버튼 이벤트 시스템 =====
-(function() {
+// 🔧 MysticTell 최종 수정 코드 - 2377~2380줄 교체
+
 const hideSplash = () => {
-  const splash = document.getElementById('splashScreen');
-  const main = document.getElementById('mainContent');
-  const nav = document.getElementById('bottomNav');
-  
-  if (splash) {
-    splash.style.display = 'none';
-    splash.classList.add('hidden');
-  }
-  if (main) {
-    main.style.display = 'block';
-    main.classList.add('show');
-  }
-  if (nav) {
-    nav.style.display = 'flex';
-    nav.classList.add('show');
-  }
-  
-  if (!location.hash) location.hash = '#/home';
+    const splash = document.getElementById('splashScreen');
+    const main = document.getElementById('mainContent');
+    const nav = document.getElementById('bottomNav');
+    
+    console.log('🚀 스플래시 숨김 시작...');
+    
+    if (splash) {
+        splash.style.display = 'none';
+        splash.classList.add('hidden');
+        console.log('✅ 스플래시 스크린 숨김 완료');
+    }
+    
+    if (main) {
+        main.style.display = 'block';
+        main.classList.add('show');
+        console.log('✅ 메인 콘텐츠 표시 완료');
+    }
+    
+    if (nav) {
+        nav.style.display = 'flex';
+        nav.classList.add('show');
+        console.log('✅ 네비게이션 표시 완료');
+    }
+    
+    // 해시 라우팅 설정
+    if (!location.hash) {
+        location.hash = '#/home';
+        console.log('✅ 라우팅 설정 완료: #/home');
+    }
+    
+    // 버튼 활성화 강화
+    enableAllButtons();
 };
+
+// 🎯 추가 함수들 - 앱 초기화 부분에 추가하세요
+
+const enableAllButtons = () => {
+    const buttons = document.querySelectorAll('button, .btn, [onclick]');
+    buttons.forEach((button, index) => {
+        button.style.pointerEvents = 'auto';
+        button.style.zIndex = '1000';
+        button.style.position = 'relative';
+        
+        // 기존 이벤트가 없다면 기본 이벤트 추가
+        if (!button.onclick && !button.getAttribute('data-fixed')) {
+            button.addEventListener('click', (e) => {
+                console.log(`🎯 버튼 ${index + 1} 클릭됨:`, button.textContent);
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            button.setAttribute('data-fixed', 'true');
+        }
+    });
+    console.log(`✅ ${buttons.length}개 버튼 활성화 완료`);
+};
+
+const initMysticTellFix = () => {
+    console.log('🔮 MysticTell 수정 시작...');
+    
+    // CSS 트랜지션 추가
+    const style = document.createElement('style');
+    style.textContent = `
+        #splashScreen {
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
+        }
+        
+        #splashScreen.hidden {
+            opacity: 0 !important;
+            transform: scale(0.95) !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+        }
+        
+        #mainContent, #bottomNav {
+            transition: opacity 0.5s ease-in !important;
+        }
+        
+        #mainContent.show, #bottomNav.show {
+            opacity: 1 !important;
+        }
+        
+        button, .btn {
+            pointer-events: auto !important;
+            z-index: 1000 !important;
+            position: relative !important;
+        }
+    `;
+    document.head.appendChild(style);
+  
+  // 🎯 이 전체 코드를 앱 초기화 부분에 추가하세요!
+const enableAllButtons = () => {
+    const buttons = document.querySelectorAll('button, .btn, [onclick]');
+    buttons.forEach((button, index) => {
+        button.style.pointerEvents = 'auto';
+        button.style.zIndex = '1000';
+        button.style.position = 'relative';
+        
+        // 기존 이벤트가 없다면 기본 이벤트 추가
+        if (!button.onclick && !button.getAttribute('data-fixed')) {
+            button.addEventListener('click', (e) => {
+                console.log(`🎯 버튼 ${index + 1} 클릭됨:`, button.textContent);
+                e.preventDefault();
+                e.stopPropagation();
+            });
+            button.setAttribute('data-fixed', 'true');
+        }
+    });
+    console.log(`✅ ${buttons.length}개 버튼 활성화 완료`);
+};
+
+const initMysticTellFix = () => {
+    console.log('🔮 MysticTell 수정 시작...');
+    
+    // CSS 트랜지션 추가
+    const style = document.createElement('style');
+    style.textContent = `
+        #splashScreen {
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
+        }
+        
+        #splashScreen.hidden {
+            opacity: 0 !important;
+            transform: scale(0.95) !important;
+            pointer-events: none !important;
+            visibility: hidden !important;
+        }
+        
+        #mainContent, #bottomNav {
+            transition: opacity 0.5s ease-in !important;
+        }
+        
+        #mainContent.show, #bottomNav.show {
+            opacity: 1 !important;
+        }
+        
+        button, .btn {
+            pointer-events: auto !important;
+            z-index: 1000 !important;
+            position: relative !important;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // 스플래시 클릭 이벤트
+    const splash = document.getElementById('splashScreen');
+    if (splash) {
+        splash.addEventListener('click', (e) => {
+            console.log('👆 스플래시 클릭됨');
+            hideSplash();
+        });
+        
+        splash.style.cursor = 'pointer';
+    }
+    
+    // 3초 후 자동 숨김
+    setTimeout(() => {
+        console.log('⏰ 3초 타이머 완료 - 자동 숨김');
+        hideSplash();
+    }, 3000);
+    
+    // DOM 완전 로드 후 버튼 활성화
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', enableAllButtons);
+    } else {
+        enableAllButtons();
+    }
+    
+    console.log('✅ MysticTell 수정 완료!');
+};
+
+// 🚀 앱 로드 시 즉시 실행
+initMysticTellFix();
   
   // 통합 라우팅 처리
   function handleRoute() {
