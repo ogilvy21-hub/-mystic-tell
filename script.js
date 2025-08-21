@@ -1,3 +1,8 @@
+// DOM 헬퍼 + 로컬스토리지 키 (맨 위에 추가)
+const $  = (sel) => document.querySelector(sel);
+const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+const LS_KEY = 'mystictell_recent_results';
+
 // lunar-javascript 글로벌 보정 (보강)
 (function fixLunarGlobals(){
   try {
