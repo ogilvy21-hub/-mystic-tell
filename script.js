@@ -2456,13 +2456,10 @@ function fixFortuneLayout() {
 window.addEventListener('hashchange', routeFromHash);
 
 window.addEventListener('load', () => {
-  // 해시 진입 시 스플래시 닫기
   if (location.hash && location.hash !== '#/home') hideSplash();
 
   // 하단 네비 바로 노출
   document.getElementById('bottomNav')?.classList.add('show');
-
-  // 스플래시 안전장치
   initSplashFailsafe(); 
 
   // 캘린더 토글
@@ -2475,17 +2472,17 @@ window.addEventListener('load', () => {
   // 섹션 위치 보정
   fixFortuneLayout();   // ✅ 선(구분선) 사이로 전부 복귀
 
-  // 라우팅 실행
-  routeFromHash();
-});
+  // ====== ★ 여기 추가: 로또 입력/버튼 리스너 초기화 & 재바인딩 ======
+  (function bindLottoOnce(){
+    if (window.__lottoBound) return;     // 중복 방지
+    window.__lottoBound = true;
+    resetLottoListeners();               // ← 전역에 정의된 함수(아래 2번)
+  })();
+  // ============================================================
 
-// ====== ★ 여기 추가: 로또 입력/버튼 리스너 초기화 & 재바인딩 ======
-(function bindLottoOnce(){
-  if (window.__lottoBound) return;     // 중복 방지
-  window.__lottoBound = true;
-  resetLottoListeners();               // ← 전역에 정의된 함수(아래 2번)
-})();
-// ============================================================
+  // 라우팅
+  routeFromHash();
+}); // ✅ load 이벤트 닫기
 
 
 /* ==== Lotto: 클릭 핸들러 ==== */
