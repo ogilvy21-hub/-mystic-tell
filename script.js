@@ -15,6 +15,56 @@ function forceHideSplash(){
 // ✅ 과거 코드 호환: hideSplash가 불릴 때도 강제 종료
 function hideSplash(){ forceHideSplash(); }
 
+// === Splash Failsafe ===
+function initSplashFailsafe(){
+  const splash = document.getElementById('splashScreen') || document.getElementById('splash');
+  const start  = document.getElementById('startBtn');
+
+  // 혹시 남아 있는 시트/백드롭이 클릭 막는 것 차단
+  try { closeSheetSafe?.(); } catch(_) {}
+  document.body.style.overflow = '';
+
+  if (!splash) return;
+
+  // 1) Start 버튼으로 닫기
+  if (start && !start.__bound){
+    start.addEventListener('click', (e)=>{ e.preventDefault(); forceHideSplash(); });
+    start.__bound = true;
+  }
+
+  // 2) 스플래시 어디나 클릭해도 닫기(원하면 주석처리)
+  if (!splash.__clickBound){
+    splash.addEventListener('click', (e)=>{
+      // 버튼 아닌 영역은 두 번째 클릭만 닫히게 하려면 조건 걸어도 됨
+      if (e.target.id === 'startBtn' || e.target.closest?.('#startBtn')) return;
+      forceHideSplash();
+    });
+    splash.__clickBound = true;
+  }
+
+  // 3) Enter / Space / Esc 로 닫기
+  if (!window.__splashKeyBound){
+    window.addEventListener('keydown', (e)=>{
+      if (['Enter',' ','Escape'].includes(e.key)) forceHideSplash();
+    });
+    window.__splashKeyBound = true;
+  }
+
+  // 4) 다른 화면으로 라우팅되면 자동 닫기
+  if (!window.__splashRouteBound){
+    window.addEventListener('hashchange', ()=>{
+      if (location.hash && location.hash !== '#/home') forceHideSplash();
+    });
+    window.__splashRouteBound = true;
+  }
+
+  // 5) 4초 대기 후에도 열려 있으면 강제 닫기(최후의 보루)
+  setTimeout(()=>{
+    const still = document.getElementById('splashScreen') || document.getElementById('splash');
+    if (still && !still.classList.contains('hidden')) forceHideSplash();
+  }, 4000);
+}
+
 // DOM 헬퍼 + 로컬스토리지 키 (맨 위에 추가)
 const $  = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -2432,7 +2482,7 @@ window.addEventListener('hashchange', routeFromHash);
 window.addEventListener('load', () => {
   // 하단 네비 바로 노출
   document.getElementById('bottomNav')?.classList.add('show');
-
+  initSplashFailsafe(); 
   // 캘린더 토글
   bindCalToggle('today');
   bindCalToggle('saju');
