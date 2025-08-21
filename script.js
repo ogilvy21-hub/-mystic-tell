@@ -1,3 +1,20 @@
+// ✅ 어디서든 호출 가능한 강제 스플래시 종료
+function forceHideSplash(){
+  const splash = document.getElementById('splashScreen') || document.getElementById('splash');
+  const main   = document.getElementById('mainContent');
+  const nav    = document.getElementById('bottomNav');
+  const bd     = document.getElementById('sheetBackdrop');
+
+  if (splash) { splash.classList.add('hidden'); splash.style.display = 'none'; }
+  if (main)   { main.style.display = 'block';   main.classList.add('show'); }
+  if (nav)    { nav.classList.add('show'); }
+  if (bd)     { bd.classList.remove('show'); }     // 혹시 남아있는 백드롭 제거
+  document.body.style.overflow = '';               // 스크롤 잠금 해제
+}
+
+// ✅ 과거 코드 호환: hideSplash가 불릴 때도 강제 종료
+function hideSplash(){ forceHideSplash(); }
+
 // DOM 헬퍼 + 로컬스토리지 키 (맨 위에 추가)
 const $  = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -2685,6 +2702,15 @@ function showComingSoonNotification() {
 
 // --- DOM 준비 후 초기화 (딱 한 번만) ---
 document.addEventListener('DOMContentLoaded', () => {
+   // ✅ 스플래시 강제 숨김 + 메인/네비 보이기
+  try { forceHideSplash(); } catch (_) {
+    const s = document.getElementById('splashScreen');
+    const m = document.getElementById('mainContent');
+    const n = document.getElementById('bottomNav');
+    if (s) { s.classList.add('hidden'); s.style.display = 'none'; }
+    m?.classList.add('show');
+    n?.classList.add('show');
+  }
   // 손금 메뉴 비활성 처리
   setPalmAsComingSoon();
   showPalmComingSoonAlert();
@@ -2698,6 +2724,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
   }, 100);
+   // 라우팅도 여기서 한 번 태워주면 안정적
+  routeFromHash?.();
+});
   
 // 운세 스타일 추가
 (function addEnhancedFortuneStyles(){
