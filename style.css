@@ -1022,31 +1022,6 @@ html{scroll-behavior:smooth;}
   pointer-events: none; /* 중요: 아래 요소 클릭 가능 */
   transition: opacity .3s ease, visibility .3s ease;
 }
-// 공통 스크롤 헬퍼
-function smoothScrollTo(selector) {
-  const el = document.querySelector(selector);
-  if (!el) return;
-  document.getElementById('splashScreen')?.classList.add('hidden'); // 혹시 남아있으면 닫기
-  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  // 주소창에 #today 등 남기기 싫으면:
-  history.replaceState(null, '', location.pathname + location.search);
-}
-
-// 버튼용(버튼을 쓰는 경우)
-document.getElementById('ctaToday')?.addEventListener('click', ()=>smoothScrollTo('#today'));
-document.getElementById('ctaSaju') ?.addEventListener('click', ()=>smoothScrollTo('#saju'));
-document.getElementById('ctaStart')?.addEventListener('click', ()=>smoothScrollTo('#today'));
-
-// <a href="#..."> 클릭 시에도 해시 제거하고 부드럽게 이동하고 싶다면:
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
-  a.addEventListener('click',(e)=>{
-    const id = a.getAttribute('href').slice(1);
-    const t  = document.getElementById(id);
-    if (!t) return;               // 타겟 없으면 기본 동작 유지
-    e.preventDefault();           // 기본 해시 점프 막고
-    smoothScrollTo('#'+id);       // 부드럽게 이동
-  });
-});
 
 /* ===== MysticTell 수정사항 ===== */
 .main-content {
