@@ -3174,39 +3174,29 @@ const showSheet = window.showSheet || ((title, html) => {
   b && b.classList.add('show');
 });
 
-// ②-5: 렌더 (인자 미전달/구조 변경에도 안전)
-function renderLottoResult(result) {
-  const safe = result || {};
-  const numbers = Array.isArray(safe.numbers) ? safe.numbers : [];
-  const bonus   = typeof safe.bonus === 'number' ? safe.bonus : null;
-
-  if (numbers.length !== 6) {
-    throw new Error('Lotto result invalid');
+function renderLottoResultSafe(res){
+  // 방어: 데이터 없으면 조용히 종료(알림 X)
+  if(!res || !Array.isArray(res.main)){
+    console.warn('Lotto: empty result', res);
+    return;
   }
-  const fmt = n => String(n).padStart(2,'0');
-  const balls = numbers.map(n => `<span class="ball" style="
-      display:inline-flex;align-items:center;justify-content:center;
-      width:36px;height:36px;border-radius:999px;
-      background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;
-      font-weight:700;margin-right:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);
-    ">${fmt(n)}</span>`).join('');
+  const main  = res.main.slice(0,6).map(n => Number(n)).filter(n => !isNaN(n)).sort((a,b)=>a-b);
+  const bonus = (typeof res.bonus === 'number') ? res.bonus : null;
+  if(main.length < 6){ console.warn('Lotto: invalid main length', main); return; }
 
   const html = `
-    <div class="result-card" style="margin-top:10px">
+    <div class="result-card main-result" style="margin-top:16px">
       <div class="card-header">
         <div class="card-icon">🍀</div>
         <div class="card-title">행운의 로또번호</div>
       </div>
-      <div class="card-description" style="font-size:16px;margin-bottom:8px;">
-        ${balls}
-        ${bonus!=null ? `<span style="margin-left:10px;color:#888">보너스: <strong>${fmt(bonus)}</strong></span>` : ''}
-      </div>
-      <div class="info-box" style="margin-top:14px">
-        <div class="info-title">🎲 랜덤 생성 · 📊 시드 기반</div>
-        <div class="info-content">입력값: ${safe.meta?.input || '미입력'}</div>
+      <div class="card-description">
+        🎲 행운의 로또번호 ${main.map(n=>`[${String(n).padStart(2,'0')}]`).join(' ')}
+        ${bonus!==null ? ` 보너스: [${String(bonus).padStart(2,'0')}]` : ''}
+        <br>🔮 개인맞춤 생성 📊 통계 기반 + 행운 조합
       </div>
     </div>`;
-  showSheet('🍀 행운의 로또번호', html);
+  openSheet('행운의 로또번호', html);             // 기존 시트 오픈 함수 그대로 사용
 }
 
 // ②-6: 버튼 클릭(반드시 결과 객체를 만들어서 렌더로 전달)
