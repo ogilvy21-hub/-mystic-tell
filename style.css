@@ -1059,5 +1059,70 @@ img, svg, video { max-width: 100%; height: auto; }
   outline-offset: 2px;
 }
 
+/* ===== Lotto 섹션 여백/크기 보강 ===== */
+#page-fortune .section-title {
+  margin: 40px 0 22px !important;          /* 제목 위아래 숨 좀 트이게 */
+}
+
+#view-lotto.card{
+  padding: 24px 20px !important;           /* 카드 내부 여백 증가 */
+  margin: 32px auto 140px !important;      /* 하단 넉넉히 (네비와 거리 확보) */
+  box-shadow: 0 12px 36px rgba(0,0,0,.08); /* 살짝 띄워 보이게(선택) */
+}
+
+#view-lotto h3{
+  margin-top: 4px !important;
+  margin-bottom: 14px !important;          /* 제목과 폼 사이 간격 */
+}
+
+#view-lotto .form-section{ margin-bottom: 14px !important; }
+#view-lotto .info-text{ margin-top: 14px !important; line-height: 1.6; }
+
+/* 버튼을 살짝 크게 */
+#view-lotto #btnLotto{
+  padding: 12px 18px !important;
+  border-radius: 12px !important;
+}
+
+/* 메인 콘텐츠 하단 여백: 네비 + 안전영역 고려 */
+.main-content, #mainContent{
+  padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* ===== 결과 시트(모달) – 네비보다 위로 + 내부 여백 확대 ===== */
+/* 하단 네비 z-index:9999 이므로 시트를 그보다 높게 */
+.sheet-backdrop{
+  z-index: 10050 !important;
+}
+
+/* 시트 안쪽 여백/하단 안전영역 확보 */
+.sheet-content{
+  padding: 24px 22px 28px !important;      /* 위/좌우/아래 */
+}
+
+/* 버튼 영역도 안전영역 포함 */
+.sheet-actions{
+  padding: 0 22px calc(26px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* 본문 요소 간 기본 세로 간격(결과 문단들이 답답해 보일 때) */
+.sheet-content > * + *{
+  margin-top: 14px !important;
+}
+
+/* 숫자 결과가 한 줄에 붙을 때 가독성 보강용(선택) */
+.lotto-result{ 
+  font-size: 1.1rem; 
+  letter-spacing: .5px;
+  line-height: 1.9;
+  margin-top: 6px !important;
+}
+
+/* ===== (옵션) 시트 둥글림/그림자 약간 강화 ===== */
+.sheet{
+  border-radius: 20px 20px 0 0 !important;
+  box-shadow: 0 -12px 44px rgba(0,0,0,.24) !important;
+}
+
 
 
