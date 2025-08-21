@@ -3316,15 +3316,19 @@ document.getElementById('ctaToday')?.addEventListener('click', ()=>smoothScrollT
 document.getElementById('ctaSaju') ?.addEventListener('click', ()=>smoothScrollTo('#saju'));
 document.getElementById('ctaStart')?.addEventListener('click', ()=>smoothScrollTo('#today'));
 
-document.querySelectorAll('a[href^="#"]').forEach(a=>{
+// 라우터용 링크(#/...)는 절대 가로채지 않음
+document.querySelectorAll('a[href^="#"]:not([href^="#/"])').forEach(a=>{
   a.addEventListener('click',(e)=>{
-    const id = a.getAttribute('href').slice(1);
+    const href = a.getAttribute('href') || '';
+    if (href.startsWith('#/')) return; // 안전막(이중 보강)
+    const id = href.slice(1);
     const t  = document.getElementById(id);
-    if (!t) return;
+    if (!t) return;        // 순수 앵커만 스무스 스크롤
     e.preventDefault();
     smoothScrollTo('#'+id);
   });
 });
+
 // ===== 행운번호 생성 =====
 function xorshift32(seed) {
   let x = seed | 0;
