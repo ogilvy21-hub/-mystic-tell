@@ -279,8 +279,6 @@ if (main) main.classList.add('show');
 if (nav) nav.classList.add('show'); 
 },600);
 }
-// ✅ 없던 함수: startApp을 그대로 호출
-function hideSplash(){ startApp(); }
 
 function ensureFortuneSectionWrap(){ /* 필요 없으면 비워둬도 됨 */ }
 
@@ -2702,6 +2700,7 @@ function showComingSoonNotification() {
 
 // --- DOM 준비 후 초기화 (딱 한 번만) ---
 document.addEventListener('DOMContentLoaded', () => {
+  if (location.hash && location.hash !== '#/home') forceHideSplash();
    // ✅ 스플래시 강제 숨김 + 메인/네비 보이기
   try { forceHideSplash(); } catch (_) {
     const s = document.getElementById('splashScreen');
@@ -3608,6 +3607,7 @@ window.addEventListener('error', () => closeSheetSafe()); // 시트/백드롭 �
 window.addEventListener('load', () => {
   // 1) 하단 네비 먼저 보여주고
   document.getElementById('bottomNav')?.classList.add('show');
+  forceHideSplash();   // ✅ 로드 직후 무조건 스플래시/백드롭 제거
 
   // 2) fortune 섹션 DOM 위치/래핑 보정
   ensureFortuneSectionWrap();
