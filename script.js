@@ -2532,7 +2532,6 @@ $('#btnLotto')?.addEventListener('click', ()=>{
         lottoView.style.borderRadius = '10px';
         lottoView.style.margin       = '20px auto';
         lottoView.style.maxWidth     = '500px';
-        lottoView.style.cursor       = 'pointer'; // 🔥 커서 추가
       }
     }, 500);
   }
