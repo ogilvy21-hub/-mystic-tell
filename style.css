@@ -1058,33 +1058,3 @@ img, svg, video { max-width: 100%; height: auto; }
   outline: 3px solid rgba(102,126,234,.45);
   outline-offset: 2px;
 }
-
-/* Lotto 박스 여백/크기 넉넉하게 */
-#view-lotto.card{
-  margin: 32px auto 72px;    /* 위·아래 공간 확대 */
-  padding: 28px 24px;        /* 내부 패딩 확대 */
-  max-width: 720px;          /* 카드 폭 넓힘 */
-  border-radius: 18px;
-}
-
-/* 입력/버튼도 숨 좀 쉬게 */
-#view-lotto .form-section{ margin: 18px 0 22px; }
-#view-lotto .btn-primary{ margin-top: 8px; padding: 12px 18px; border-radius: 999px; }
-
-/* 섹션 제목과 본문 사이 간격 약간 더 */
-#page-fortune .section-title{ margin-top: 28px; margin-bottom: 16px; }
-
-/* 시트(결과 모달)도 답답하지 않게 */
-.sheet{ max-width: 800px; border-radius: 24px 24px 16px 16px; }
-.sheet-header{ padding: 24px 28px 12px; }
-.sheet-content{ padding: 28px; padding-bottom: 32px; }
-.sheet-actions{ padding: 0 28px 28px; }
-
-/* 결과 문장 가독성 */
-.sheet .lotto-result-wrap{ margin-top: 6px; line-height: 1.9; font-size: 18px; }
-
-/* 하단 네비와 겹침 방지(세이프에어리어 포함) */
-#mainContent{ padding-bottom: 100px !important; }
-.sheet, .sheet-actions{
-  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
-}
