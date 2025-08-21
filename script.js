@@ -2452,37 +2452,38 @@ function fixFortuneLayout() {
 }
 /* ---------- /fortune 섹션 뷰 재정렬 패치 ---------- */
 
-// 3) 진입/해시변경 시 적용
+// 1) 해시 변경 시 라우팅
 window.addEventListener('hashchange', routeFromHash);
 
+// 2) 초기화 (로드 완료 시)
 window.addEventListener('load', () => {
-  // 1) 해시 진입이면 스플래시 닫기
+  // (1) 스플래시 닫기
   if (location.hash && location.hash !== '#/home') hideSplash();
 
-  // 2) 하단 네비 바로 노출
+  // (2) 하단 네비 보이기
   document.getElementById('bottomNav')?.classList.add('show');
 
-  // 3) 스플래시 안전장치
-  initSplashFailsafe(); 
+  // (3) 스플래시 안전장치
+  initSplashFailsafe();
 
-  // 4) 캘린더 토글
-  bindCalToggle('today');
-  bindCalToggle('saju');
+  // (4) 캘린더 토글
+  bindCalToggle?.('today');
+  bindCalToggle?.('saju');
 
-  // 5) 첫 진입 해시 보정
+  // (5) 첫 진입 해시 보정
   if (!location.hash) location.hash = '#/home';
 
-  // 6) 섹션 위치 보정
-  fixFortuneLayout();   // ✅ 선(구분선) 사이로 전부 복귀
+  // (6) 섹션 위치 보정
+  fixFortuneLayout();
 
-  // 7) 로또 리스너 중복 방지
-  (function bindLottoOnce(){
+  // (7) 로또 리스너 중복 방지
+  (function bindLottoOnce() {
     if (window.__lottoBound) return; // 중복 방지
     window.__lottoBound = true;
-    resetLottoListeners();           // ← 전역에 정의된 함수
+    resetLottoListeners();           // 전역 함수
   })();
 
-  // 8) 라우팅
+  // (8) 라우팅 실행
   routeFromHash();
 });
 
