@@ -2751,3 +2751,27 @@ $('#btnLotto')?.addEventListener('click', ()=>{
     }, 500);
   }
 });
+
+// 공통 스크롤 헬퍼
+function smoothScrollTo(selector) {
+  const el = document.querySelector(selector);
+  if (!el) return;
+  document.getElementById('splashScreen')?.classList.add('hidden');
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  history.replaceState(null, '', location.pathname + location.search);
+}
+
+document.getElementById('ctaToday')?.addEventListener('click', ()=>smoothScrollTo('#today'));
+document.getElementById('ctaSaju') ?.addEventListener('click', ()=>smoothScrollTo('#saju'));
+document.getElementById('ctaStart')?.addEventListener('click', ()=>smoothScrollTo('#today'));
+
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',(e)=>{
+    const id = a.getAttribute('href').slice(1);
+    const t  = document.getElementById(id);
+    if (!t) return;
+    e.preventDefault();
+    smoothScrollTo('#'+id);
+  });
+});
+
