@@ -1867,6 +1867,8 @@ ${createResultCard('💡', '인생조언', '실용적 가이드', advice, false,
 return html;
 }
 
+document.getElementById('startBtn')?.addEventListener('click', startApp);
+
 // ===== 버튼 이벤트 =====
 $('#btnToday')?.addEventListener('click', ()=>{
 const birthRaw = $('#today-birth').value;
@@ -2005,6 +2007,7 @@ function routeFromHash() {
 // 3) 진입/해시변경 시 적용
 window.addEventListener('hashchange', routeFromHash);
 window.addEventListener('load', () => {
+document.getElementById('bottomNav')?.classList.add('show');
   bindCalToggle('today');
   bindCalToggle('saju');
   if (!location.hash) location.hash = '#/home';
@@ -2778,5 +2781,62 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     e.preventDefault();
     smoothScrollTo('#'+id);
   });
+});
+// ===== 행운번호 생성 =====
+function xorshift32(seed) {
+  let x = seed | 0;
+  return () => {
+    x ^= x << 13; x ^= x >>> 17; x ^= x << 5;
+    return (x >>> 0) / 4294967296; // 0..1
+  };
+}
+
+function hashSeed(str=''){
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function generateLottoNumbers(birth='') {
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`;
+  const seedStr = (birth || '') + '|' + dateStr + '|mystictell';
+  const rnd = xorshift32(hashSeed(seedStr));
+
+  // 1~45 중복 없이 6개
+  const pool = Array.from({length:45}, (_,i)=>i+1);
+  for (let i = pool.length - 1; i > 0; i--) { // shuffle
+    const j = Math.floor(rnd() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  const pick = pool.slice(0, 6).sort((a,b)=>a-b);
+  const bonus = pool[6];
+
+  return { nums: pick, bonus, date: dateStr };
+}
+
+document.getElementById('btnLotto')?.addEventListener('click', () => {
+  const birth = (document.getElementById('lotto-birth')?.value || '').trim();
+  const r = generateLottoNumbers(birth);
+  const html = `
+    <div class="result-section">
+      <div class="section-title-result">🎲 오늘의 행운번호</div>
+      <div class="result-card main-result">
+        <div class="card-header"><div class="card-icon">🎯</div><div class="card-title">추천 조합</div></div>
+        <div class="card-value" style="letter-spacing:2px;">${r.nums.join(' · ')}</div>
+        <div class="card-description">보너스 번호: <strong>${r.bonus}</strong></div>
+      </div>
+      <div class="info-box">
+        <div class="info-title">ℹ️ 안내</div>
+        <div class="info-content">
+          개인 입력값(선택)과 날짜로 생성한 가벼운 추천입니다. 재미용으로만 활용하세요 🙂
+        </div>
+      </div>
+    </div>`;
+  openSheet('행운번호', html, { type:'lotto', birth, data:r });
+  reactCrystal?.('행운번호를 준비했어요! ✨');
 });
 
