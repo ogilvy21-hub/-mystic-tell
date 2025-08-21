@@ -1058,3 +1058,17 @@ img, svg, video { max-width: 100%; height: auto; }
   outline: 3px solid rgba(102,126,234,.45);
   outline-offset: 2px;
 }
+/* === Lotto / Sheet spacing overrides === */
+#view-lotto.card{
+  max-width:720px;
+  margin:28px auto 44px;
+  padding:24px;
+}
+
+.sheet-content{
+  padding-top:28px; /* 시트 내용 위쪽 여백 ↑ */
+}
+
+#fortune-routes-section .mt-wrap{
+  padding-top:12px; /* 오늘의 운세 섹션과 다음 카드 사이 간격 */
+}
