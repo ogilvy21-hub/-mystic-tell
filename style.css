@@ -1054,32 +1054,36 @@ img, svg, video { max-width: 100%; height: auto; }
 #fortune-routes-section .mt-wrap{ padding-top: 12px; }
 .result-section.lotto-wrap { margin-bottom: 18px; }
 
-/* --- Splash --- */
+/* ===== Splash ===== */
 #splashScreen, #splash {
-  position: fixed;      /* 화면 전체 덮기 */
+  position: fixed;
   inset: 0;
   z-index: 99999;
-  display: block;
-  background: #fff;     /* 필요 시 배경 */
-  pointer-events: auto; /* 처음에는 클릭 막음 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;       /* 필요시 투명/이미지 가능 */
+  pointer-events: auto;
+  transition: opacity .3s ease;
 }
 
-/* 숨김 상태 */
 #splashScreen.hidden, #splash.hidden {
   display: none !important;
   opacity: 0 !important;
-  visibility: hidden !important;
   pointer-events: none !important;
-  transition: opacity .25s ease;
+  visibility: hidden !important;
 }
 
-/* Start 버튼만 클릭 가능 */
-#startBtn, 
-#splashScreen .splashStart, 
-#splash .splashStart {
-  pointer-events: auto !important;
+/* Start 버튼 */
+#startBtn, .splashStart {
   cursor: pointer;
-  position: absolute;
-  top: 16px;
-  left: 18px;
+  z-index: 100000;        /* 스플래시 안에서 항상 위 */
+  position: relative;     /* 부모 스플래시 중앙 기준 */
+  margin-top: 20px;       /* 로고 아래 배치되도록 */
 }
+
+/* 메인 콘텐츠 항상 표시 가능 */
+#mainContent {
+  display: block !important;
+}
+
