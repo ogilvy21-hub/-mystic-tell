@@ -3557,16 +3557,37 @@ function routeFromHash() {
   }
 }
 
-// 초기화 연결 (load 안)
-window.addEventListener('hashchange', routeFromHash);
-window.addEventListener('load', () => {
-  document.getElementById('bottomNav')?.classList.add('show');
-  if (location.hash && location.hash !== '#/home') hideSplash();
-  ensureFortuneSectionWrap();   // ★ 추가
-  bindLotto();     
+// ========== 전역 리스너 (load 바깥) ==========
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#/"]');
+  if (!a) return;
+  e.preventDefault();
+  e.stopPropagation();
+  hideSplash();                         // 라우팅 전에 스플래시/네비 노출
+  const to = a.getAttribute('href');
+  if (to && location.hash !== to) location.hash = to; // → hashchange → routeFromHash()
+}, true);
 
-// ★ 추가
+window.addEventListener('hashchange', routeFromHash);
+window.addEventListener('error', () => closeSheetSafe()); // 시트/백드롭 막힘 방지
+
+// ========== 초기화 (load 안) ==========
+window.addEventListener('load', () => {
+  // 1) 하단 네비 먼저 보여주고
+  document.getElementById('bottomNav')?.classList.add('show');
+
+  // 2) fortune 섹션 DOM 위치/래핑 보정
+  ensureFortuneSectionWrap();
+
+  // 3) 캘린더 토글/로또 바인딩 (idempotent 권장)
+  bindCalToggle?.('today');
+  bindCalToggle?.('saju');
+  bindLotto?.(); // 내부에서 중복 바인딩 방지: if (window.__lottoBound) return;
+
+  // 4) 해시 진입이면 스플래시 닫기
+  if (location.hash && location.hash !== '#/home') hideSplash();
+
+  // 5) 마지막에 라우팅 실행 (DOM/리스너 준비 후)
   routeFromHash();
 });
 
-  window.addEventListener('error', () => closeSheetSafe());
