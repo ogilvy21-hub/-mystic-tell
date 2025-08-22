@@ -3504,10 +3504,10 @@ window.addEventListener('load', () => {
   bindCalToggle?.('saju');
   bindLotto?.();
 
-  if (location.hash && location.hash !== '#/home') hideSplash();
-}
+  if (location.hash && location.hash !== '#/home') {
+  hideSplash();
   routeFromHash();
-
+}
 // 이벤트 연결
 window.addEventListener("hashchange", routeFromHash);
 document.addEventListener("DOMContentLoaded", routeFromHash);
