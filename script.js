@@ -2731,14 +2731,13 @@ function showComingSoonNotification() {
 }
 
 function routeFromHash() {
-  console.log("라우터 실행됨:", location.hash);   // 디버깅용 로그
-  const hash = location.hash || "#/home";
+  const hash = location.hash;
 
-  // 모든 view 일단 숨기기
-  document.querySelectorAll("#view-today, #view-saju, #view-lotto, #page-home")
+  // 모든 view/page 숨기기
+  document.querySelectorAll("#page-home, #view-today, #view-saju, #view-lotto, #view-palm")
     .forEach(el => el.style.display = "none");
 
-  if (hash === "#/home") {
+  if (hash === "#/home" || hash === "" || hash === "#") {
     document.getElementById("page-home").style.display = "block";
   } else if (hash === "#/fortune/today") {
     document.getElementById("view-today").style.display = "block";
@@ -2746,10 +2745,10 @@ function routeFromHash() {
     document.getElementById("view-saju").style.display = "block";
   } else if (hash === "#/fortune/lotto") {
     document.getElementById("view-lotto").style.display = "block";
-  } else if (hash === "#/guide") {
-    document.getElementById("guide").scrollIntoView({ behavior: "smooth" });
-  } else if (hash === "#/contact") {
-    document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
+  } else if (hash === "#/fortune/palm") {
+    // 손금은 예정: 무조건 숨김 처리
+    alert("손금 보기는 예정 중입니다 🙂");
+    document.getElementById("page-home").style.display = "block";
   }
 }
 
@@ -3680,7 +3679,8 @@ window.addEventListener('load', () => {
 });
 
 // --- 이벤트 연결 ---
+window.addEventListener("DOMContentLoaded", routeFromHash);
 window.addEventListener("hashchange", routeFromHash);
-document.addEventListener("DOMContentLoaded", routeFromHash);
+
 
 
