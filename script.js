@@ -2731,30 +2731,25 @@ function showComingSoonNotification() {
 }
 
 function routeFromHash() {
+  console.log("라우터 실행됨:", location.hash);   // 디버깅용 로그
   const hash = location.hash || "#/home";
 
-  // 모든 주요 섹션 숨기기
-  document.querySelectorAll("#page-home, #view-today, #view-saju, #view-lotto")
-    .forEach(el => {
-      if (el) el.style.display = "none";
-    });
+  // 모든 view 일단 숨기기
+  document.querySelectorAll("#view-today, #view-saju, #view-lotto, #page-home")
+    .forEach(el => el.style.display = "none");
 
-  // 해시 값에 맞는 섹션만 표시
   if (hash === "#/home") {
-    document.getElementById("page-home")?.style.display = "block";
+    document.getElementById("page-home").style.display = "block";
   } else if (hash === "#/fortune/today") {
-    document.getElementById("view-today")?.style.display = "block";
-    document.getElementById("fortuneTitle").innerText = "오늘의 운세";
+    document.getElementById("view-today").style.display = "block";
   } else if (hash === "#/fortune/saju") {
-    document.getElementById("view-saju")?.style.display = "block";
-    document.getElementById("fortuneTitle").innerText = "정통 사주";
+    document.getElementById("view-saju").style.display = "block";
   } else if (hash === "#/fortune/lotto") {
-    document.getElementById("view-lotto")?.style.display = "block";
-    document.getElementById("fortuneTitle").innerText = "행운번호";
+    document.getElementById("view-lotto").style.display = "block";
   } else if (hash === "#/guide") {
-    document.getElementById("guide")?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("guide").scrollIntoView({ behavior: "smooth" });
   } else if (hash === "#/contact") {
-    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("contact").scrollIntoView({ behavior: "smooth" });
   }
 }
 
@@ -3684,8 +3679,8 @@ window.addEventListener('load', () => {
   routeFromHash();
 });
 
-window.addEventListener("hashchange", () => { routeFromHash?.(); });
-document.addEventListener("DOMContentLoaded", () => { routeFromHash?.(); });
-
+// --- 이벤트 연결 ---
+window.addEventListener("hashchange", routeFromHash);
+document.addEventListener("DOMContentLoaded", routeFromHash);
 
 
