@@ -591,5 +591,49 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- ========= /MysticTell: Policy Modals ========= -->
 <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.12/lunar.min.js"></script>
 <script src="script.js"></script> 
+<script>
+// 라우트 매핑
+const routes = {
+  "home": "page-home",
+  "fortune": "page-fortune",
+  "fortune/today": "view-today",
+  "fortune/saju": "view-saju",
+  "fortune/lotto": "view-lotto",
+  "fortune/tarot": "view-tarot",
+  "fortune/palm": "view-palm",
+  "fortune/match": "view-match",
+  "fortune/year": "view-year",
+  "chat": "page-chat",
+  "me": "page-me"
+};
+
+function showRoute() {
+  const hash = location.hash.replace(/^#\//, "");
+  const targetId = routes[hash] || "page-home";
+
+  // 모든 page/card 숨기기
+  document.querySelectorAll(".page, .card").forEach(el => {
+    if (el.id.startsWith("view-") || el.classList.contains("page")) {
+      el.style.display = "none";
+      el.classList.remove("show");
+    }
+  });
+
+  // 선택된 섹션 보이기
+  const target = document.getElementById(targetId);
+  if (target) {
+    target.style.display = "block";
+    target.classList.add("show");
+  }
+
+  // bottom nav 활성화 갱신
+  document.querySelectorAll(".bottom-nav .nav-item").forEach(item => {
+    item.classList.toggle("active", item.dataset.tab === hash.split("/")[0]);
+  });
+}
+
+window.addEventListener("hashchange", showRoute);
+window.addEventListener("DOMContentLoaded", showRoute);
+</script>
 </body>
 </html>
