@@ -3506,8 +3506,8 @@ window.addEventListener('load', () => {
 
   if (location.hash && location.hash !== '#/home') {
   hideSplash();
+}    
   routeFromHash();
-}
 // 이벤트 연결
 window.addEventListener("hashchange", routeFromHash);
 document.addEventListener("DOMContentLoaded", routeFromHash);
