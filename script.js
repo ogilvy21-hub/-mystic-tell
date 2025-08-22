@@ -2730,35 +2730,34 @@ function showComingSoonNotification() {
   }, 2500);
 }
 
-// --- DOM 준비 후 초기화 (딱 한 번만) ---
-document.addEventListener('DOMContentLoaded', () => {
-  if (location.hash && location.hash !== '#/home') forceHideSplash();
-   // ✅ 스플래시 강제 숨김 + 메인/네비 보이기
-  try { forceHideSplash(); } catch (_) {
-    const s = document.getElementById('splashScreen');
-    const m = document.getElementById('mainContent');
-    const n = document.getElementById('bottomNav');
-    if (s) { s.classList.add('hidden'); s.style.display = 'none'; }
-    m?.classList.add('show');
-    n?.classList.add('show');
+document.addEventListener("DOMContentLoaded", () => {
+  const splash = document.getElementById("splashScreen");
+  const main = document.getElementById("mainContent");
+  const startBtn = document.getElementById("startBtn");
+  const nav = document.getElementById("bottomNav");
+
+  function hideSplash() {
+    if (!splash || !main) return;
+    splash.style.transition = "opacity 0.6s";
+    splash.style.opacity = "0";
+    setTimeout(() => {
+      splash.style.display = "none";
+      main.style.display = "block";
+      nav?.classList.add("show");
+    }, 600);
   }
-  // 손금 메뉴 비활성 처리
-  setPalmAsComingSoon();
-  showPalmComingSoonAlert();
-  // 손금 타이틀 (예정) 붙이기
+
+  startBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    hideSplash();
+  });
+
+  // 5초 자동 제거
   setTimeout(() => {
-    document
-      .querySelectorAll('[data-route="fortune-palm"] h3, [data-route="fortune-palm"] .title')
-      .forEach((title) => {
-        if (title && !title.textContent.includes('(예정)')) {
-          title.textContent = title.textContent.replace('손금 보기', '손금 보기 (예정)');
-        }
-      });
-  }, 100);
-   // 라우팅도 여기서 한 번 태워주면 안정적
-  routeFromHash?.();
+    if (splash && splash.style.display !== "none") hideSplash();
+  }, 5000);
 });
-  
+
 // 운세 스타일 추가
 (function addEnhancedFortuneStyles(){
 if (document.getElementById('enhanced-fortune-styles')) return;
