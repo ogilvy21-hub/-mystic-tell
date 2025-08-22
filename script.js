@@ -3490,11 +3490,11 @@ window.addEventListener('error', () => closeSheetSafe());
 // 초기화
 window.addEventListener('load', () => {
   document.getElementById('bottomNav')?.classList.add('show');
-});
+  
   // Start 버튼 이벤트
   const start = document.getElementById('startBtn');
   start?.addEventListener('click', () => forceHideSplash());
-
+});
   // 로드 직후 스플래시 제거
   forceHideSplash();
 
@@ -3511,4 +3511,3 @@ window.addEventListener('load', () => {
 // 이벤트 연결
 window.addEventListener("hashchange", routeFromHash);
 document.addEventListener("DOMContentLoaded", routeFromHash);
-});
