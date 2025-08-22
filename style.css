@@ -1085,3 +1085,8 @@ img, svg, video { max-width: 100%; height: auto; }
 }
 
 #mainContent { display: none; }  /* 시작 시 숨김 */
+
+#splashScreen {
+  display: none !important;
+}
+
