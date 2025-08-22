@@ -2733,20 +2733,20 @@ function showComingSoonNotification() {
 function routeFromHash() {
   const hash = location.hash;
 
-  // 모든 view/page 숨기기
-  document.querySelectorAll("#page-home, #view-today, #view-saju, #view-lotto, #view-palm")
+  // 모든 section/page 숨기기
+  document.querySelectorAll("#page-home, #today, #saju, #lotto")
     .forEach(el => el.style.display = "none");
 
   if (hash === "#/home" || hash === "" || hash === "#") {
     document.getElementById("page-home").style.display = "block";
   } else if (hash === "#/fortune/today") {
-    document.getElementById("view-today").style.display = "block";
+    document.getElementById("today").style.display = "block";
   } else if (hash === "#/fortune/saju") {
-    document.getElementById("view-saju").style.display = "block";
+    document.getElementById("saju").style.display = "block";
   } else if (hash === "#/fortune/lotto") {
-    document.getElementById("view-lotto").style.display = "block";
+    document.getElementById("lotto").style.display = "block";
   } else if (hash === "#/fortune/palm") {
-    // 손금은 예정: 무조건 숨김 처리
+    // 손금은 예정 중 → 임시 알림
     alert("손금 보기는 예정 중입니다 🙂");
     document.getElementById("page-home").style.display = "block";
   }
