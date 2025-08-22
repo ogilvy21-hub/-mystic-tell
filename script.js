@@ -2422,20 +2422,26 @@ window.addEventListener('load', () => {
   // (8) 라우팅 실행
 routeFromHash();
 
-// ✅ 로또 버튼 클릭 이벤트 등록
-document.getElementById("btnLotto")?.addEventListener("click", () => {
-  const result = generateLottoSet();  // ✅ 위 함수 호출
-  console.log("🎲 행운 번호:", result.numbers, "보너스:", result.bonus);
+function resetLottoListeners() {
+  document.getElementById("btnLotto")?.addEventListener("click", () => {
+    // 📌 날짜 기반 시드 생성 (매일 고정된 결과를 주기 위함)
+    const seed = new Date().toISOString().slice(0, 10);
 
-  showSheetSafe("🍀 행운의 로또번호", `
-    <div class="lotto-result">
-      <p>번호: ${result.numbers.join(", ")}</p>
-      <p>보너스: ${result.bonus}</p>
-    </div>
-  `);
-});
+    // 📌 번호 생성 (2491줄과 동일한 방식)
+    const main  = generateLottoSet(seed);          // 안전 버전 6개 번호
+    const bonus = generateBonusNumber(seed, main); // 보너스 번호
 
-}); // ← 여기 하나만 있어야 함 (load 이벤트 닫기)
+    console.log("🎲 행운 번호:", [...main], "보너스:", bonus);
+
+    // 📌 결과 UI 표시
+    showSheetSafe("🍀 행운의 로또번호", `
+      <div class="lotto-result">
+        <p>번호: ${[...main].join(", ")}</p>
+        <p>보너스: ${bonus}</p>
+      </div>
+    `);
+  });
+}
 
 /* ==== Lotto: 클릭 핸들러 ==== */
 function onClickLotto(e) {
