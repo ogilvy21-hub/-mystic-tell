@@ -3490,7 +3490,7 @@ window.addEventListener('error', () => closeSheetSafe());
 // 초기화
 window.addEventListener('load', () => {
   document.getElementById('bottomNav')?.classList.add('show');
-
+});
   // Start 버튼 이벤트
   const start = document.getElementById('startBtn');
   start?.addEventListener('click', () => forceHideSplash());
