@@ -2423,17 +2423,20 @@ window.addEventListener('load', () => {
 routeFromHash();
 
 function resetLottoListeners() {
-  document.getElementById("btnLotto")?.addEventListener("click", () => {
-    // 📌 날짜 기반 시드 생성 (매일 고정된 결과를 주기 위함)
-    const seed = new Date().toISOString().slice(0, 10);
+  console.log("✅ resetLottoListeners 실행됨");
 
-    // 📌 번호 생성 (2491줄과 동일한 방식)
-    const main  = generateLottoSet(seed);          // 안전 버전 6개 번호
-    const bonus = generateBonusNumber(seed, main); // 보너스 번호
+  const btn = document.getElementById("btnLotto");
+  console.log("✅ btnLotto 찾음:", btn);
+
+  btn?.addEventListener("click", () => {
+    console.log("✅ btnLotto 클릭 감지됨");
+
+    const seed = new Date().toISOString().slice(0, 10);
+    const main = generateLottoSet(seed);
+    const bonus = generateBonusNumber(seed, main);
 
     console.log("🎲 행운 번호:", [...main], "보너스:", bonus);
 
-    // 📌 결과 UI 표시
     showSheetSafe("🍀 행운의 로또번호", `
       <div class="lotto-result">
         <p>번호: ${[...main].join(", ")}</p>
