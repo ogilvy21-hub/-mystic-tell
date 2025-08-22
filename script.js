@@ -2730,6 +2730,32 @@ function showComingSoonNotification() {
   }, 2500);
 }
 
+function routeFromHash() {
+  const hash = location.hash || "#/home";
+
+  // 모든 섹션을 일단 숨김
+  document.querySelectorAll("#page-home, #view-today, #view-saju, #view-lotto")
+    .forEach(el => el.style.display = "none");
+
+  // 어떤 해시인지 확인해서 해당 페이지만 보이게
+  if (hash === "#/home") {
+    document.getElementById("page-home")?.style.display = "block";
+  } else if (hash === "#/fortune/today") {
+    document.getElementById("view-today")?.style.display = "block";
+    document.getElementById("fortuneTitle").innerText = "오늘의 운세";
+  } else if (hash === "#/fortune/saju") {
+    document.getElementById("view-saju")?.style.display = "block";
+    document.getElementById("fortuneTitle").innerText = "정통 사주";
+  } else if (hash === "#/fortune/lotto") {
+    document.getElementById("view-lotto")?.style.display = "block";
+    document.getElementById("fortuneTitle").innerText = "행운번호";
+  } else if (hash === "#/guide") {
+    document.getElementById("guide")?.scrollIntoView({ behavior: "smooth" });
+  } else if (hash === "#/contact") {
+    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const splash = document.getElementById("splashScreen");
   const main = document.getElementById("mainContent");
@@ -3656,17 +3682,14 @@ window.addEventListener('load', () => {
   routeFromHash();
 });
 
-// ==============================
-// [라우터 연결 - 맨 아래 추가]
-// ==============================
-
-// 해시값(#/home, #/fortune/today 등) 바뀔 때마다 라우터 실행
+// 해시값 바뀔 때 라우터 실행
 window.addEventListener("hashchange", () => {
   routeFromHash?.();
 });
 
-// 페이지 첫 로딩할 때도 라우터 실행
+// 페이지 첫 로딩 시 라우터 실행
 document.addEventListener("DOMContentLoaded", () => {
   routeFromHash?.();
 });
+
 
