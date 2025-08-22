@@ -3505,7 +3505,7 @@ window.addEventListener('load', () => {
   bindLotto?.();
 
   if (location.hash && location.hash !== '#/home') hideSplash();
-
+}
   routeFromHash();
 
 // 이벤트 연결
