@@ -2567,6 +2567,7 @@ function handleLottoClick(e){
 }
 
     // (C) 렌더 → 시트 열기
+    try {
     const html = renderLottoResult(result);   // ← 기존 함수명 유지
     showSheetSafe('🍀 행운의 로또번호', html);
   } catch (err){
