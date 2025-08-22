@@ -2523,7 +2523,6 @@ function handleLottoClick(e){
     closeSheetSafe?.();
     alert('행운번호 생성 중 오류가 발생했습니다.');
   }
-}
 
 // (D) 안전한 시트 열기/닫기 (기존 showSheet가 있다면 이걸로 대체해도 됨)
 function showSheetSafe(title, html){
