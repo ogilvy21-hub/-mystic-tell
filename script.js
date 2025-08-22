@@ -1538,87 +1538,41 @@ function isoWeekKey(date = new Date()) {
   const weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
   return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
 }
-
-// 1세트(6개) 생성 – 안전 버전 (기존 함수 "이름 유지"하고 교체)
-function generateLottoSet(seedStr) {
-  // 1) 문자열 씨드를 32비트 정수로 안전 변환
+// 🎯 최종 로또 번호 생성 함수
+function generateLottoSet(seedStr = '') {
   const s = String(seedStr ?? '');
-  // YYYYMMDD도 허용 → YYYY-MM-DD로 정규화
   const digits = s.replace(/\D/g, '');
   let seed = Number.isFinite(Date.parse(s)) ? Date.parse(s) : NaN;
+
   if (!Number.isFinite(seed) && digits.length === 8) {
     const norm = `${digits.slice(0,4)}-${digits.slice(4,6)}-${digits.slice(6,8)}`;
     seed = Date.parse(norm);
   }
-  // 여전히 실패면 문자열 해시로 대체
+
   if (!Number.isFinite(seed)) {
-    let h = 2166136261; // FNV-1a
-    for (let i = 0; i < s.length; i++) h = (h ^ s.charCodeAt(i)) * 16777619 >>> 0;
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++) {
+      h = (h ^ s.charCodeAt(i)) * 16777619 >>> 0;
+    }
     seed = (h || (Date.now() >>> 0));
   }
 
-  // 2) LCG 기반 난수 (seededRandomFactory 대신 자체 RNG, 충돌 시 안전)
+  // LCG 난수 생성기
   let state = seed >>> 0;
   function rnd() {
     state = (1664525 * state + 1013904223) >>> 0;
-    return state / 2 ** 32; // 0~1
+    return state / 2 ** 32;
   }
 
-  // 3) 번호 6개 뽑기 + 무한루프 가드
+  // 번호 6개 + 보너스
   const picked = new Set();
-  let guard = 0;
-  while (picked.size < 6 && guard++ < 4000) {
-    const n = Math.floor(rnd() * 45) + 1; // 1~45
-    if (n >= 1 && n <= 45) picked.add(n);
-  }
-
-  // 4) 혹시 모자라면 Math.random으로 채워서라도 종료
   while (picked.size < 6) {
-    picked.add(Math.floor(Math.random() * 45) + 1);
+    picked.add(1 + Math.floor(rnd() * 45));
   }
+  const numbers = [...picked].sort((a,b)=>a-b);
+  const bonus = 1 + Math.floor(rnd() * 45);
 
-  return Array.from(picked).sort((a, b) => a - b);
-}
-
-// 1세트(6개) 생성 – 안전 버전 (기존 함수 "이름 유지"하고 교체)
-function generateLottoSet(seedStr) {
-  // 1) 문자열 씨드를 32비트 정수로 안전 변환
-  const s = String(seedStr ?? '');
-  // YYYYMMDD도 허용 → YYYY-MM-DD로 정규화
-  const digits = s.replace(/\D/g, '');
-  let seed = Number.isFinite(Date.parse(s)) ? Date.parse(s) : NaN;
-  if (!Number.isFinite(seed) && digits.length === 8) {
-    const norm = `${digits.slice(0,4)}-${digits.slice(4,6)}-${digits.slice(6,8)}`;
-    seed = Date.parse(norm);
-  }
-  // 여전히 실패면 문자열 해시로 대체
-  if (!Number.isFinite(seed)) {
-    let h = 2166136261; // FNV-1a
-    for (let i = 0; i < s.length; i++) h = (h ^ s.charCodeAt(i)) * 16777619 >>> 0;
-    seed = (h || (Date.now() >>> 0));
-  }
-
-  // 2) LCG 기반 난수 (seededRandomFactory 대신 자체 RNG, 충돌 시 안전)
-  let state = seed >>> 0;
-  function rnd() {
-    state = (1664525 * state + 1013904223) >>> 0;
-    return state / 2 ** 32; // 0~1
-  }
-
-  // 3) 번호 6개 뽑기 + 무한루프 가드
-  const picked = new Set();
-  let guard = 0;
-  while (picked.size < 6 && guard++ < 4000) {
-    const n = Math.floor(rnd() * 45) + 1; // 1~45
-    if (n >= 1 && n <= 45) picked.add(n);
-  }
-
-  // 4) 혹시 모자라면 Math.random으로 채워서라도 종료
-  while (picked.size < 6) {
-    picked.add(Math.floor(Math.random() * 45) + 1);
-  }
-
-  return Array.from(picked).sort((a, b) => a - b);
+  return { numbers, bonus };
 }
 
 // 렌더링 (호환·방어 버전)
@@ -2238,24 +2192,6 @@ function generateBonusNumber(seedStr, main) {
   return b;
 }
 
-function generateLottoNumbers(birthStr){
-  const today = new Date();
-  const y = today.getFullYear();
-  const weekIdx = Math.floor((today - new Date(y,0,1)) / (7*24*60*60*1000)); // 년-주차 기준
-  const seed = (birthStr||'') + `|${y}-W${weekIdx}`;
-  const rnd = seededRandom(seed);
-
-  const nums = new Set();
-  while(nums.size < 6){
-    const n = 1 + Math.floor(rnd() * 45);
-    nums.add(n);
-  }
-  const main = [...nums].sort((a,b)=>a-b);
-  let bonus;
-  do { bonus = 1 + Math.floor(rnd() * 45); } while (nums.has(bonus));
-  return { main, bonus, seedInfo: `${y}년 ${weekIdx+1}주 기준` };
-}
-
 // (script.js) ─ 기존 renderLottoResult 정의를 이걸로 교체
 function renderLottoResult(res){
   const data = (res && typeof res === 'object') ? res : {};
@@ -2484,8 +2420,22 @@ window.addEventListener('load', () => {
   })();
 
   // (8) 라우팅 실행
-  routeFromHash();
+routeFromHash();
+
+// ✅ 로또 버튼 클릭 이벤트 등록
+document.getElementById("btnLotto")?.addEventListener("click", () => {
+  const result = generateLottoSet();  // ✅ 위 함수 호출
+  console.log("🎲 행운 번호:", result.numbers, "보너스:", result.bonus);
+
+  showSheetSafe("🍀 행운의 로또번호", `
+    <div class="lotto-result">
+      <p>번호: ${result.numbers.join(", ")}</p>
+      <p>보너스: ${result.bonus}</p>
+    </div>
+  `);
 });
+
+}); // ← 여기 하나만 있어야 함 (load 이벤트 닫기)
 
 /* ==== Lotto: 클릭 핸들러 ==== */
 function onClickLotto(e) {
@@ -3335,67 +3285,6 @@ const LOTTO_STATS = {
   lucky: [7, 14, 21, 28, 35, 42]
 };
 
-function generateLotto(birthdate = '') {
-  const today = new Date().toDateString();
-  const seed = (birthdate || 'random') + today;
-  let hash = 0;
-  
-  for(let i = 0; i < seed.length; i++) {
-    hash = (hash * 31 + seed.charCodeAt(i)) % 100000;
-  }
-  
-  const numbers = [];
-  const hotNums = [...LOTTO_STATS.hot];
-  
-  // 통계 기반 4개
-  for(let i = 0; i < 4; i++) {
-    const idx = Math.abs(hash + i) % hotNums.length;
-    numbers.push(hotNums.splice(idx, 1)[0]);
-  }
-  
-  // 개인화 랜덤 2개
-  while(numbers.length < 6) {
-    const num = (Math.abs(hash + numbers.length * 7) % 45) + 1;
-    if(!numbers.includes(num)) numbers.push(num);
-  }
-  
-  const bonus = (Math.abs(hash + 99) % 45) + 1;
-  return { numbers: numbers.sort((a,b) => a-b), bonus };
-}
-
-// 로또 버튼 이벤트
-$('#btnLotto')?.addEventListener('click', ()=>{
-  const birth = $('#lotto-birth')?.value || '';
-  const result = generateLotto(birth);
-  const html = `
-    🎲 행운의 로또번호
-    
-    ${result.numbers.map(n => `[${String(n).padStart(2,'0')}]`).join(' ')}
-    보너스: [${String(result.bonus).padStart(2,'0')}]
-    
-    ${birth ? '🔮 개인맞춤' : '🎲 랜덤'} 생성
-    📊 통계 기반 + 행운 조합
-  `;
-  openSheet('🍀 행운의 로또번호', html, {type:'lotto', numbers:result.numbers, bonus:result.bonus});
-  reactCrystal('행운의 번호를 생성했습니다! 🍀');
-});
-
-// 로또 페이지 들어왔을 때 스타일 보강
-  if (location.hash.includes('lotto')) {
-    setTimeout(() => {
-      const lottoView = document.querySelector('#view-lotto');
-      if (lottoView) {
-        lottoView.style.background   = 'white';
-        lottoView.style.padding      = '20px';
-        lottoView.style.border       = '1px solid #ddd';
-        lottoView.style.borderRadius = '10px';
-        lottoView.style.margin       = '20px auto';
-        lottoView.style.maxWidth     = '500px';
-      }
-    }, 500);
-  }
-});
-
 // 공통 스크롤 헬퍼
 function smoothScrollTo(selector) {
   const el = document.querySelector(selector);
@@ -3455,46 +3344,6 @@ function hashSeed(str=''){
   return h >>> 0;
 }
 
-function generateLottoNumbers(birth='') {
-  const today = new Date();
-  const dateStr = `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`;
-  const seedStr = (birth || '') + '|' + dateStr + '|mystictell';
-  const rnd = xorshift32(hashSeed(seedStr));
-
-  // 1~45 중복 없이 6개
-  const pool = Array.from({length:45}, (_,i)=>i+1);
-  for (let i = pool.length - 1; i > 0; i--) { // shuffle
-    const j = Math.floor(rnd() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  const pick = pool.slice(0, 6).sort((a,b)=>a-b);
-  const bonus = pool[6];
-
-  return { nums: pick, bonus, date: dateStr };
-}
-
-document.getElementById('btnLotto')?.addEventListener('click', () => {
-  const birth = (document.getElementById('lotto-birth')?.value || '').trim();
-  const r = generateLottoNumbers(birth);
-  const html = `
-    <div class="result-section">
-      <div class="section-title-result">🎲 오늘의 행운번호</div>
-      <div class="result-card main-result">
-        <div class="card-header"><div class="card-icon">🎯</div><div class="card-title">추천 조합</div></div>
-        <div class="card-value" style="letter-spacing:2px;">${r.nums.join(' · ')}</div>
-        <div class="card-description">보너스 번호: <strong>${r.bonus}</strong></div>
-      </div>
-      <div class="info-box">
-        <div class="info-title">ℹ️ 안내</div>
-        <div class="info-content">
-          개인 입력값(선택)과 날짜로 생성한 가벼운 추천입니다. 재미용으로만 활용하세요 🙂
-        </div>
-      </div>
-    </div>`;
-  openSheet('행운번호', html, { type:'lotto', birth, data:r });
-  reactCrystal?.('행운번호를 준비했어요! ✨');
-});
-
 // ①-1: #page-fortune 안에 공용 .mt-section/.mt-wrap 생성 후 view-* 카드들을 안으로 이동
 function ensureFortuneSectionWrap() {
   const page = document.getElementById('page-fortune');
@@ -3552,29 +3401,6 @@ function seedFromBirth(birthStr) {
   if (s.length < 8) return Date.now();
   return parseInt(s.slice(0,8), 10);
 }
-
-// ②-3: 1~45 중 6개 + 보너스(중복X) 생성
-function generateLottoBySeed(birthStr) {
-  const rnd = xorshift32(seedFromBirth(birthStr));
-  const pool = Array.from({length:45}, (_,i)=>i+1);
-  for (let i=pool.length-1;i>0;i--) { // Fisher-Yates
-    const j = Math.floor(rnd()* (i+1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  const numbers = pool.slice(0,6).sort((a,b)=>a-b);
-  const bonus   = pool[6];
-  return { numbers, bonus, meta:{ strategy:'랜덤+시드', input:birthStr || '' } };
-}
-
-// ②-4: 시트 표시(프로젝트에 이미 있으면 기존 함수 사용)
-const showSheet = window.showSheet || ((title, html) => {
-  const b = document.getElementById('sheetBackdrop');
-  const t = document.getElementById('sheetTitle');
-  const c = document.getElementById('sheetContent');
-  if (t) t.textContent = title || '결과';
-  if (c) c.innerHTML = html || '';
-  b && b.classList.add('show');
-});
 
 function renderLottoResult(res){
   // 방어
