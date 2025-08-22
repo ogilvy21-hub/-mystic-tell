@@ -3655,3 +3655,18 @@ window.addEventListener('load', () => {
 
   routeFromHash();
 });
+
+// ==============================
+// [라우터 연결 - 맨 아래 추가]
+// ==============================
+
+// 해시값(#/home, #/fortune/today 등) 바뀔 때마다 라우터 실행
+window.addEventListener("hashchange", () => {
+  routeFromHash?.();
+});
+
+// 페이지 첫 로딩할 때도 라우터 실행
+document.addEventListener("DOMContentLoaded", () => {
+  routeFromHash?.();
+});
+
