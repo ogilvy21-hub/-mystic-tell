@@ -2733,11 +2733,13 @@ function showComingSoonNotification() {
 function routeFromHash() {
   const hash = location.hash || "#/home";
 
-  // 모든 섹션을 일단 숨김
+  // 모든 주요 섹션 숨기기
   document.querySelectorAll("#page-home, #view-today, #view-saju, #view-lotto")
-    .forEach(el => el.style.display = "none");
+    .forEach(el => {
+      if (el) el.style.display = "none";
+    });
 
-  // 어떤 해시인지 확인해서 해당 페이지만 보이게
+  // 해시 값에 맞는 섹션만 표시
   if (hash === "#/home") {
     document.getElementById("page-home")?.style.display = "block";
   } else if (hash === "#/fortune/today") {
@@ -3682,14 +3684,8 @@ window.addEventListener('load', () => {
   routeFromHash();
 });
 
-// 해시값 바뀔 때 라우터 실행
-window.addEventListener("hashchange", () => {
-  routeFromHash?.();
-});
+window.addEventListener("hashchange", () => { routeFromHash?.(); });
+document.addEventListener("DOMContentLoaded", () => { routeFromHash?.(); });
 
-// 페이지 첫 로딩 시 라우터 실행
-document.addEventListener("DOMContentLoaded", () => {
-  routeFromHash?.();
-});
 
 
