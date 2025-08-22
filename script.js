@@ -3489,25 +3489,30 @@ window.addEventListener('error', () => closeSheetSafe());
 
 // 초기화
 window.addEventListener('load', () => {
-  document.getElementById('bottomNav')?.classList.add('show');
-  
-  // Start 버튼 이벤트
-  const start = document.getElementById('startBtn');
-  start?.addEventListener('click', () => forceHideSplash());
+    document.getElementById('bottomNav')?.classList.add('show');
+
+    // Start 버튼 이벤트
+    const start = document.getElementById('startBtn');
+    start?.addEventListener('click', () => forceHideSplash());
+
+    // 로드 직후 스플래시 제거
+    forceHideSplash();
+
+    // 보정 함수 실행
+    ensureFortuneSectionWrap();
+    bindCalToggle?.('today');
+    bindCalToggle?.('saju');
+    bindLotto?.();
+
+    // 해시가 있으면 스플래시 숨기기
+    if (location.hash && location.hash !== '#/home') {
+        hideSplash();
+    }
+
+    // 라우팅 실행
+    routeFromHash();
 });
-  // 로드 직후 스플래시 제거
-  forceHideSplash();
 
-  // 보정 함수 실행
-  ensureFortuneSectionWrap();
-  bindCalToggle?.('today');
-  bindCalToggle?.('saju');
-  bindLotto?.();
-
-  if (location.hash && location.hash !== '#/home') {
-  hideSplash();
-}    
-  routeFromHash();
 // 이벤트 연결
 window.addEventListener("hashchange", routeFromHash);
 document.addEventListener("DOMContentLoaded", routeFromHash);
