@@ -1084,3 +1084,4 @@ img, svg, video { max-width: 100%; height: auto; }
   display: block !important;
 }
 
+#mainContent { display: none; }  /* 시작 시 숨김 */
