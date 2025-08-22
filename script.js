@@ -3512,5 +3512,3 @@ window.addEventListener('load', () => {
 window.addEventListener("hashchange", routeFromHash);
 document.addEventListener("DOMContentLoaded", routeFromHash);
 
-
-
