@@ -2485,18 +2485,18 @@ function handleLottoClick(e){
   try {
     const birthStr = (document.getElementById('lotto-birth')?.value || '').trim();
 
-    // 주간 고정 시드(ISO week) — 같은 주에는 같은 조합이 나오게
+    // 주간 고정 시드(ISO week)
     const now = new Date();
     const utc = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
-    const day = utc.getUTCDay() || 7;                 // 1(월)~7(일)
-    utc.setUTCDate(utc.getUTCDate() + 4 - day);       // 해당 주의 목요일
+    const day = utc.getUTCDay() || 7;
+    utc.setUTCDate(utc.getUTCDate() + 4 - day);
     const yearStart = new Date(Date.UTC(utc.getUTCFullYear(), 0, 1));
     const isoWeek = Math.ceil((((utc - yearStart) / 86400000) + 1) / 7);
     const seed = `${utc.getUTCFullYear()}-W${String(isoWeek).padStart(2,'0')}:${birthStr}`;
 
-    // 번호 생성 (안전 RNG 사용)
-    const main  = generateLottoSet(seed);            // ← safe 버전
-    const bonus = generateBonusNumber(seed, main);   // ← 앞서 추가한 함수
+    // 번호 생성
+    const main  = generateLottoSet(seed);
+    const bonus = generateBonusNumber(seed, main);
 
     // 렌더 + 시트 오픈
     const html = renderLottoResult({
@@ -2507,7 +2507,7 @@ function handleLottoClick(e){
     if (typeof openSheet === 'function') {
       openSheet('🍀 행운의 로또번호', html);
     } else {
-      // fallback(프로젝트에 openSheet 없을 때)
+      // fallback
       const bd = document.getElementById('sheetBackdrop');
       const ct = document.getElementById('sheetContent');
       const tt = document.getElementById('sheetTitle');
@@ -2520,19 +2520,8 @@ function handleLottoClick(e){
     }
   } catch (err) {
     console.error('[Lotto] generate error:', err);
-    closeSheetSafe?.(); // 중복 정의 없이 1개만 존재하도록 유지
+    closeSheetSafe?.();
     alert('행운번호 생성 중 오류가 발생했습니다.');
-  }
-}
-
-    // (C) 렌더 → 시트 열기
-    try {
-    const html = renderLottoResult(result);   // ← 기존 함수명 유지
-    showSheetSafe('🍀 행운의 로또번호', html);
-  } catch (err){
-    console.error('[Lotto] generate failed:', err);
-    closeSheetSafe(); // 혹시 열려있던 시트/백드롭 해제
-    // alert 대신 console에만 남겨 UI가 멈추지 않게 함
   }
 }
 
