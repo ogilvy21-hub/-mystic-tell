@@ -2732,19 +2732,27 @@ function showComingSoonNotification() {
 
 function routeFromHash() {
   const hash = location.hash;
+  console.log("📌 routeFromHash 실행됨:", hash);
 
   // 모든 section/page 숨기기
   document.querySelectorAll("#page-home, #today, #saju, #view-lotto")
-    .forEach(el => el.style.display = "none");
+    .forEach(el => {
+      el.style.display = "none";
+      console.log("숨김 처리:", el.id);
+    });
 
   if (hash === "#/home" || hash === "" || hash === "#") {
+    console.log("👉 홈 표시");
     document.getElementById("page-home").style.display = "block";
   } else if (hash === "#/fortune/today") {
+    console.log("👉 오늘의 운세 표시");
     document.getElementById("today").style.display = "block";
   } else if (hash === "#/fortune/saju") {
+    console.log("👉 정통 사주 표시");
     document.getElementById("saju").style.display = "block";
   } else if (hash === "#/fortune/lotto") {
-    document.getElementById("view-lotto").style.display = "block"; // ✅ 여기 수정
+    console.log("👉 행운번호 표시");
+    document.getElementById("view-lotto").style.display = "block";
   } else if (hash === "#/fortune/palm") {
     alert("손금 보기는 예정 중입니다 🙂");
     document.getElementById("page-home").style.display = "block";
@@ -3677,9 +3685,9 @@ window.addEventListener('load', () => {
   routeFromHash();
 });
 
-// --- 이벤트 연결 ---
-window.addEventListener("DOMContentLoaded", routeFromHash);
+// 이벤트 연결
 window.addEventListener("hashchange", routeFromHash);
+document.addEventListener("DOMContentLoaded", routeFromHash);
 
 
 
