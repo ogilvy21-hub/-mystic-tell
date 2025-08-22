@@ -635,5 +635,30 @@ function showRoute() {
 window.addEventListener("hashchange", showRoute);
 window.addEventListener("DOMContentLoaded", showRoute);
 </script>
+<script>
+function routeFromHash() {
+  const hash = location.hash;
+
+  // 일단 모든 view/page 숨기기
+  document.querySelectorAll("#page-home, #view-today, #view-saju, #view-lotto")
+    .forEach(el => el.style.display = "none");
+
+  // 해시에 맞는 섹션만 보이기
+  if (hash === "#/home" || hash === "" || hash === "#") {
+    document.getElementById("page-home").style.display = "block";
+  } else if (hash === "#/fortune/today") {
+    document.getElementById("view-today").style.display = "block";
+  } else if (hash === "#/fortune/saju") {
+    document.getElementById("view-saju").style.display = "block";
+  } else if (hash === "#/fortune/lotto") {
+    document.getElementById("view-lotto").style.display = "block";
+  }
+}
+
+// 페이지 로드 & 해시 변경 시 실행
+window.addEventListener("DOMContentLoaded", routeFromHash);
+window.addEventListener("hashchange", routeFromHash);
+</script>
+
 </body>
 </html>
