@@ -3504,13 +3504,11 @@ window.addEventListener('load', () => {
     bindCalToggle?.('saju');
     bindLotto?.();
 
-    if (location.hash && location.hash !== '#/home') {
-    hideSplash();
-    routeFromHash();
-} else {
-    routeFromHash();
+    // 해시가 있으면 스플래시 숨기기
+if (location.hash && location.hash !== '#/home') {
+  hideSplash();
 }
-
+routeFromHash();
 
 // 이벤트 연결
 window.addEventListener("hashchange", routeFromHash);
