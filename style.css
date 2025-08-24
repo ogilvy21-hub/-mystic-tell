@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MysticTell CSS 수정버전</title>
+    <title>MysticTell 최소 수정 CSS</title>
     <style>
 /* ---- 기존 :root에 이어서 붙이기 ---- */
 :root{
@@ -56,21 +56,18 @@ min-height:100vh; color:#333; overflow-x:hidden;
 }
 .container{max-width:430px;margin:0 auto;min-height:100vh;position:relative}
 
-/* ===== Splash - 수정된 부분 ===== */
+/* ===== Splash ===== */
 .splash-screen{
-position:fixed; /* fixed로 변경 */
-inset:0; /* 전체 화면 덮기 */
-display:flex; align-items:center; justify-content:center;
+position:relative; min-height:100vh; display:flex; align-items:center; justify-content:center;
 background: center/cover no-repeat var(--splash-bg-url);
 touch-action: manipulation;
-z-index:9999; /* z-index 추가 */
 }
 .splash-screen::after{
 content:""; position:absolute; inset:0;
 background:linear-gradient(to bottom, rgba(0,0,0,.10), rgba(0,0,0,.18));
 pointer-events:none;
 }
-.splash-screen.hidden{opacity:0; transform:scale(.98); pointer-events:none; transition:all .6s ease; visibility:hidden;}
+.splash-screen.hidden{opacity:0; transform:scale(.98); pointer-events:none; transition:all .6s ease}
 
 .start-image-btn{
 position:relative; z-index:2; display:block; width:min(100%, 400px);
@@ -83,8 +80,8 @@ transition: transform .08s ease, filter .12s ease;
 }
 .start-image-btn:active{ transform: translateY(1px) scale(.99); filter: drop-shadow(0 6px 16px rgba(0,0,0,.35)); }
 
-/* ===== Main - 수정된 부분 ===== */
-.main-content{display:block;background:#fff;min-height:100vh;padding:20px}
+/* ===== Main ===== */
+.main-content{display:none;background:#fff;min-height:100vh;padding:20px}
 .main-content.show{display:block;animation:slideIn .8s ease-out}
 @keyframes slideIn{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 
@@ -653,6 +650,30 @@ border-color: #673AB7;
 border-color: #795548;
 }
 
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+.palm-types-grid {
+grid-template-columns: repeat(2, 1fr);
+gap: 10px;
+}
+
+.palm-type-card {
+padding: 12px;
+}
+
+.palm-icon {
+height: 60px;
+font-size: 12px;
+}
+
+.palm-title {
+font-size: 12px;
+}
+
+.palm-description {
+font-size: 9px;
+}
+}
 .tarot-card-selection {
 display: flex;
 flex-direction: column;
@@ -854,6 +875,42 @@ opacity: 1;
 .btn-ghost{background:#f6f6f6;color:#333}
 .spacer{height:100px}
 
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+.pillars-grid {
+gap: 8px;
+}
+
+.pillar-card {
+padding: 12px 6px;
+}
+
+.pillar-value {
+font-size: 16px;
+}
+
+.result-card {
+padding: 16px;
+}
+
+.card-value {
+font-size: 18px;
+}
+
+.tarot-card-back {
+width: 60px;
+height: 90px;
+}
+
+.card-back-design {
+font-size: 18px;
+}
+
+.tarot-modal {
+padding: 20px;
+margin: 10px;
+}
+}
 :root { --sheetW: 640px; }
 
 #sheetContent .palm-result-image,
@@ -957,120 +1014,21 @@ html{scroll-behavior:smooth;}
   .mt-hero-left h1{font-size:30px}
 }
 
-/* ===== 수정사항 (핵심) ===== */
+/* ===== 기존 스타일 강제 보존 ===== */
 
-/* 스플래시 숨김 처리 */
-#splashScreen, #splash {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  display: block;
-  pointer-events: auto;
-}
-
-#splashScreen.hidden, #splash.hidden {
+/* Splash가 숨겨졌을 때는 클릭을 통과시키기 */
+#splashScreen.hidden {
   opacity: 0;
   visibility: hidden;
-  display: none !important;
-  pointer-events: none;
+  pointer-events: none; /* 중요: 아래 요소 클릭 가능 */
+  transition: opacity .3s ease, visibility .3s ease;
 }
 
-/* 메인 콘텐츠 항상 표시 가능하도록 */
-#mainContent {
-  display: block !important;
-  position: relative;
-  z-index: 1;
-}
-
-/* 스플래시가 숨겨졌을 때 메인 콘텐츠가 보이도록 */
-body.splash-hidden #mainContent {
-  display: block !important;
-}
-
-/* 네비게이션 복구 */
-.mt-nav {
-  display: block !important;
-}
-
-/* 히어로 섹션 텍스트 복구 */
-.mt-hero-left {
-  display: block !important;
-}
-
-/* 버튼 클릭 가능하도록 */
-.btn, .start-image-btn {
-  pointer-events: auto;
-  cursor: pointer;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 768px) {
-  .pillars-grid {
-    gap: 8px;
-  }
-  
-  .pillar-card {
-    padding: 12px 6px;
-  }
-  
-  .pillar-value {
-    font-size: 16px;
-  }
-  
-  .result-card {
-    padding: 16px;
-  }
-  
-  .card-value {
-    font-size: 18px;
-  }
-  
-  .tarot-card-back {
-    width: 60px;
-    height: 90px;
-  }
-  
-  .card-back-design {
-    font-size: 18px;
-  }
-  
-  .tarot-modal {
-    padding: 20px;
-    margin: 10px;
-  }
-  
-  .palm-types-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-  
-  .palm-type-card {
-    padding: 12px;
-  }
-  
-  .palm-icon {
-    height: 60px;
-    font-size: 12px;
-  }
-  
-  .palm-title {
-    font-size: 12px;
-  }
-  
-  .palm-description {
-    font-size: 9px;
-  }
-}
-
-/* ===== 전역 안전 규칙 ===== */
-img, svg, video { max-width: 100%; height: auto; }
-
-/* 키보드 사용자 친화 */
-.btn:focus,
-.sheet-close-btn:focus,
-.tarot-close-btn:focus {
-  outline: 3px solid rgba(102,126,234,.45);
-  outline-offset: 2px;
+/* 메인 콘텐츠 보정 */
+.main-content {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+  padding-bottom: 80px !important; /* 하단 네비 여백 */
 }
 
 /* 버튼/네비 앵커 기본 밑줄 제거 */
@@ -1081,84 +1039,111 @@ a.btn:hover, .btn:hover { text-decoration: none; }
 @media (prefers-reduced-motion: reduce){
   * { animation: none !important; transition: none !important; }
 }
+
+/* 전역 안전 규칙 */
+img, svg, video { max-width: 100%; height: auto; }
+
+/* 키보드 사용자 친화 */
+.btn:focus,
+.sheet-close-btn:focus,
+.tarot-close-btn:focus {
+  outline: 3px solid rgba(102,126,234,.45);
+  outline-offset: 2px;
+}
+
+/* === Lotto / Sheet spacing overrides === */
+#view-lotto.card{
+  max-width: 720px;
+  margin: 28px auto 44px;
+  padding: 24px;
+}
+.sheet-content{ padding-top: 28px; }
+#fortune-routes-section .mt-wrap{ padding-top: 12px; }
+.result-section.lotto-wrap { margin-bottom: 18px; }
+
+/* ===== 최종 failsafe 규칙들 ===== */
+/* 이 부분은 기존 HTML/JS가 예상하는 구조를 보장합니다 */
+
+/* 스플래시 관련 */
+#splashScreen, #splash {
+  display: block; /* 기본적으로 보이게 */
+}
+
+#splashScreen.hidden, #splash.hidden {
+  display: none !important; /* 숨김 시 완전히 제거 */
+}
+
+/* 메인 콘텐츠 관련 */
+#mainContent {
+  display: block !important; /* 항상 보이게 */
+}
+
+/* 네비게이션 관련 */
+.mt-header, .mt-nav {
+  display: block !important;
+}
+
+/* 히어로 섹션 관련 */
+.mt-hero-split, .mt-hero-left {
+  display: block !important;
+}
+
+.mt-hero-split .mt-wrap {
+  display: grid !important;
+}
     </style>
 </head>
 <body>
-    <!-- 예시 HTML 구조 -->
+    <!-- 데모용 HTML - 실제로는 기존 HTML 구조 사용 -->
     <div class="container">
-        <!-- 스플래시 스크린 -->
-        <div id="splashScreen" class="splash-screen">
-            <button class="start-image-btn" id="startBtn"></button>
-        </div>
-        
-        <!-- 메인 콘텐츠 -->
-        <div id="mainContent" class="main-content show">
-            <!-- 헤더 -->
-            <div class="mt-header">
-                <div class="mt-wrap">
-                    <a href="/" class="mt-logo">MysticTell</a>
-                    <nav class="mt-nav">
-                        <a href="#home">홈</a>
-                        <a href="#fortune">오늘의 운세</a>
-                        <a href="#saju">정통 사주</a>
-                        <a href="#lucky">행운번호</a>
-                        <a href="#guide">이용 가이드</a>
-                        <a href="#help">문의</a>
-                    </nav>
-                </div>
+        <div class="main-content show">
+            <div class="header">
+                <div class="logo">MysticTell</div>
+                <div class="subtitle">신비로운 미래를 알려드리는 디지털 점술사</div>
             </div>
             
-            <!-- 히어로 섹션 -->
-            <div class="mt-hero-split">
-                <div class="mt-wrap">
-                    <div class="mt-hero-left">
-                        <div class="eyebrow">맞춤 운세</div>
-                        <h1>미스틱텔</h1>
-                        <ul class="ticks">
-                            <li>✨ 매일 업데이트 되는 신규 운세</li>
-                            <li>😊 개인정보 저장 없이 결과 확인</li>
-                            <li>🔮 무료로 보는 내일</li>
-                        </ul>
-                        <div>
-                            <a href="#fortune" class="btn-primary">오늘의 운세</a>
-                            <a href="#saju" class="btn">정통 사주</a>
-                            <a href="#lucky" class="btn">행운번호</a>
-                            <a href="#palm" class="btn">바로 시작</a>
-                        </div>
-                    </div>
-                    <div class="mt-hero-right">
-                        <div class="hero-card">
-                            <h3>🔮 MysticTell</h3>
-                            <p>신비로운 미래를 알려드리는 디지털 점술사</p>
-                            <div class="main-crystal">
-                                구슬 속 미래를<br>확인해보세요
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="main-crystal">
+                구슬 속 미래를<br>확인해보세요
             </div>
             
-            <!-- 서비스 그리드 -->
+            <div class="section-title">✨ 핵심 운세 서비스</div>
+            
             <div class="service-grid">
                 <div class="service-item">
-                    <div class="service-icon">🎴</div>
+                    <div class="service-icon">📅</div>
                     <div class="service-name">오늘의 운세</div>
                     <div class="service-desc">매일 새로운 운세를 확인하세요</div>
                 </div>
                 <div class="service-item">
-                    <div class="service-icon">🔢</div>
-                    <div class="service-name">정통 사주</div>
-                    <div class="service-desc">생년월일로 운명을 분석합니다</div>
-                </div>
-                <div class="service-item">
-                    <div class="service-icon">🍀</div>
+                    <div class="service-icon">🧮</div>
                     <div class="service-name">행운번호</div>
-                    <div class="service-desc">오늘의 행운을 가져다줄 숫자</div>
+                    <div class="service-desc">행운 기운 넘치는 번호</div>
                 </div>
                 <div class="service-item">
-                    <div class="service-icon">👋</div>
-                    <div class="service-name">바로 시작</div>
-                    <div class="service-desc">간단한 질문으로 바로 시작</div>
+                    <div class="service-icon">📜</div>
+                    <div class="service-name">정통 사주</div>
+                    <div class="service-desc">생년월일로 보는 인생 운명</div>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon">🔮</div>
+                    <div class="service-name">타로 점</div>
+                    <div class="service-desc">카드로 진단하는 미래 예측</div>
+                </div>
+            </div>
+            
+            <!-- 사주 결과 예시 -->
+            <div class="section-title">⭐ 특별 서비스</div>
+            
+            <div class="special-grid">
+                <div class="special-item">
+                    <div class="special-icon">💎</div>
+                    <div class="special-title">궁합 보기</div>
+                    <div class="special-desc">나와 그 사람의 궁합</div>
+                </div>
+                <div class="special-item">
+                    <div class="special-icon">🌟</div>
+                    <div class="special-title">신년 운세</div>
+                    <div class="special-desc">새해 첫날 전체 운세</div>
                 </div>
             </div>
         </div>
