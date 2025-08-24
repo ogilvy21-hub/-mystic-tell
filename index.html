@@ -1,664 +1,1928 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-W7FLS9VD');</script>
-<!-- End Google Tag Manager -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6295549457389423" crossorigin="anonymous"></script>
-<meta charset="UTF-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">                                        
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="google-site-verification" content="1QBY45_o4H-d9oeXsXzAkCG7Wh3KvquTfm6-_HDOSX4" />
-<meta name="naver-site-verification" content="62f6fac5e8d13d265e2e647708858411d2a3b4da" />
-<meta name="msvalidate.01" content="19C58CB71B35EFD8E892ACA8FDD1257C" />
-<meta name="description" content="신비로운 미래를 알려드리는 디지털 점술사 - 오늘의 운세, 정통 사주, 타로 카드">
-<meta name="keywords" content="운세, 사주, 타로, 점술, 미스틱텔">
-<title>🔮 MysticTell</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 MysticTell - 맞춤 운세</title>
+    <meta name="description" content="신비로운 미래를 알려드리는 디지털 점술사 - 오늘의 운세, 정통 사주, 타로 카드">
+    <meta name="keywords" content="운세, 사주, 타로, 점술, 미스틱텔">
+    
+    <style>
+        :root {
+            --splash-bg-url: url('https://i.imgur.com/zjaoFlI.png');
+            --start-img-url: url('https://i.imgur.com/SmhPkiD.png');
+            --start-blink-duration: 1700ms;
+            --start-blink-scale-min: 1;
+            --start-blink-scale-max: 1.06;
+            --start-blink-opacity-min: .85;
+            --sheetW: 640px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background: #fff;
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ===== 스플래시 화면 ===== */
+        #splashScreen {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: center/cover no-repeat var(--splash-bg-url);
+            touch-action: manipulation;
+        }
+
+        #splashScreen::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,.10), rgba(0,0,0,.18));
+            pointer-events: none;
+        }
+
+        #splashScreen.hidden {
+            opacity: 0;
+            transform: scale(.98);
+            pointer-events: none;
+            transition: all .6s ease;
+            display: none !important;
+        }
+
+        .start-image-btn {
+            position: relative;
+            z-index: 2;
+            display: block;
+            width: min(100%, 400px);
+            aspect-ratio: 3.2 / 1;
+            background: center/contain no-repeat var(--start-img-url);
+            border: none;
+            outline: none;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            filter: drop-shadow(0 10px 22px rgba(0,0,0,.35));
+            transition: transform .08s ease, filter .12s ease;
+            animation: start-blink var(--start-blink-duration) ease-in-out infinite;
+            will-change: transform, opacity, filter;
+        }
+
+        .start-image-btn:active {
+            transform: translateY(1px) scale(.99);
+            filter: drop-shadow(0 6px 16px rgba(0,0,0,.35));
+        }
+
+        @keyframes start-blink {
+            0%, 100% {
+                opacity: var(--start-blink-opacity-min);
+                transform: scale(var(--start-blink-scale-min));
+                filter: drop-shadow(0 10px 22px rgba(0,0,0,.32));
+            }
+            50% {
+                opacity: 1;
+                transform: scale(var(--start-blink-scale-max));
+                filter: drop-shadow(0 16px 28px rgba(0,0,0,.4));
+            }
+        }
+
+        /* ===== 메인 콘텐츠 ===== */
+        #mainContent {
+            display: none;
+            background: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        #mainContent.show {
+            display: block;
+            animation: slideIn .8s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+            border-radius: 0 0 30px 30px;
+            margin: -20px -20px 30px -20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,.1) 0%, transparent 70%);
+            animation: sparkle 4s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: .3; transform: scale(1); }
+            50% { opacity: .8; transform: scale(1.1); }
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: .9;
+            position: relative;
+            z-index: 2;
+        }
+
+        #mainCrystal {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 20px auto;
+            border: 3px solid rgba(102,126,234,.3);
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.8), rgba(255,255,255,.3), transparent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #eef;
+            font-size: 14px;
+            animation: float 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: all .3s ease;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        #mainCrystal:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102,126,234,.3);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 30px 0 16px;
+            color: #333;
+            text-align: center;
+        }
+
+        /* ===== 페이지 및 뷰 관리 ===== */
+        .page {
+            display: none;
+        }
+
+        .page.show {
+            display: block;
+        }
+
+        /* ===== 서비스 그리드 ===== */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .service-item {
+            background: linear-gradient(135deg, #ffefd5 0%, #ffd5e5 100%);
+            border-radius: 16px;
+            padding: 20px 12px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,.08);
+            transition: all .2s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.4), transparent);
+            transition: left .5s;
+        }
+
+        .service-item:hover::before {
+            left: 100%;
+        }
+
+        .service-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(0,0,0,.12);
+        }
+
+        .service-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .service-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .service-desc {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .special-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 16px 0 24px;
+        }
+
+        .special-item {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .special-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,.1);
+        }
+
+        .special-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .special-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #333;
+        }
+
+        .special-desc {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* ===== 카드 스타일 ===== */
+        .card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,.06);
+            margin-bottom: 20px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .label {
+            font-size: 13px;
+            color: #444;
+            font-weight: bold;
+        }
+
+        .input, select {
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            background: #fff;
+            outline: none;
+        }
+
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(102,126,234,.25);
+            transition: transform .1s ease;
+            text-decoration: none;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 8px;
+        }
+
+        .btn-ghost {
+            background: #f6f6f6;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        /* ===== 하단 네비게이션 ===== */
+        #bottomNav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 430px;
+            width: 100%;
+            background: #fff;
+            padding: 10px 16px;
+            box-shadow: 0 -2px 15px rgba(0,0,0,.1);
+            display: none;
+            justify-content: space-around;
+            border-radius: 16px 16px 0 0;
+            z-index: 20;
+        }
+
+        #bottomNav.show {
+            display: flex;
+        }
+
+        .nav-item {
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s;
+            padding: 8px;
+            border-radius: 12px;
+            user-select: none;
+        }
+
+        .nav-item:hover {
+            background: #f5f5f5;
+            transform: translateY(-2px);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-text {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .nav-item.active .nav-text {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #667eea;
+        }
+
+        /* ===== 결과 시트 ===== */
+        #sheetBackdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.4);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 30;
+            backdrop-filter: blur(5px);
+        }
+
+        #sheetBackdrop.show {
+            display: flex;
+        }
+
+        .sheet {
+            width: 100%;
+            max-width: 430px;
+            background: #fff;
+            border-radius: 20px 20px 0 0;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: sheetUp .3s ease-out;
+            box-shadow: 0 -10px 40px rgba(0,0,0,.2);
+        }
+
+        @keyframes sheetUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .sheet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 20px 10px;
+            border-bottom: 1px solid #f0f0f0;
+            background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+        }
+
+        #sheetTitle {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        #btnClose {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(102,126,234,.1);
+            color: #667eea;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s ease;
+        }
+
+        #btnClose:hover {
+            background: rgba(102,126,234,.2);
+            transform: scale(1.1);
+        }
+
+        #sheetContent {
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .sheet-actions {
+            padding: 0 20px 30px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        /* ===== 결과 카드 ===== */
+        .result-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-icon {
+            font-size: 20px;
+            margin-right: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #667eea;
+            margin: 8px 0;
+        }
+
+        .card-description {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .card-description strong {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .section-title-result {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 16px;
+            padding-left: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-section {
+            margin-bottom: 24px;
+        }
+
+        /* ===== 정보 박스 ===== */
+        .info-box {
+            background: rgba(102, 126, 234, 0.05);
+            border: 1px dashed rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .info-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .info-content {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #666;
+        }
+
+        /* ===== 로또 스타일 ===== */
+        .lotto-wrap {
+            text-align: center;
+        }
+
+        .lotto-balls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 10px 0 6px;
+        }
+
+        .ball {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #fff;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            box-shadow: 0 6px 16px rgba(0,0,0,.18);
+        }
+
+        .ball.bonus {
+            background: linear-gradient(135deg, #ff9800, #ffc107);
+        }
+
+        .lotto-meta {
+            color: #666;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        /* ===== 타로 카드 ===== */
+        .tarot-card-selection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 0;
+        }
+
+        .tarot-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tarot-card-back {
+            width: 70px;
+            height: 105px;
+            background: linear-gradient(145deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 12px;
+            border: 3px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15), inset 0 1px 3px rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
+        }
+
+        .tarot-card-back:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25), 0 0 20px rgba(102,126,234,0.4);
+            border-color: #ffd700;
+        }
+
+        .card-back-design {
+            font-size: 22px;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            filter: drop-shadow(0 0 8px rgba(255,215,0,0.3));
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .tarot-card-front {
+            position: absolute;
+            inset: 0;
+            background: #fff;
+            border-radius: 9px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 9px;
+            color: #333;
+            border: 2px solid #ffd700;
+            box-shadow: inset 0 2px 8px rgba(255,215,0,0.2);
+            transform: rotateY(180deg);
+            backface-visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .tarot-card-back.revealed .tarot-card-front {
+            opacity: 1;
+        }
+
+        .tarot-card-back.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .tarot-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ===== 타로 모달 ===== */
+        #tarotModalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        #tarotModalOverlay.show {
+            display: flex;
+        }
+
+        .tarot-modal {
+            background: linear-gradient(145deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8), inset 0 2px 5px rgba(255,255,255,0.1);
+            border: 2px solid #667eea;
+            position: relative;
+            color: white;
+            animation: modalIn 0.3s ease-out;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        #tarotCloseBtn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #ffd700;
+            font-size: 24px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        #tarotCloseBtn:hover {
+            background: rgba(255,215,0,0.1);
+            transform: scale(1.1);
+        }
+
+        /* ===== 럭키 아이템 그리드 ===== */
+        .lucky-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .lucky-item-card {
+            background: linear-gradient(135deg, #f8f9ff, #e8f4ff);
+            border: 2px solid #e0e7ff;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .lucky-item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .lucky-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .lucky-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .lucky-value {
+            font-weight: bold;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .fortune-date {
+            text-align: center;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .spacer {
+            height: 100px;
+        }
+
+        /* ===== 반응형 ===== */
+        @media (max-width: 768px) {
+            .service-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .tarot-card-back {
+                width: 60px;
+                height: 90px;
+            }
+            
+            .card-back-design {
+                font-size: 18px;
+            }
+        }
+    </style>
 </head>
 <body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W7FLS9VD"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-<header class="mt-header">
-  <div class="mt-wrap">
-    <!-- 로고도 라우팅 패턴을 맞추면 더 안전 -->
-    <a href="#/home" class="mt-logo">MysticTell</a>
-
-<nav class="mt-nav">
-  <a href="#/home" class="btn-ghost">홈</a>
-  <a href="#/fortune/today" class="btn-ghost">오늘의 운세</a>
-  <a href="#/fortune/saju" class="btn-ghost">정통 사주</a>
-  <a href="#/fortune/lotto" class="btn-ghost">행운번호</a>
-  <a href="#guide" class="btn-ghost">이용 가이드</a>
-  <a href="#contact" class="btn-ghost">문의</a>
-</nav>
-    
-  </div>
-</header>
-<!-- Hero split -->
-<section class="mt-hero-split" id="home">
-  <div class="mt-wrap">
-    <div class="mt-hero-left">
-      <p class="eyebrow">오늘을 시작하며,</p>
-      <h1>내일을 본다,<br><span class="accent">맞춤 운세</span> 미스틱텔</h1>
-      <ul class="ticks">
-        <li>✨ 매일 업데이트 되는 신규 운세</li>
-        <li>😊 개인정보 저장 없이 결과 확인</li>
-        <li>🎁 무료로 보는 내일</li>
-      </ul>
-     <div class="main-buttons">
-     <a href="#/fortune/today" class="btn btn-primary">오늘의 운세</a>
-     <a href="#/fortune/saju" class="btn btn-primary">정통 사주</a>
-     <a href="#/fortune/lotto" class="btn btn-primary">행운번호</a>
-     <a href="#/home" class="btn btn-primary">바로 시작</a>
-    </div>
-
-    </div>
-
-    <div class="mt-hero-right">
-      <div class="card hero-card">
-        <div class="card-body">
-          <h3>고민을 구슬에 담아보세요</h3>
-          <p>간단한 입력으로 빠르게 결과를 받아보세요.</p>
-          <a href="#today" class="btn-sm">바로 시작</a>
+    <div class="container">
+        <!-- 스플래시 화면 -->
+        <div id="splashScreen" aria-label="MysticTell Splash">
+            <button class="start-image-btn" id="startBtn" aria-label="Start"></button>
         </div>
-      </div>
+
+        <!-- 메인 콘텐츠 -->
+        <div id="mainContent">
+            <div class="header">
+                <div class="logo">🔮 MysticTell</div>
+                <div class="subtitle">신비로운 미래를 알려드리는 디지털 점술사</div>
+                <div id="mainCrystal">구슬 속 미래를<br/>확인해보세요</div>
+            </div>
+
+            <!-- 홈 페이지 -->
+            <section id="page-home" class="page show">
+                <div class="section-title">✨ 핵심 운세 서비스</div>
+                <div class="service-grid">
+                    <div class="service-item" data-route="fortune-today">
+                        <span class="service-icon">🗓️</span>
+                        <div class="service-name">오늘의 운세</div>
+                        <div class="service-desc">매일 새로운 운세를 확인하세요</div>
+                    </div>
+                    <div class="service-item" data-route="fortune-lotto">
+                        <div class="service-icon">🎲</div>
+                        <div class="service-name">행운번호</div>
+                        <div class="service-desc">통계 기반 로또 번호</div>
+                    </div>
+                    <div class="service-item" data-route="fortune-saju">
+                        <span class="service-icon">📜</span>
+                        <div class="service-name">정통 사주</div>
+                        <div class="service-desc">생년월일로 보는 인생 운세</div>
+                    </div>
+                    <div class="service-item" data-route="fortune-tarot">
+                        <span class="service-icon">🃏</span>
+                        <div class="service-name">타로 점</div>
+                        <div class="service-desc">카드가 전하는 미래 메시지</div>
+                    </div>
+                </div>
+
+                <div class="section-title">🌟 특별 서비스</div>
+                <div class="special-grid">
+                    <div class="special-item" data-route="fortune-match">
+                        <div class="special-icon">💕</div>
+                        <div class="special-title">궁합 보기</div>
+                        <div class="special-desc">두 사람의 운명적 만남</div>
+                    </div>
+                    <div class="special-item" data-route="fortune-year">
+                        <div class="special-icon">🎊</div>
+                        <div class="special-title">신년 운세</div>
+                        <div class="special-desc">2025년 한 해 운세</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 운세 페이지 -->
+            <section id="page-fortune" class="page">
+                <div class="section-title" id="fortuneTitle">운세</div>
+
+                <!-- 오늘의 운세 -->
+                <div id="view-today" class="card" style="display:none;">
+                    <div class="field">
+                        <div class="label">생년월일</div>
+                        <input class="input" type="date" id="today-birth" />
+                    </div>
+                    <div class="field">
+                        <div class="label">이름 (선택)</div>
+                        <input class="input" type="text" id="today-name" placeholder="이름을 입력하세요" />
+                    </div>
+                    <div class="field">
+                        <div class="label">달력</div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <label><input type="radio" name="today-cal" id="today-cal-solar" value="solar" checked> 양력</label>
+                            <label><input type="radio" name="today-cal" id="today-cal-lunar" value="lunar"> 음력</label>
+                            <label style="margin-left:8px;"><input type="checkbox" id="today-leap"> 윤달</label>
+                        </div>
+                    </div>
+                    <button class="btn" id="btnToday">오늘의 운세 보기</button>
+                </div>
+
+                <!-- 정통 사주 -->
+                <div id="view-saju" class="card" style="display:none;">
+                    <div class="field">
+                        <div class="label">생년월일</div>
+                        <input class="input" type="date" id="saju-birth" />
+                    </div>
+                    <div class="field">
+                        <div class="label">이름 (선택)</div>
+                        <input class="input" type="text" id="saju-name" placeholder="이름을 입력하세요" />
+                    </div>
+                    <div class="field">
+                        <div class="label">성별</div>
+                        <select id="saju-gender" class="input">
+                            <option value="F">여성</option>
+                            <option value="M">남성</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <div class="label">태어난 시간 (선택)</div>
+                        <input class="input" type="time" id="saju-time" step="900" placeholder="예: 13:30" />
+                    </div>
+                    <div class="field">
+                        <div class="label">달력</div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <label><input type="radio" name="saju-cal" id="saju-cal-solar" value="solar" checked> 양력</label>
+                            <label><input type="radio" name="saju-cal" id="saju-cal-lunar" value="lunar"> 음력</label>
+                            <label style="margin-left:8px;"><input type="checkbox" id="saju-leap"> 윤달</label>
+                        </div>
+                    </div>
+                    <button class="btn" id="btnSaju">사주 해석 보기</button>
+                </div>
+
+                <!-- 행운번호 -->
+                <div id="view-lotto" class="card" style="display:none;">
+                    <h3 style="margin-bottom: 20px; text-align: center; color: #667eea;">🎲 행운의 로또번호</h3>
+                    <p style="text-align: center; color: #666; margin-bottom: 25px; font-style: italic;">
+                        실제 통계 + 개인 행운수 조합
+                    </p>
+                    <div class="field">
+                        <div class="label">생년월일 (선택사항)</div>
+                        <input type="text" id="lotto-birth" placeholder="1990-01-01" class="input">
+                        <small style="color: #666;">개인맞춤 행운번호를 위해 입력하세요!</small>
+                    </div>
+                    <button id="btnLotto" class="btn">
+                        🎲 행운번호 생성하기
+                    </button>
+                    <div style="margin-top: 16px; font-size: 12px; color: #666; text-align: center;">
+                        💡 가장 자주 나온 번호들과 개인 행운수의 조합
+                    </div>
+                </div>
+
+                <!-- 타로 -->
+                <div id="view-tarot" class="card" style="display:none;">
+                    <h3 style="margin-bottom: 20px; text-align: center; color: #667eea;">🔮 타로 카드 점</h3>
+                    <p style="text-align: center; color: #666; margin-bottom: 25px; font-style: italic;">
+                        🌟 마음을 집중하고 카드를 선택하세요
+                    </p>
+                    
+                    <div class="tarot-card-selection">
+                        <div class="tarot-row">
+                            <div class="tarot-card-back" data-card-index="0">
+                                <div class="card-back-design">🌟</div>
+                            </div>
+                            <div class="tarot-card-back" data-card-index="1">
+                                <div class="card-back-design">🌟</div>
+                            </div>
+                            <div class="tarot-card-back" data-card-index="2">
+                                <div class="card-back-design">🌟</div>
+                            </div>
+                            <div class="tarot-card-back" data-card-index="3">
+                                <div class="card-back-design">🌟</div>
+                            </div>
+                        </div>
+                        <div class="tarot-row">
+                            <div class="tarot-card-back" data-card-index="4">
+                                <div class="card-back-design">🌟</div>
+                            </div>
+                            <div class="tarot-card-back" data-card-index="5">
+                                <div class="card-back-design">🌟</div>
+                            </div>
+                            <div class="tarot-card-back" data-card-index="6">
+                                <div class="card-back-design">🌟</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tarot-actions">
+                        <button id="btnRandomTarot" class="btn" style="background: linear-gradient(135deg, #8e44ad, #9b59b6);">
+                            🎲 랜덤 뽑기
+                        </button>
+                        <button id="btnResetTarot" class="btn btn-ghost">🔄 다시 시작</button>
+                    </div>
+                </div>
+
+                <!-- 궁합 보기 -->
+                <div id="view-match" class="card" style="display:none;">
+                    <div class="field">
+                        <div class="label">당신의 생년월일</div>
+                        <input class="input" type="date" id="match-a" />
+                    </div>
+                    <div class="field">
+                        <div class="label">상대의 생년월일</div>
+                        <input class="input" type="date" id="match-b" />
+                    </div>
+                    <button class="btn" id="btnMatch">궁합 확인</button>
+                </div>
+
+                <!-- 신년 운세 -->
+                <div id="view-year" class="card" style="display:none;">
+                    <div class="field">
+                        <div class="label">생년월일</div>
+                        <input class="input" type="date" id="year-birth" />
+                    </div>
+                    <button class="btn" id="btnYear">2025 신년 운세</button>
+                </div>
+            </section>
+
+            <!-- 상담 페이지 -->
+            <section id="page-chat" class="page">
+                <div class="card">
+                    <div class="label" style="margin-bottom:8px;">상담 준비중</div>
+                    <div style="font-size:14px;color:#555;">곧 전문가와 1:1 상담 기능이 열립니다.</div>
+                </div>
+            </section>
+
+            <!-- 마이 페이지 -->
+            <section id="page-me" class="page">
+                <div class="card">
+                    <div class="label" style="margin-bottom:8px;">마이 페이지(로컬)</div>
+                    <div style="font-size:14px;color:#555;">최근 결과가 이 기기(브라우저)에 저장됩니다.</div>
+                    <button class="btn" id="btnClear" style="margin-top:12px;">최근 결과 모두 삭제</button>
+                </div>
+            </section>
+
+            <div class="spacer"></div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <div id="bottomNav">
+            <div class="nav-item active" data-tab="home">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-text">홈</div>
+            </div>
+            <div class="nav-item" data-tab="fortune">
+                <div class="nav-icon">🔮</div>
+                <div class="nav-text">운세</div>
+            </div>
+            <div class="nav-item" data-tab="chat">
+                <div class="nav-icon">💬</div>
+                <div class="nav-text">상담</div>
+            </div>
+            <div class="nav-item" data-tab="me">
+                <div class="nav-icon">👤</div>
+                <div class="nav-text">마이</div>
+            </div>
+        </div>
     </div>
-  </div>
-</section>
 
-<div class="container">
-<!-- Splash: 배경 이미지 + 스타트 이미지 버튼 -->
-<div class="splash-screen" id="splashScreen" aria-label="MysticTell Splash">
-<button class="start-image-btn" id="startBtn" aria-label="Start"></button>
-</div>
-
-<!-- Main -->
-<div class="main-content" id="mainContent">
-<div class="header">
-<div class="logo">🔮 MysticTell</div>
-<div class="subtitle">신비로운 미래를 알려드리는 디지털 점술사</div>
-<div class="main-crystal" id="mainCrystal">구슬 속 미래를<br/>확인해보세요</div>
-</div>
-
-<!-- 홈 -->
-<section id="page-home" class="page show">
-<div class="section-title">✨ 핵심 운세 서비스</div>
-<div class="service-grid">
-<div class="service-item" data-route="fortune-today">
-<span class="service-icon">🗓️</span>
-<div class="service-name">오늘의 운세</div>
-<div class="service-desc">매일 새로운 운세를 확인하세요</div>
-</div>
-<div class="service-item" data-route="fortune-lotto">
-  <div class="service-icon">🎲</div>
-  <h3>행운번호</h3>
-  <p>통계 기반 로또 번호</p>
-</div>
-<div class="service-item" data-route="fortune-saju">
-<span class="service-icon">📜</span>
-<div class="service-name">정통 사주</div>
-<div class="service-desc">생년월일로 보는 인생 운세</div>
-</div>
-<div class="service-item" data-route="fortune-tarot">
-<span class="service-icon">🃏</span>
-<div class="service-name">타로 점</div>
-<div class="service-desc">카드가 전하는 미래 메시지</div>
-</div>
-<div class="service-item" data-route="fortune-match">
-<span class="service-icon">💕</span>
-<div class="service-name">궁합 보기</div>
-<div class="service-desc">두 사람의 운명적 만남</div>
-</div>
-</div>
-<div class="section-title">🌟 특별 서비스</div>
-<div class="special-grid">
-<div class="special-item" data-route="fortune-year">
-<div class="special-icon">🎊</div>
-<div class="special-title">신년 운세</div>
-<div class="special-desc">2025년 한 해 운세</div>
-</div>
-<div class="special-item" data-route="fortune-palm">
-<div class="special-icon">🖐️</div>
-<div class="special-title">손금 보기</div>
-<div class="special-desc">손바닥으로 보는 운명</div>
-</div>
-</div>
-</section>
-
-<!-- 운세 폼 -->
-<section id="page-fortune" class="page">
-<div class="section-title" id="fortuneTitle">운세</div>
-
-<!-- 오늘의 운세 -->
-<section id="today" class="mt-section">
-  <div class="mt-wrap">
-    <div id="view-today" class="card" style="display:none;">
-      <div class="field">
-        <div class="label">생년월일</div>
-        <input class="input" type="date" id="today-birth" />
-      </div>
-      <label class="field-label">달력</label>
-      <div class="seg">
-        <label><input type="radio" name="today-cal" id="today-cal-solar" value="solar" checked> 양력</label>
-        <label><input type="radio" name="today-cal" id="today-cal-lunar" value="lunar"> 음력</label>
-        <label style="margin-left:8px;"><input type="checkbox" id="today-leap"> 윤달</label>
-      </div>
-      <button class="btn" id="btnToday">오늘의 운세 보기</button>
+    <!-- 결과 시트 -->
+    <div id="sheetBackdrop" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+        <div class="sheet" role="document">
+            <div class="sheet-header">
+                <div id="sheetTitle">결과</div>
+                <button id="btnClose">✕</button>
+            </div>
+            <div id="sheetContent">내용</div>
+            <div class="sheet-actions">
+                <button class="btn" id="btnSave">최근 결과 저장</button>
+            </div>
+        </div>
     </div>
-  </div>
-</section>
 
-<!-- 정통 사주 -->
-<section id="saju" class="mt-section">
-  <div class="mt-wrap">
-    <div id="view-saju" class="card" style="display:none;">
-      <div class="field">
-        <div class="label">생년월일</div>
-        <input class="input" type="date" id="saju-birth" />
-      </div>
-      <label class="field-label">달력</label>
-      <div class="seg">
-        <label><input type="radio" name="saju-cal" id="saju-cal-solar" value="solar" checked> 양력</label>
-        <label><input type="radio" name="saju-cal" id="saju-cal-lunar" value="lunar"> 음력</label>
-        <label style="margin-left:8px;"><input type="checkbox" id="saju-leap"> 윤달</label>
-      </div>
-      <!-- 이름 (선택) -->
-      <label for="saju-name" class="field-label">이름 (선택)</label>
-      <input id="saju-name" type="text" placeholder="이름을 입력하세요" class="input" />
-      <div class="field">
-        <div class="label">성별</div>
-        <select id="saju-gender" class="input">
-          <option value="F">여성</option>
-          <option value="M">남성</option>
-        </select>
-      </div>
-      <div class="field">
-        <div class="label">태어난 시간 (선택)</div>
-        <input class="input" type="time" id="saju-time" step="900" placeholder="예: 13:30" />
-      </div>
-      <button class="btn" id="btnSaju">사주 해석 보기</button>
+    <!-- 타로 모달 -->
+    <div id="tarotModalOverlay">
+        <div class="tarot-modal" id="tarotModal">
+            <button id="tarotCloseBtn">✕</button>
+            <div id="tarotModalContent">
+                <!-- 모달 내용이 JavaScript로 채워짐 -->
+            </div>
+        </div>
     </div>
-  </div>
-</section>
 
-<!-- 타로 섹션 -->
-<div id="view-tarot" class="card" style="display:none;">
-<h3 style="margin-bottom: 20px; text-align: center; color: #667eea;">🔮 타로 카드 점</h3>
-<p style="text-align: center; color: #666; margin-bottom: 25px; font-style: italic;">
-🌟 마음을 집중하고 카드를 선택하세요
-</p>
-<!-- 7장 카드 선택 영역 -->
-<div class="tarot-card-selection">
-<div class="tarot-row">
-<div class="tarot-card-back" data-card-index="0">
-<div class="card-back-design">🌟</div>
-</div>
-<div class="tarot-card-back" data-card-index="1">
-<div class="card-back-design">🌟</div>
-</div>
-<div class="tarot-card-back" data-card-index="2">
-<div class="card-back-design">🌟</div>
-</div>
-<div class="tarot-card-back" data-card-index="3">
-<div class="card-back-design">🌟</div>
-</div>
-</div>
-<div class="tarot-row">
-<div class="tarot-card-back" data-card-index="4">
-<div class="card-back-design">🌟</div>
-</div>
-<div class="tarot-card-back" data-card-index="5">
-<div class="card-back-design">🌟</div>
-</div>
-<div class="tarot-card-back" data-card-index="6">
-<div class="card-back-design">🌟</div>
-</div>
-</div>
-</div>
-<div class="tarot-actions">
-<button id="btnRandomTarot" class="btn" style="background: linear-gradient(135deg, #8e44ad, #9b59b6);">
-🎲 랜덤 뽑기
-</button>
-<button id="btnResetTarot" class="btn btn-ghost">🔄 다시 시작</button>
-</div>
-</div>
+    <!-- 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.12/lunar.min.js"></script>
+    
+    <!-- 메인 JavaScript -->
+    <script>
+        // ===========================================
+        // 전역 변수 및 헬퍼 함수
+        // ===========================================
+        const $ = (sel) => document.querySelector(sel);
+        const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+        const LS_KEY = 'mystictell_recent_results';
 
-<!-- 손금 섹션 -->
-<div id="view-palm" class="card" style="display:none;">
-<h3 style="margin-bottom: 20px; text-align: center; color: #667eea;">🖐️ 손금 보기</h3>
-<p style="text-align: center; color: #666; margin-bottom: 25px; font-style: italic;">
-✨ 관심 있는 손금 유형을 선택하세요
-</p>
-<!-- 행운번호 섹션: palm 밖으로 빼서 형제로 이동 -->
-<div id="view-lotto" class="card" style="display:none;">
-  <h3 style="margin-bottom: 20px; text-align: center; color: #667eea;">🎲 행운의 로또번호</h3>
-  <p style="text-align: center; color: #666; margin-bottom: 25px; font-style: italic;">
-  실제 통계 + 개인 행운수 조합
-  </p>
-  <br>
-  <div class="form-section">
-    <label>생년월일 (선택사항)</label>
-    <input type="text" id="lotto-birth" placeholder="1990-01-01" class="form-input">
-    <br>
-    <small>개인맞춤 행운번호를 위해 입력하세요!</small>
-  </div>
-  <br>
-  <button id="btnLotto" class="btn-primary">
-    🎲 행운번호 생성하기
-  </button>
-  <br>
-  <div class="info-text">
-    💡 가장 자주 나온 번호들과 개인 행운수의 조합
-  </div>
-</div>
-<!-- 손금 섹션 -->
-<div class="palm-types-grid">
-<div class="palm-type-card" data-palm-type="life">
-<div class="palm-image">
-<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #4CAF50, #8BC34A);">
-<defs>
-<!-- 더 자연스러운 손바닥 모양 -->
-<path id="hand" d="M25,75 Q20,70 22,60 Q25,50 30,40 Q35,30 45,25 Q50,20 60,22 Q65,18 70,20 Q75,15 80,18 Q85,15 90,20 Q95,25 92,35 Q95,45 90,55 Q85,65 75,70 Q65,75 50,75 Q37,75 25,75 Z" fill="rgba(255,255,255,0.95)" stroke="rgba(255,255,255,0.8)" stroke-width="1"/>
-</defs>
-<use href="#hand"/>
-<!-- 생명선 -->
-<path d="M30,40 Q25,50 27,75" stroke="#2E7D32" stroke-width="4" fill="none" stroke-linecap="round"/>
-<text x="60" y="45" fill="white" font-size="12" font-weight="bold" text-anchor="middle">생명선</text>
-<text x="60" y="58" fill="white" font-size="16" text-anchor="middle">🌱</text>
-</svg>
-</div>
-<div class="palm-title">생명선 (生命線)</div>
-<div class="palm-description">건강과 생명력, 체력을 나타내는 선</div>
-</div>
+        // ===========================================
+        // 스플래시 관리
+        // ===========================================
+        function hideSplash() {
+            const splash = $('#splashScreen');
+            const main = $('#mainContent');
+            const nav = $('#bottomNav');
 
-<div class="palm-type-card" data-palm-type="head">
-<div class="palm-image">
-<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #2196F3, #03A9F4);">
-<use href="#hand"/>
-<!-- 지혜선 -->
-<path d="M30,40 Q50,45 75,50 Q85,52 90,55" stroke="#1565C0" stroke-width="4" fill="none" stroke-linecap="round"/>
-<text x="60" y="35" fill="white" font-size="12" font-weight="bold" text-anchor="middle">지혜선</text>
-<text x="60" y="68" fill="white" font-size="16" text-anchor="middle">🧠</text>
-</svg>
-</div>
-<div class="palm-title">지혜선 (知慧線)</div>
-<div class="palm-description">지능과 사고력, 학습능력을 보여주는 선</div>
-</div>
+            console.log('🔮 스플래시 숨김 시작...');
 
-<div class="palm-type-card" data-palm-type="heart">
-<div class="palm-image">
-<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #E91E63, #F06292);">
-<use href="#hand"/>
-<!-- 감정선 -->
-<path d="M22,35 Q45,30 70,32 Q85,34 92,35" stroke="#AD1457" stroke-width="4" fill="none" stroke-linecap="round"/>
-<text x="60" y="50" fill="white" font-size="12" font-weight="bold" text-anchor="middle">감정선</text>
-<text x="60" y="63" fill="white" font-size="16" text-anchor="middle">💖</text>
-</svg>
-</div>
-<div class="palm-title">감정선 (感情線)</div>
-<div class="palm-description">사랑과 감정, 인간관계를 나타내는 선</div>
-</div>
+            if (splash) {
+                splash.classList.add('hidden');
+                console.log('✅ 스플래시 스크린 숨김 완료');
+            }
 
-<div class="palm-type-card" data-palm-type="fate">
-<div class="palm-image">
-<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #FF9800, #FFC107);">
-<use href="#hand"/>
-<!-- 운명선 -->
-<path d="M60,75 Q58,60 60,45 Q62,30 65,22" stroke="#E65100" stroke-width="4" fill="none" stroke-linecap="round"/>
-<text x="40" y="45" fill="white" font-size="12" font-weight="bold" text-anchor="middle">운명선</text>
-<text x="80" y="58" fill="white" font-size="16" text-anchor="middle">🌟</text>
-</svg>
-</div>
-<div class="palm-title">운명선 (運命線)</div>
-<div class="palm-description">직업운과 사회적 성취를 보여주는 선</div>
-</div>
+            if (main) {
+                main.style.display = 'block';
+                main.classList.add('show');
+                console.log('✅ 메인 콘텐츠 표시 완료');
+            }
 
-<div class="palm-type-card" data-palm-type="sun">
-<div class="palm-image">
-<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #FFC107, #FFD54F);">
-<use href="#hand"/>
-<!-- 태양선 -->
-<path d="M75,70 Q73,55 75,40 Q77,30 80,20" stroke="#F57F17" stroke-width="4" fill="none" stroke-linecap="round"/>
-<text x="45" y="45" fill="white" font-size="12" font-weight="bold" text-anchor="middle">태양선</text>
-<text x="45" y="58" fill="white" font-size="16" text-anchor="middle">☀️</text>
-</svg>
-</div>
-<div class="palm-title">태양선 (太陽線)</div>
-<div class="palm-description">명예와 인기, 예술적 재능을 나타내는 선</div>
-</div>
+            if (nav) {
+                nav.style.display = 'flex';
+                nav.classList.add('show');
+                console.log('✅ 네비게이션 표시 완료');
+            }
+        }
 
-<div class="palm-type-card" data-palm-type="marriage">
-<div class="palm-image">
-<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #9C27B0, #BA68C8);">
-<use href="#hand"/>
-<!-- 결혼선 -->
-<path d="M90,25 Q93,27 95,30" stroke="#6A1B9A" stroke-width="4" fill="none" stroke-linecap="round"/>
-<path d="M90,30 Q93,32 95,35" stroke="#6A1B9A" stroke-width="3" fill="none" stroke-linecap="round"/>
-<text x="45" y="45" fill="white" font-size="12" font-weight="bold" text-anchor="middle">결혼선</text>
-<text x="45" y="58" fill="white" font-size="16" text-anchor="middle">💕</text>
-</svg>
-</div>
-<div class="palm-title">결혼선 (結婚線)</div>
-<div class="palm-description">결혼과 연애, 배우자운을 보여주는 선</div>
-</div>
+        // ===========================================
+        // 페이지 및 뷰 관리
+        // ===========================================
+        const pages = {
+            home: () => $('#page-home'),
+            fortune: () => $('#page-fortune'),
+            chat: () => $('#page-chat'),
+            me: () => $('#page-me')
+        };
 
-<div class="palm-type-card" data-palm-type="health">
-<div class="palm-image">
-<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #00BCD4, #4DD0E1);">
-<use href="#hand"/>
-<!-- 건강선 -->
-<path d="M45,75 Q48,60 50,45 Q52,30 55,22" stroke="#00838F" stroke-width="4" fill="none" stroke-linecap="round"/>
-<text x="70" y="45" fill="white" font-size="12" font-weight="bold" text-anchor="middle">건강선</text>
-<text x="70" y="58" fill="white" font-size="16" text-anchor="middle">⚕️</text>
-</svg>
-</div>
-<div class="palm-title">건강선 (健康線)</div>
-<div class="palm-description">건강상태와 질병 예방을 나타내는 선</div>
-</div>
+        const views = {
+            'fortune-today': $('#view-today'),
+            'fortune-saju': $('#view-saju'),
+            'fortune-tarot': $('#view-tarot'),
+            'fortune-match': $('#view-match'),
+            'fortune-year': $('#view-year'),
+            'fortune-lotto': $('#view-lotto')
+        };
 
-<div class="palm-type-card" data-palm-type="intuition">
-<div class="palm-image">
-<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #673AB7, #9575CD);">
-<use href="#hand"/>
-<!-- 직감선 -->
-<path d="M25,75 Q22,65 25,55 Q28,45 32,35" stroke="#4527A0" stroke-width="4" fill="none" stroke-linecap="round"/>
-<text x="70" y="45" fill="white" font-size="12" font-weight="bold" text-anchor="middle">직감선</text>
-<text x="70" y="58" fill="white" font-size="16" text-anchor="middle">🔮</text>
-</svg>
-</div>
-<div class="palm-title">직감선 (直感線)</div>
-<div class="palm-description">직감력과 영감, 초능력을 보여주는 선</div>
-</div>
+        function setActiveTab(tab) {
+            // 탭 활성화
+            $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.tab === tab));
+            
+            // 페이지 표시
+            Object.entries(pages).forEach(([k, pageGetter]) => {
+                const page = pageGetter();
+                if (page) {
+                    page.classList.toggle('show', k === tab);
+                    page.style.display = k === tab ? 'block' : 'none';
+                }
+            });
+            
+            closeAllOverlays();
+        }
 
-<div class="palm-type-card" data-palm-type="venus">
-<div class="palm-image">
-<svg width="100%" height="80" viewBox="0 0 120 80" style="border-radius: 6px; background: linear-gradient(135deg, #795548, #A1887F);">
-<use href="#hand"/>
-<!-- 금성대 -->
-<path d="M45,25 Q60,22 75,25 Q85,27 92,35" stroke="#5D4037" stroke-width="4" fill="none" stroke-linecap="round"/>
-<text x="45" y="50" fill="white" font-size="12" font-weight="bold" text-anchor="middle">금성대</text>
-<text x="75" y="63" fill="white" font-size="16" text-anchor="middle">💫</text>
-</svg>
-</div>
-<div class="palm-title">금성대 (金星帶)</div>
-<div class="palm-description">예술성과 감수성, 창조력을 나타내는 선</div>
-</div>
-</div>
+        function showFortuneView(route) {
+            const fortuneTitle = $('#fortuneTitle');
+            
+            // 모든 뷰 숨기기
+            Object.values(views).forEach(v => {
+                if (v) v.style.display = 'none';
+            });
+            
+            // 선택된 뷰 표시
+            const viewElement = views[route];
+            if (viewElement) {
+                viewElement.style.display = 'block';
+            }
+            
+            // 제목 설정
+            const titles = {
+                'fortune-today': '오늘의 운세',
+                'fortune-saju': '정통 사주',
+                'fortune-tarot': '타로 점',
+                'fortune-match': '궁합 보기',
+                'fortune-year': '신년 운세 (2025)',
+                'fortune-lotto': '행운번호'
+            };
+            
+            if (fortuneTitle) {
+                fortuneTitle.textContent = titles[route] || '준비중';
+            }
+            
+            // 특별 초기화
+            if (route === 'fortune-tarot') {
+                setTimeout(() => initializeTarot(), 50);
+            }
+            
+            reactCrystal(`${titles[route] || '서비스'}를 준비합니다...`);
+        }
 
-<div class="palm-actions">
-<button id="btnRandomPalm" class="btn" style="background: linear-gradient(135deg, #4CAF50, #8BC34A);">
-🍀 랜덤 손금 보기
-</button>
-</div>
-</div>
+        // ===========================================
+        // 라우팅
+        // ===========================================
+        function routeFromHash() {
+            const hash = location.hash || '#/home';
+            const match = hash.match(/^#\/([^/]+)(?:\/([^/]+))?/);
+            const tab = match?.[1] || 'home';
+            const sub = match?.[2] || '';
 
-<div id="view-match" class="card" style="display:none;">
-<div class="field">
-<div class="label">당신의 생년월일</div>
-<input class="input" type="date" id="match-a" />
-</div>
-<div class="field">
-<div class="label">상대의 생년월일</div>
-<input class="input" type="date" id="match-b" />
-</div>
-<button class="btn" id="btnMatch">궁합 확인</button>
-</div>
+            console.log('🔄 라우팅:', tab, sub);
 
-<div id="view-year" class="card" style="display:none;">
-<div class="field">
-<div class="label">생년월일</div>
-<input class="input" type="date" id="year-birth" />
-</div>
-<button class="btn" id="btnYear">2025 신년 운세</button>
-</div>
-</section>
+            // 탭 설정
+            if (['home', 'fortune', 'chat', 'me'].includes(tab)) {
+                setActiveTab(tab);
+            } else {
+                setActiveTab('home');
+            }
 
-<section id="page-chat" class="page">
-<div class="card">
-<div class="label" style="margin-bottom:8px;">상담 준비중</div>
-<div style="font-size:14px;color:#555;">곧 전문가와 1:1 상담 기능이 열립니다.</div>
-</div>
-</section>
+            // 운세 서브뷰 설정
+            if (tab === 'fortune') {
+                const viewMap = {
+                    'today': 'fortune-today',
+                    'saju': 'fortune-saju',
+                    'tarot': 'fortune-tarot',
+                    'match': 'fortune-match',
+                    'year': 'fortune-year',
+                    'lotto': 'fortune-lotto'
+                };
+                showFortuneView(viewMap[sub] || 'fortune-today');
+            }
+        }
 
-<section id="page-me" class="page">
-<div class="card">
-<div class="label" style="margin-bottom:8px;">마이 페이지(로컬)</div>
-<div style="font-size:14px;color:#555;">최근 결과가 이 기기(브라우저)에 저장됩니다.</div>
-<button class="btn" id="btnClear" style="margin-top:12px;">최근 결과 모두 삭제</button>
-</div>
-</section>
+        // ===========================================
+        // 크리스탈 반응
+        // ===========================================
+        function reactCrystal(text) {
+            const crystal = $('#mainCrystal');
+            if (!crystal) return;
+            
+            crystal.style.background = 'radial-gradient(circle at 30% 30%, rgba(255,215,0,.9), rgba(255,20,147,.7), rgba(138,43,226,.5))';
+            crystal.innerHTML = '🔮<br>분석중...';
+            
+            setTimeout(() => {
+                crystal.innerHTML = text || '✨ 준비중입니다...';
+            }, 800);
+            
+            setTimeout(() => {
+                crystal.style.background = 'radial-gradient(circle at 30% 30%, rgba(255,255,255,.8), rgba(255,255,255,.3), transparent)';
+                crystal.innerHTML = '구슬 속 미래를<br>확인해보세요';
+            }, 2800);
+        }
 
-<div class="spacer"></div>
-</div>
+        // ===========================================
+        // 시트 관리
+        // ===========================================
+        const sheet = $('#sheetBackdrop');
+        const sheetTitle = $('#sheetTitle');
+        const sheetContent = $('#sheetContent');
+        let lastResult = null;
 
-<!-- 하단 네비 -->
-<div class="bottom-nav" id="bottomNav">
-<div class="nav-item active" data-tab="home">
-<div class="nav-icon">🏠</div>
-<div class="nav-text">홈</div>
-</div>
-<div class="nav-item" data-tab="fortune">
-<div class="nav-icon">🔮</div>
-<div class="nav-text">운세</div>
-</div>
-<div class="nav-item" data-tab="chat">
-<div class="nav-icon">💬</div>
-<div class="nav-text">상담</div>
-</div>
-<div class="nav-item" data-tab="me">
-<div class="nav-icon">👤</div>
-<div class="nav-text">마이</div>
-</div>
-</div>
+        function openSheet(title, content, savePayload) {
+            if (!sheet || !sheetTitle || !sheetContent) return;
+            
+            sheetTitle.textContent = title;
+            
+            if (typeof content === 'string' && content.includes('<')) {
+                sheetContent.innerHTML = content;
+            } else {
+                sheetContent.textContent = content?.toString?.() || '';
+            }
+            
+            sheet.classList.add('show');
+            lastResult = savePayload || null;
+            document.body.style.overflow = 'hidden';
+        }
 
-<!-- 결과 시트(모달) - 개선된 디자인 -->
-<div class="sheet-backdrop" id="sheetBackdrop" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
-<div class="sheet" role="document">
-<div class="sheet-header">
-<div class="sheet-title" id="sheetTitle">결과</div>
-<button class="sheet-close-btn" id="btnClose">✕</button>
-</div>
-<div class="sheet-content" id="sheetContent">내용</div>
-<div class="sheet-actions">
-<button class="btn" id="btnSave">최근 결과 저장</button>
-</div>
-</div>
-</div>
+        function closeSheet() {
+            if (!sheet) return;
+            sheet.classList.remove('show');
+            document.body.style.overflow = '';
+        }
 
-<!-- 타로 모달 -->
-<div class="tarot-modal-overlay" id="tarotModalOverlay">
-<div class="tarot-modal" id="tarotModal">
-<button class="tarot-close-btn" id="tarotCloseBtn">✕</button>
-<div class="tarot-modal-content" id="tarotModalContent">
-<!-- 모달 내용이 JavaScript로 채워짐 -->
-</div>
-</div>
-</div>
-</div>
-<section id="guide" class="mt-section">
-  <div class="mt-wrap howto">
-    <h2>이용 가이드</h2>
-    <ol>
-      <li>생년월일을 선택하세요</li>
-      <li>양력/음력과 옵션을 선택하세요</li>
-      <li>버튼을 눌러 결과를 확인하세요</li>
-    </ol>
-  </div>
-</section>
+        function closeAllOverlays() {
+            closeSheet();
+            closeTarotModal();
+        }
 
-<section class="mt-section">
-  <div class="mt-wrap faq">
-    <h2>자주 묻는 질문</h2>
-    <details><summary>개인정보를 저장하나요?</summary>저장하지 않습니다. 입력값은 결과 계산에만 사용됩니다.</details>
-    <details><summary>결과는 얼마나 정확한가요?</summary>점술은 참고용이며, 결정은 스스로의 몫입니다.</details>
-  </div>
-</section>
+        // ===========================================
+        // 로컬스토리지 관리
+        // ===========================================
+        function pushRecent(item) {
+            try {
+                const arr = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+                arr.unshift({ ...item, ts: Date.now() });
+                localStorage.setItem(LS_KEY, JSON.stringify(arr.slice(0, 20)));
+            } catch (e) {
+                console.warn('LocalStorage error:', e);
+            }
+        }
 
-<section id="contact" class="mt-section">
-  <div class="mt-wrap">
-    <h2>문의</h2>
-    <p>개선 제안이나 문의는 <a href="mailto:tmrw@tmrw.co.kr">tmrw@tmrw.co.kr</a> 으로 보내주세요.</p>
-  </div>
-</section>
+        // ===========================================
+        // 운세 데이터
+        // ===========================================
+        const FORTUNE_CATEGORIES = {
+            total: {
+                name: '총운',
+                icon: '🌟',
+                messages: {
+                    90: ['오늘은 모든 일이 술술 풀리는 최고의 날입니다!', '행운의 여신이 함께하는 특별한 하루가 될 것입니다!'],
+                    80: ['긍정적인 에너지가 넘치는 좋은 날입니다!', '작은 기적들이 일어날 수 있는 날입니다!'],
+                    70: ['안정적이고 평화로운 하루가 될 것입니다!', '차근차근 진행하면 좋은 성과를 얻을 수 있습니다!'],
+                    60: ['조금만 더 노력하면 원하는 결과를 얻을 수 있습니다!', '인내심을 갖고 꾸준히 나아가세요!'],
+                    50: ['현상 유지하며 안전하게 지내는 것이 좋겠습니다!', '급하게 서두르지 말고 신중하게 판단하세요!'],
+                    40: ['조심스럽게 행동하고 신중한 결정을 내리세요!', '작은 일부터 차근차근 해결해나가세요!'],
+                    30: ['오늘은 무리하지 말고 여유롭게 지내세요!', '스트레스를 줄이고 마음의 평화를 찾으세요!']
+                }
+            },
+            love: {
+                name: '연애운',
+                icon: '💕',
+                messages: {
+                    90: ['운명적인 만남이 기다리고 있을지도 몰라요!', '사랑하는 사람과의 관계가 한층 더 깊어질 것입니다!'],
+                    80: ['달콤한 사랑의 기운이 가득한 하루입니다!', '좋아하는 사람과의 거리가 가까워질 것입니다!'],
+                    70: ['따뜻한 마음을 나누는 평온한 연애운입니다!', '서로를 이해하고 배려하는 시간을 가져보세요!'],
+                    60: ['조금 더 적극적으로 마음을 표현해보세요!', '상대방의 입장에서 생각해보는 것이 중요합니다!'],
+                    50: ['섣부른 고백보다는 천천히 관계를 발전시키세요!', '감정적인 판단보다는 이성적인 접근이 필요합니다!'],
+                    40: ['연애보다는 자기계발에 집중하는 것이 좋겠습니다!', '갈등이 생길 수 있으니 말조심하세요!'],
+                    30: ['오늘은 연애 문제로 스트레스받지 마세요!', '친구들과의 시간을 더 소중히 여기세요!']
+                }
+            },
+            money: {
+                name: '재물운',
+                icon: '💰',
+                messages: {
+                    90: ['예상치 못한 수입이나 보너스가 있을 수 있습니다!', '투자나 사업에서 큰 성과를 거둘 것입니다!'],
+                    80: ['돈 관리를 잘하면 목돈을 만들 수 있을 것입니다!', '부업이나 사이드 프로젝트에서 수익이 생길 수 있습니다!'],
+                    70: ['안정적인 수입과 지출 관리가 이루어질 것입니다!', '계획적인 저축으로 미래를 준비하세요!'],
+                    60: ['가계부를 작성하며 돈의 흐름을 파악해보세요!', '불필요한 지출을 줄이는 것이 중요합니다!'],
+                    50: ['큰 지출은 피하고 현상 유지에 집중하세요!', '충동구매를 자제하고 신중하게 소비하세요!'],
+                    40: ['돈 문제로 스트레스받지 않도록 주의하세요!', '대출이나 투자는 신중하게 결정하세요!'],
+                    30: ['오늘은 지갑을 단단히 닫아두세요!', '금전 거래는 최대한 피하는 것이 좋겠습니다!']
+                }
+            }
+        };
 
-<!-- ========= MysticTell: Footer ========= -->
-<footer class="mt-footer">
-  <div class="mt-footer-links">
-    <a id="mt-link-privacy" href="#privacy">개인정보처리방침</a>
-    <a id="mt-link-terms" href="#terms">이용약관</a>
-    <a href="mailto:your-email@gmail.com">문의하기</a>
-  </div>
-  <div class="mt-footer-info">
-    <p>&copy; 2025 MysticTell. 본 서비스는 재미와 참고용이며, 운세 결과에 대한 책임을 지지 않습니다.</p>
-    <p>연락처: tmrw@tmrw.co.kr</p>
-  </div>
-</footer>
+        const LUCKY_ITEMS = {
+            items: ['반지', '목걸이', '시계', '향수', '립밤', '차키', '지갑', '스마트폰 케이스'],
+            colors: ['빨강', '파랑', '노랑', '초록', '보라', '분홍', '하늘색', '주황'],
+            numbers: ['3', '7', '9', '12', '21', '27', '33', '42'],
+            directions: ['동쪽', '서쪽', '남쪽', '북쪽', '동남쪽', '동북쪽', '서남쪽', '서북쪽']
+        };
 
-<!-- ========= MysticTell: Policy Modals ========= -->
-<div id="mt-privacy" class="mt-sheet-backdrop" aria-hidden="true">
-  <div class="mt-sheet" role="dialog" aria-modal="true" aria-labelledby="mt-privacy-title">
-    <div class="mt-sheet-header">
-      <h3 class="mt-sheet-title" id="mt-privacy-title">개인정보처리방침</h3>
-      <button type="button" class="mt-sheet-close" data-mt-close aria-label="닫기">×</button>
-    </div>
-    <div class="mt-sheet-content">
-      <div class="mt-policy-content">
-        <section class="mt-policy-section">
-          <h4>1. 개인정보의 처리목적</h4>
-          <ul>
-            <li>운세 서비스 제공 (생년월일, 이름 등)</li>
-            <li>서비스 개선 및 통계 분석</li>
-          </ul>
-        </section>
-        <section class="mt-policy-section">
-          <h4>2. 처리 및 보유기간</h4>
-          <p>입력 개인정보는 서비스 제공 후 즉시 삭제되며 별도 저장하지 않습니다.</p>
-        </section>
-        <section class="mt-policy-section">
-          <h4>3. 쿠키의 사용</h4>
-          <p>Google AdSense 운영을 위해 쿠키가 사용될 수 있습니다.</p>
-        </section>
-        <section class="mt-policy-section">
-          <h4>4. 개인정보보호책임자</h4>
-          <p>이메일: tmrw@tmrw.co.kr</p>
-        </section>
-      </div>
-    </div>
-  </div>
-</div>
+        // ===========================================
+        // 운세 계산
+        // ===========================================
+        function calcEnhancedDailyFortune(birthdate) {
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+            const results = {};
 
-<div id="mt-terms" class="mt-sheet-backdrop" aria-hidden="true">
-  <div class="mt-sheet" role="dialog" aria-modal="true" aria-labelledby="mt-terms-title">
-    <div class="mt-sheet-header">
-      <h3 class="mt-sheet-title" id="mt-terms-title">이용약관</h3>
-      <button type="button" class="mt-sheet-close" data-mt-close aria-label="닫기">×</button>
-    </div>
-    <div class="mt-sheet-content">
-      <div class="mt-policy-content">
-        <section class="mt-policy-section">
-          <h4>1. 서비스 이용</h4>
-          <p>본 서비스는 무료로 제공되며 누구나 이용할 수 있습니다.</p>
-        </section>
-        <section class="mt-policy-section">
-          <h4>2. 서비스의 성격</h4>
-          <p>재미·참고용 점술 서비스로 결과에 대한 책임은 지지 않습니다.</p>
-        </section>
-        <section class="mt-policy-section">
-          <h4>3. 금지사항</h4>
-          <ul>
-            <li>무단 복제/상업적 이용</li>
-            <li>타인에게 피해를 주는 행위</li>
-            <li>허위 정보 입력</li>
-          </ul>
-        </section>
-        <section class="mt-policy-section">
-          <h4>4. 면책조항</h4>
-          <p>운세 결과로 인한 모든 결과에 대해 책임을 지지 않습니다.</p>
-        </section>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- ========= /MysticTell: Policy Modals ========= -->
-<script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.12/lunar.min.js"></script>
-<script src="script.js"></script> 
-<script>
-// 라우트 매핑
-const routes = {
-  "home": "page-home",
-  "fortune": "page-fortune",
-  "fortune/today": "view-today",
-  "fortune/saju": "view-saju",
-  "fortune/lotto": "view-lotto",
-  "fortune/tarot": "view-tarot",
-  "fortune/palm": "view-palm",
-  "fortune/match": "view-match",
-  "fortune/year": "view-year",
-  "chat": "page-chat",
-  "me": "page-me"
-};
+            Object.keys(FORTUNE_CATEGORIES).forEach((category, index) => {
+                const seed = (birthdate || '').replaceAll('-', '') + dateStr + category + index;
+                let hash = 0;
+                for (let i = 0; i < seed.length; i++) {
+                    hash = (hash * 37 + seed.charCodeAt(i)) % 100000;
+                }
+                const score = Math.abs(hash) % 100;
 
-function showRoute() {
-  const hash = location.hash.replace(/^#\//, "");
-  const targetId = routes[hash] || "page-home";
+                let messageKey = 30;
+                if (score >= 85) messageKey = 90;
+                else if (score >= 75) messageKey = 80;
+                else if (score >= 65) messageKey = 70;
+                else if (score >= 55) messageKey = 60;
+                else if (score >= 45) messageKey = 50;
+                else if (score >= 35) messageKey = 40;
 
-  // 모든 page/card 숨기기
-  document.querySelectorAll(".page, .card").forEach(el => {
-    if (el.id.startsWith("view-") || el.classList.contains("page")) {
-      el.style.display = "none";
-      el.classList.remove("show");
-    }
-  });
+                const messages = FORTUNE_CATEGORIES[category].messages[messageKey];
+                const messageIndex = Math.abs(hash) % messages.length;
 
-  // 선택된 섹션 보이기
-  const target = document.getElementById(targetId);
-  if (target) {
-    target.style.display = "block";
-    target.classList.add("show");
-  }
+                results[category] = {
+                    name: FORTUNE_CATEGORIES[category].name,
+                    icon: FORTUNE_CATEGORIES[category].icon,
+                    score: score,
+                    message: messages[messageIndex]
+                };
+            });
 
-  // bottom nav 활성화 갱신
-  document.querySelectorAll(".bottom-nav .nav-item").forEach(item => {
-    item.classList.toggle("active", item.dataset.tab === hash.split("/")[0]);
-  });
-}
+            // 럭키 아이템 생성
+            const luckyHash = birthdate.replaceAll('-', '') + dateStr + 'lucky';
+            let lHash = 0;
+            for (let i = 0; i < luckyHash.length; i++) {
+                lHash = (lHash * 41 + luckyHash.charCodeAt(i)) % 100000;
+            }
 
-window.addEventListener("hashchange", showRoute);
-window.addEventListener("DOMContentLoaded", showRoute);
-</script>
-<script>
-function routeFromHash() {
-  const hash = location.hash;
+            return {
+                categories: results,
+                lucky: {
+                    item: LUCKY_ITEMS.items[Math.abs(lHash) % LUCKY_ITEMS.items.length],
+                    color: LUCKY_ITEMS.colors[Math.abs(lHash + 1) % LUCKY_ITEMS.colors.length],
+                    number: LUCKY_ITEMS.numbers[Math.abs(lHash + 2) % LUCKY_ITEMS.numbers.length],
+                    direction: LUCKY_ITEMS.directions[Math.abs(lHash + 3) % LUCKY_ITEMS.directions.length]
+                },
+                date: dateStr
+            };
+        }
 
-  // 일단 모든 view/page 숨기기
-  document.querySelectorAll("#page-home, #view-today, #view-saju, #view-lotto")
-    .forEach(el => el.style.display = "none");
+        // ===========================================
+        // 결과 렌더링
+        // ===========================================
+        function createResultCard(icon, title, value, description, isMain = false, cardType = '') {
+            let cardClass = 'result-card';
+            if (isMain) cardClass += ' main-result';
+            if (cardType) cardClass += ' ' + cardType;
 
-  // 해시에 맞는 섹션만 보이기
-  if (hash === "#/home" || hash === "" || hash === "#") {
-    document.getElementById("page-home").style.display = "block";
-  } else if (hash === "#/fortune/today") {
-    document.getElementById("view-today").style.display = "block";
-  } else if (hash === "#/fortune/saju") {
-    document.getElementById("view-saju").style.display = "block";
-  } else if (hash === "#/fortune/lotto") {
-    document.getElementById("view-lotto").style.display = "block";
-  }
-}
+            return `
+            <div class="${cardClass}">
+                <div class="card-header">
+                    <div class="card-icon">${icon}</div>
+                    <div class="card-title">${title}</div>
+                </div>
+                <div class="card-value">${value}</div>
+                <div class="card-description">${description}</div>
+            </div>
+            `;
+        }
 
-// 페이지 로드 & 해시 변경 시 실행
-window.addEventListener("DOMContentLoaded", routeFromHash);
-window.addEventListener("hashchange", routeFromHash);
-</script>
+        function renderEnhancedDailyFortune(fortuneData, name = '') {
+            const nameTitle = name ? `<b>${name}</b>님의 ` : '';
 
+            let html = `
+            <div class="result-section">
+                <div class="section-title-result">🌟 ${nameTitle}오늘의 운세</div>
+                <div class="fortune-date">📅 ${fortuneData.date}</div>
+            </div>
+            `;
+
+            // 각 카테고리별 운세 카드
+            html += '<div class="result-section">';
+            Object.values(fortuneData.categories).forEach((category, index) => {
+                const isMainCard = index === 0;
+                html += createResultCard(
+                    category.icon,
+                    category.name,
+                    `${category.score}점`,
+                    category.message,
+                    isMainCard,
+                    'fortune-card'
+                );
+            });
+            html += '</div>';
+
+            // 럭키 정보 섹션
+            html += `
+            <div class="result-section">
+                <div class="section-title-result">🍀 오늘의 럭키 아이템</div>
+                <div class="lucky-items-grid">
+                    <div class="lucky-item-card">
+                        <div class="lucky-icon">🎁</div>
+                        <div class="lucky-label">럭키 아이템</div>
+                        <div class="lucky-value">${fortuneData.lucky.item}</div>
+                    </div>
+                    <div class="lucky-item-card">
+                        <div class="lucky-icon">🎨</div>
+                        <div class="lucky-label">럭키 컬러</div>
+                        <div class="lucky-value">${fortuneData.lucky.color}</div>
+                    </div>
+                    <div class="lucky-item-card">
+                        <div class="lucky-icon">🔢</div>
+                        <div class="lucky-label">럭키 넘버</div>
+                        <div class="lucky-value">${fortuneData.lucky.number}</div>
+                    </div>
+                    <div class="lucky-item-card">
+                        <div class="lucky-icon">🧭</div>
+                        <div class="lucky-label">럭키 방향</div>
+                        <div class="lucky-value">${fortuneData.lucky.direction}</div>
+                    </div>
+                </div>
+            </div>
+            `;
+
+            return html;
+        }
+
+        // ===========================================
+        // 로또 번호 생성
+        // ===========================================
+        function generateLottoNumbers(birthStr = '') {
+            const today = new Date();
+            const weekKey = getISOWeek(today);
+            const seed = weekKey + (birthStr || '');
+            
+            let hash = 0;
+            for (let i = 0; i < seed.length; i++) {
+                hash = (hash * 31 + seed.charCodeAt(i)) & 0x7fffffff;
+            }
+            
+            const rng = seededRandom(hash);
+            const numbers = [];
+            
+            while (numbers.length < 6) {
+                const num = Math.floor(rng() * 45) + 1;
+                if (!numbers.includes(num)) {
+                    numbers.push(num);
+                }
+            }
+            
+            const bonus = Math.floor(rng() * 45) + 1;
+            
+            return {
+                main: numbers.sort((a, b) => a - b),
+                bonus: bonus,
+                seedInfo: `주 ${weekKey}${birthStr ? ` · ${birthStr}` : ''}`
+            };
+        }
+
+        function seededRandom(seed) {
+            let state = seed;
+            return function() {
+                state = (state * 1664525 + 1013904223) >>> 0;
+                return state / 0xFFFFFFFF;
+            };
+        }
+
+        function getISOWeek(date) {
+            const target = new Date(date.valueOf());
+            const dayNr = (date.getDay() + 6) % 7;
+            target.setDate(target.getDate() - dayNr + 3);
+            const firstThursday = target.valueOf();
+            target.setMonth(0, 1);
+            if (target.getDay() !== 4) {
+                target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+            }
+            return 1 + Math.ceil((firstThursday - target) / 604800000);
+        }
+
+        function renderLottoResult(result) {
+            if (!result || !Array.isArray(result.main)) {
+                return `
+                <div class="info-box">
+                    <div class="info-title">ℹ️ 안내</div>
+                    <div class="info-content">번호 생성에 실패했어요. 다시 시도해 주세요.</div>
+                </div>`;
+            }
+
+            const ballsHtml = result.main
+                .map(n => `<div class="ball">${String(n).padStart(2, '0')}</div>`)
+                .join('');
+
+            const bonusHtml = result.bonus ? 
+                `<div style="align-self:center;font-weight:800;margin:0 4px">+</div>
+                 <div class="ball bonus">${String(result.bonus).padStart(2, '0')}</div>` : '';
+
+            return `
+            <div class="result-section lotto-wrap">
+                <div class="section-title-result">🎱 행운번호</div>
+                <div class="lotto-balls">
+                    ${ballsHtml}
+                    ${bonusHtml}
+                </div>
+                <div class="lotto-meta">생성 기준: ${result.seedInfo || '랜덤'} · 참고용</div>
+            </div>
+            <div class="info-box">
+                <div class="info-title">ℹ️ 안내</div>
+                <div class="info-content">
+                    • 결과는 <strong>같은 주(ISO 주)</strong>에는 동일합니다.<br/>
+                    • 입력한 생년월일이 같으면 같은 주에는 같은 추천이 나옵니다.<br/>
+                    • 재미/참고용이며, 책임있는 구매를 권장해요. 🎯
+                </div>
+            </div>
+            `;
+        }
+
+        // ===========================================
+        // 타로 관련
+        // ===========================================
+        const TAROT_DETAILS = [
+            {name: "THE FOOL (바보)", meaning: "새로운 시작과 순수함을 나타내는 카드입니다.", upright: "새로운 시작, 순진함, 자발성", reversed: "무모함, 경솔함, 위험한 행동"},
+            {name: "THE MAGICIAN (마법사)", meaning: "의지력과 창조력을 나타내는 카드입니다.", upright: "의지력, 창조력, 집중", reversed: "기만, 조작, 능력 부족"},
+            {name: "THE HIGH PRIESTESS (여교황)", meaning: "직감과 내면의 지혜를 나타내는 카드입니다.", upright: "직감, 무의식, 신비", reversed: "비밀, 숨겨진 동기, 직감 무시"},
+            {name: "THE EMPRESS (여황제)", meaning: "풍요와 모성을 나타내는 카드입니다.", upright: "풍요, 모성, 창조성", reversed: "불임, 창조성 부족, 과보호"},
+            {name: "THE EMPEROR (황제)", meaning: "권위와 안정을 나타내는 카드입니다.", upright: "권위, 구조, 질서", reversed: "독재, 권위주의, 경직성"},
+            {name: "THE HIEROPHANT (교황)", meaning: "전통과 교육을 나타내는 카드입니다.", upright: "전통, 교육, 종교", reversed: "반항, 비정통성, 새로운 접근법"},
+            {name: "THE LOVERS (연인)", meaning: "사랑과 선택을 나타내는 카드입니다.", upright: "사랑, 관계, 선택", reversed: "불균형, 갈등, 잘못된 선택"},
+            {name: "THE CHARIOT (전차)", meaning: "승리와 의지를 나타내는 카드입니다.", upright: "승리, 의지력, 자제력", reversed: "통제력 상실, 방향성 부족"},
+            {name: "STRENGTH (힘)", meaning: "내적 힘과 용기를 나타내는 카드입니다.", upright: "내적 힘, 용기, 인내", reversed: "약함, 자기 의심, 에너지 부족"},
+            {name: "THE HERMIT (은둔자)", meaning: "내적 탐구와 지혜를 나타내는 카드입니다.", upright: "내적 탐구, 지혜, 성찰", reversed: "고립, 외로움, 잘못된 조언"},
+            {name: "WHEEL OF FORTUNE (운명의 바퀴)", meaning: "변화와 운명을 나타내는 카드입니다.", upright: "변화, 운명, 기회", reversed: "불운, 통제력 상실, 외부 영향"},
+            {name: "JUSTICE (정의)", meaning: "공정과 균형을 나타내는 카드입니다.", upright: "정의, 공정성, 진실", reversed: "불공정, 편견, 책임 회피"},
+            {name: "THE HANGED MAN (매달린 남자)", meaning: "희생과 관점의 전환을 나타내는 카드입니다.", upright: "희생, 관점 전환, 기다림", reversed: "불필요한 희생, 지연, 저항"},
+            {name: "DEATH (죽음)", meaning: "변화와 재생을 나타내는 카드입니다.", upright: "변화, 끝과 시작, 재생", reversed: "변화에 대한 저항, 정체"},
+            {name: "TEMPERANCE (절제)", meaning: "균형과 조화를 나타내는 카드입니다.", upright: "균형, 절제, 조화", reversed: "불균형, 과도함, 조급함"},
+            {name: "THE DEVIL (악마)", meaning: "유혹과 속박을 나타내는 카드입니다.", upright: "유혹, 속박, 중독", reversed: "해방, 자유, 속박에서 벗어남"},
+            {name: "THE TOWER (탑)", meaning: "파괴와 급변을 나타내는 카드입니다.", upright: "파괴, 급변, 계시", reversed: "내적 변화, 개인적 변화"},
+            {name: "THE STAR (별)", meaning: "희망과 영감을 나타내는 카드입니다.", upright: "희망, 영감, 치유", reversed: "절망, 희망 상실, 방향성 부족"},
+            {name: "THE MOON (달)", meaning: "환상과 불안을 나타내는 카드입니다.", upright: "환상, 불안, 혼란", reversed: "진실 드러남, 명확성"},
+            {name: "THE SUN (태양)", meaning: "기쁨과 성공을 나타내는 카드입니다.", upright: "기쁨, 성공, 활력", reversed: "일시적 기쁨, 에너지 부족"},
+            {name: "JUDGEMENT (심판)", meaning: "부활과 각성을 나타내는 카드입니다.", upright: "부활, 각성, 새로운 시작", reversed: "자기 의심, 과거에 얽매임"},
+            {name: "THE WORLD (세계)", meaning: "완성과 성취를 나타내는 카드입니다.", upright: "완성, 성취, 통합", reversed: "미완성, 목표 부족, 지연"}
+        ];
+
+        const CARD_ICONS = ["🃏", "🎩", "🔮", "👑", "⚡", "⛪", "💕", "🏆", "💪", "🕯️", "🎰", "⚖️", "🙃", "💀", "⚖️", "😈", "🗼", "⭐", "🌙", "☀️", "📯", "🌍"];
+
+        function initializeTarot() {
+            const tarotCards = $$('.tarot-card-back');
+            
+            tarotCards.forEach(card => {
+                if (card.__bound) return;
+                card.addEventListener('click', () => selectTarotCard(card));
+                card.__bound = true;
+            });
+
+            const randomBtn = $('#btnRandomTarot');
+            if (randomBtn && !randomBtn.__bound) {
+                randomBtn.addEventListener('click', drawRandomTarotCard);
+                randomBtn.__bound = true;
+            }
+
+            const resetBtn = $('#btnResetTarot');
+            if (resetBtn && !resetBtn.__bound) {
+                resetBtn.addEventListener('click', resetTarotCards);
+                resetBtn.__bound = true;
+            }
+
+            resetTarotCards();
+        }
+
+        function selectTarotCard(cardElement) {
+            if (cardElement.classList.contains('revealed')) return;
+
+            const randomTarotIndex = Math.floor(Math.random() * TAROT_DETAILS.length);
+            const isUpright = Math.random() < 0.7;
+            const selectedCard = TAROT_DETAILS[randomTarotIndex];
+
+            if (!selectedCard) return;
+
+            cardElement.classList.add('flipped');
+            
+            setTimeout(() => {
+                const frontElement = document.createElement('div');
+                frontElement.className = 'tarot-card-front';
+                frontElement.innerHTML = `
+                <div class="card-number">${randomTarotIndex}</div>
+                <div class="card-icon">${CARD_ICONS[randomTarotIndex]}</div>
+                <div class="card-name">${selectedCard.name.split('(')[0].trim()}</div>
+                <div class="card-direction">${isUpright ? '정위' : '역위'}</div>
+                `;
+                cardElement.appendChild(frontElement);
+                cardElement.classList.add('revealed');
+                setTimeout(() => frontElement.style.opacity = '1', 100);
+            }, 300);
+
+            setTimeout(() => showTarotModal(randomTarotIndex, isUpright), 800);
+            
+            pushRecent({
+                type: 'tarot',
+                card: selectedCard.name,
+                upright: isUpright,
+                meaning: isUpright ? selectedCard.upright : selectedCard.reversed
+            });
+            
+            reactCrystal(`${selectedCard.name.split('(')[0].trim()}을 뽑았습니다! ✨`);
+        }
+
+        function showTarotModal(cardIndex, isUpright) {
+            const modal = $('#tarotModalOverlay');
+            const content = $('#tarotModalContent');
+            if (!modal || !content) return;
+
+            const card = TAROT_DETAILS[cardIndex];
+            if (!card) return;
+
+            content.innerHTML = `
+            <h2>${card.name}</h2>
+            <p style="color:#6B7280; margin-bottom:20px; line-height:1.6; font-style:italic;">${card.meaning}</p>
+            <div class="meaning-section upright"><h3>⬆️ 정방향 의미</h3><p>${card.upright}</p></div>
+            <br>
+            <div class="meaning-section reversed"><h3>⬇️ 역방향 의미</h3><p>${card.reversed}</p></div>
+            <div style="margin-top:25px; padding:15px; background:rgba(255,215,0,0.1); border-radius:10px; border-left:4px solid #ffd700;">
+                <h3 style="color:#ffd700; margin-bottom:10px;">${isUpright ? '⬆️ 현재 뽑힌 방향: 정방향' : '⬇️ 현재 뽑힌 방향: 역방향'}</h3>
+                <p style="color:#333; line-height:1.5;">${isUpright ? card.upright : card.reversed}</p>
+            </div>
+            `;
+            
+            modal.style.display = 'flex';
+            requestAnimationFrame(() => modal.classList.add('show'));
+        }
+
+        function closeTarotModal() {
+            const modal = $('#tarotModalOverlay');
+            if (!modal) return;
+            modal.classList.remove('show');
+            modal.style.display = 'none';
+        }
+
+        function resetTarotCards() {
+            $$('.tarot-card-back').forEach(card => {
+                card.classList.remove('flipped', 'revealed');
+                card.style.transform = '';
+                card.querySelector('.tarot-card-front')?.remove();
+            });
+            closeTarotModal();
+            reactCrystal('새로운 카드들이 준비되었습니다 ✨');
+        }
+
+        function drawRandomTarotCard() {
+            const available = $$('.tarot-card-back:not(.revealed)');
+            if (!available.length) {
+                reactCrystal('모든 카드를 이미 뽑았습니다! 🔄');
+                return;
+            }
+            const el = available[Math.floor(Math.random() * available.length)];
+            setTimeout(() => selectTarotCard(el), 300);
+        }
+
+        // ===========================================
+        // 이벤트 리스너
+        // ===========================================
+        function bindEventListeners() {
+            console.log('🔗 이벤트 리스너 바인딩 시작...');
+
+            // 오늘의 운세 버튼
+            $('#btnToday')?.addEventListener('click', () => {
+                const birthRaw = $('#today-birth')?.value || '';
+                const name = $('#today-name')?.value?.trim() || '';
+
+                try {
+                    if (!birthRaw.trim()) {
+                        alert('생년월일을 입력하세요.');
+                        return;
+                    }
+
+                    const fortuneData = calcEnhancedDailyFortune(birthRaw);
+                    const htmlResult = renderEnhancedDailyFortune(fortuneData, name);
+
+                    openSheet('오늘의 운세', htmlResult, {
+                        type: 'enhanced-today',
+                        birth_input: birthRaw,
+                        name: name,
+                        data: fortuneData
+                    });
+
+                    reactCrystal('오늘의 상세 운세를 불러왔습니다! ✨');
+                } catch (e) {
+                    console.error(e);
+                    alert(e.message || '입력 값을 확인해 주세요.');
+                }
+            });
+
+            // 로또 번호 버튼
+            $('#btnLotto')?.addEventListener('click', () => {
+                const birth = $('#lotto-birth')?.value?.trim() || '';
+                try {
+                    const result = generateLottoNumbers(birth);
+                    const html = renderLottoResult(result);
+                    
+                    openSheet('🎱 행운의 로또번호', html, {
+                        type: 'lotto',
+                        birth,
+                        result
+                    });
+                    
+                    reactCrystal('이번 주 행운번호를 뽑았어요! ✨');
+                } catch (e) {
+                    console.error(e);
+                    alert('행운번호 생성 중 오류가 발생했습니다.');
+                }
+            });
+
+            // 시트 닫기 버튼
+            $('#btnClose')?.addEventListener('click', closeSheet);
+            
+            // 시트 배경 클릭시 닫기
+            sheet?.addEventListener('click', e => {
+                if (e.target === sheet) closeSheet();
+            });
+
+            // 결과 저장 버튼
+            $('#btnSave')?.addEventListener('click', () => {
+                if (!lastResult) {
+                    closeSheet();
+                    return;
+                }
+                pushRecent(lastResult);
+                
+                const notice = document.createElement('div');
+                notice.textContent = '📁 최근 결과에 저장됐습니다.';
+                notice.style.cssText = 'margin-top:16px;padding:12px;background:rgba(102,126,234,0.1);border-radius:8px;text-align:center;color:#667eea;font-weight:bold;';
+                sheetContent?.appendChild(notice);
+                setTimeout(() => notice.remove(), 3000);
+            });
+
+            // 네비게이션 클릭
+            $$('.nav-item[data-tab]').forEach(item => {
+                item.addEventListener('click', () => {
+                    const tab = item.dataset.tab || 'home';
+                    location.hash = '#/' + tab;
+                    reactCrystal(`${tab} 페이지로 이동합니다! ✨`);
+                });
+            });
+
+            // 서비스 카드 클릭
+            $$('.service-item, .special-item').forEach(card => {
+                card.addEventListener('click', () => {
+                    const route = card.dataset.route || 'fortune-today';
+                    if (route.startsWith('fortune-')) {
+                        location.hash = '#/fortune/' + route.replace('fortune-', '');
+                    }
+                });
+            });
+
+            // 크리스탈 클릭
+            $('#mainCrystal')?.addEventListener('click', () => {
+                reactCrystal('🔮 신비로운 힘을 느껴보세요');
+            });
+
+            // 타로 모달 닫기
+            $('#tarotCloseBtn')?.addEventListener('click', closeTarotModal);
+            
+            // 타로 모달 배경 클릭
+            $('#tarotModalOverlay')?.addEventListener('click', e => {
+                if (e.target === $('#tarotModalOverlay')) closeTarotModal();
+            });
+
+            console.log('✅ 이벤트 리스너 바인딩 완료');
+        }
+
+        // ===========================================
+        // 초기화
+        // ===========================================
+        function initMysticTell() {
+            console.log('🚀 MysticTell 초기화 시작...');
+
+            // 이벤트 리스너 바인딩
+            bindEventListeners();
+
+            // 스플래시 숨기기
+            hideSplash();
+
+            // 초기 라우팅
+            if (!location.hash) {
+                location.hash = '#/home';
+            }
+            routeFromHash();
+
+            console.log('✅ MysticTell 초기화 완료');
+        }
+
+        // ===========================================
+        // 전역 이벤트
+        // ===========================================
+
+        // 해시 변경 시 라우팅
+        window.addEventListener('hashchange', routeFromHash);
+
+        // 페이지 로드 완료 시 초기화
+        window.addEventListener('load', initMysticTell);
+
+        // DOM 준비 시 스플래시 처리
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = $('#startBtn');
+            startBtn?.addEventListener('click', (e) => {
+                e.preventDefault();
+                hideSplash();
+            });
+
+            // 자동 스플래시 숨김 (3초 후)
+            setTimeout(hideSplash, 3000);
+        });
+
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeAllOverlays();
+            }
+        });
+
+        // 에러 처리
+        window.addEventListener('error', (e) => {
+            console.error('Global error:', e);
+            closeSheet();
+        });
+
+        console.log('📱 MysticTell JavaScript 로드 완료');
+    </script>
 </body>
 </html>
