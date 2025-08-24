@@ -3504,14 +3504,13 @@ window.addEventListener('load', () => {
     bindCalToggle?.('saju');
     bindLotto?.();
 
-    // 해시가 있으면 스플래시 숨기기
     if (location.hash && location.hash !== '#/home') {
-        hideSplash();
-    }
-
-    // 라우팅 실행
+    hideSplash();
     routeFromHash();
-});
+} else {
+    routeFromHash();
+}
+
 
 // 이벤트 연결
 window.addEventListener("hashchange", routeFromHash);
