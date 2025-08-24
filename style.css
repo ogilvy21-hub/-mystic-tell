@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MysticTell CSS 수정버전</title>
+    <title>MysticTell HTML-CSS 연결 수정</title>
     <style>
+/* ===== 기존 CSS + HTML 매칭을 위한 추가 스타일 ===== */
+
 /* ---- 기존 :root에 이어서 붙이기 ---- */
 :root{
 /* 너가 이미 넣은 변수 유지 */
@@ -15,6 +17,11 @@
 --start-blink-scale-min: 1;
 --start-blink-scale-max: 1.06;
 --start-blink-opacity-min: .85;
+/* 추가 변수들 */
+--max:1040px;
+--gap:20px;
+--brand:#667eea;
+--ink:#1f2937;
 }
 
 /* Start 이미지 버튼에 애니메이션 적용 */
@@ -56,21 +63,186 @@ min-height:100vh; color:#333; overflow-x:hidden;
 }
 .container{max-width:430px;margin:0 auto;min-height:100vh;position:relative}
 
-/* ===== Splash - 수정된 부분 ===== */
+/* ===== 핵심 수정: HTML 구조에 맞춘 스타일링 ===== */
+
+/* 1. 상단 헤더 네비게이션 (.mt-header) */
+.mt-header {
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #eef2f7;
+    z-index: 50;
+    display: block !important; /* 강제 표시 */
+}
+
+.mt-header .mt-wrap {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--gap);
+    display: flex !important; /* 강제 flex */
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+}
+
+.mt-logo {
+    font-weight: 700;
+    color: #2b2f36;
+    text-decoration: none !important;
+    font-size: 18px;
+}
+
+.mt-nav {
+    display: flex !important; /* 강제 표시 */
+    gap: 14px;
+}
+
+.mt-nav a {
+    color: #4b5563;
+    text-decoration: none !important;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.mt-nav a:hover {
+    background: #f3f4f6;
+    text-decoration: none;
+}
+
+/* 2. 히어로 섹션 (.mt-hero-split) */
+.mt-hero-split {
+    padding: 56px 0;
+    background: linear-gradient(180deg, #f6f8ff, #ffffff);
+    display: block !important; /* 강제 표시 */
+}
+
+.mt-hero-split .mt-wrap {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--gap);
+    display: grid !important; /* 강제 grid */
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+}
+
+.mt-hero-left {
+    display: block !important; /* 강제 표시 */
+}
+
+.mt-hero-left .eyebrow {
+    color: #6b7280;
+    margin: 0 0 8px;
+    font-size: 14px;
+}
+
+.mt-hero-left h1 {
+    margin: 0 0 10px;
+    font-size: 40px;
+    line-height: 1.2;
+    color: var(--ink);
+}
+
+.mt-hero-left .accent {
+    color: var(--brand);
+}
+
+.ticks {
+    margin: 12px 0 18px;
+    padding-left: 20px;
+}
+
+.ticks li {
+    margin: 6px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+/* 3. 메인 버튼들 (.main-buttons) */
+.main-buttons {
+    display: flex !important; /* 강제 표시 */
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-primary {
+    display: inline-block !important; /* 강제 표시 */
+    background: linear-gradient(135deg, var(--brand), #764ba2);
+    color: #fff !important;
+    padding: 12px 18px;
+    border-radius: 25px;
+    text-decoration: none !important;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    text-decoration: none;
+}
+
+/* 4. 히어로 우측 카드 */
+.mt-hero-right .hero-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 18px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,.06);
+}
+
+.hero-card h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    color: #333;
+}
+
+.hero-card p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.btn-sm {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 20px;
+    padding: 8px 12px;
+    color: #374151;
+    text-decoration: none;
+}
+
+/* 5. 스플래시 스크린 수정 */
 .splash-screen{
-position:fixed; /* fixed로 변경 */
-inset:0; /* 전체 화면 덮기 */
-display:flex; align-items:center; justify-content:center;
+position: fixed; /* fixed로 변경하여 전체 화면 커버 */
+inset: 0;
+display: flex; 
+align-items: center; 
+justify-content: center;
 background: center/cover no-repeat var(--splash-bg-url);
 touch-action: manipulation;
-z-index:9999; /* z-index 추가 */
+z-index: 9999; /* 최상위 */
 }
 .splash-screen::after{
 content:""; position:absolute; inset:0;
 background:linear-gradient(to bottom, rgba(0,0,0,.10), rgba(0,0,0,.18));
 pointer-events:none;
 }
-.splash-screen.hidden{opacity:0; transform:scale(.98); pointer-events:none; transition:all .6s ease; visibility:hidden;}
+.splash-screen.hidden{
+opacity:0; 
+transform:scale(.98); 
+pointer-events:none; 
+transition:all .6s ease;
+display: none !important; /* 완전히 숨김 */
+}
 
 .start-image-btn{
 position:relative; z-index:2; display:block; width:min(100%, 400px);
@@ -83,8 +255,13 @@ transition: transform .08s ease, filter .12s ease;
 }
 .start-image-btn:active{ transform: translateY(1px) scale(.99); filter: drop-shadow(0 6px 16px rgba(0,0,0,.35)); }
 
-/* ===== Main - 수정된 부분 ===== */
-.main-content{display:block;background:#fff;min-height:100vh;padding:20px}
+/* 6. 메인 콘텐츠 수정 */
+.main-content{
+display:block !important; /* 항상 표시 */
+background:#fff;
+min-height:100vh;
+padding:20px;
+}
 .main-content.show{display:block;animation:slideIn .8s ease-out}
 @keyframes slideIn{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 
@@ -151,7 +328,7 @@ background:#fff;padding:10px 16px;box-shadow:0 -2px 15px rgba(0,0,0,.1);display:
 .btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;padding:12px 16px;font-weight:bold;cursor:pointer;box-shadow:0 6px 16px rgba(102,126,234,.25);transition:transform .1s ease}
 .btn:active{transform:translateY(1px)}
 
-/* ===== 개선된 결과 시트 디자인 ===== */
+/* ===== 사주 결과 관련 스타일 (기존 유지) ===== */
 .sheet-backdrop{
 position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-end;justify-content:center;z-index:30;
 backdrop-filter: blur(5px);
@@ -195,8 +372,6 @@ padding:20px;line-height:1.6;color:#333;
 padding:0 20px 30px;display:flex;gap:12px;justify-content:center;
 }
 
-/* ===== 사주 결과 카드 디자인 ===== */
-
 /* 사주 기둥 그리드 */
 .pillars-grid {
 display: grid;
@@ -221,21 +396,6 @@ transform: translateY(-2px);
 box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15);
 }
 
-.pillar-card::before {
-content: '';
-position: absolute;
-top: 0;
-left: -100%;
-width: 100%;
-height: 100%;
-background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-transition: left 0.5s;
-}
-
-.pillar-card:hover::before {
-left: 100%;
-}
-
 .pillar-label {
 font-size: 11px;
 color: #667eea;
@@ -250,7 +410,6 @@ color: #333;
 text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
-/* 결과 섹션 */
 .result-section {
 margin-bottom: 24px;
 }
@@ -264,7 +423,6 @@ padding-left: 12px;
 border-left: 4px solid #667eea;
 }
 
-/* 결과 카드 */
 .result-card {
 background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
 border-radius: 16px;
@@ -280,18 +438,6 @@ transition: transform 0.2s ease, box-shadow 0.2s ease;
 .result-card:hover {
 transform: translateY(-2px);
 box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-}
-
-.result-card::before {
-content: '';
-position: absolute;
-top: 0;
-right: 0;
-width: 60px;
-height: 60px;
-background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
-border-radius: 50%;
-transform: translate(30%, -30%);
 }
 
 .card-header {
@@ -334,834 +480,239 @@ color: #555;
 
 .card-description strong { color:#667eea; font-weight:700; }
 
-/* 메인 결과 카드 (중요한 정보) */
-.main-result {
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-color: white;
-border: none;
-}
-
-.main-result .card-title,
-.main-result .card-description {
-color: white;
-}
-
-.main-result .card-icon {
-background: rgba(255,255,255,0.2);
-}
-
-.main-result .card-value {
-color: #ffd700;
-}
-
-/* 오행 분포 차트 */
-.element-distribution {
-background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
-border-radius: 12px;
-padding: 16px;
-margin-top: 12px;
-}
-
-.element-item {
-display: flex;
-align-items: center;
-margin-bottom: 10px;
-}
-
-.element-name {
-font-size: 14px;
-font-weight: bold;
-width: 40px;
-color: #333;
-}
-
-.element-bar {
-flex: 1;
-height: 24px;
-background: #f0f0f0;
-border-radius: 12px;
-margin: 0 12px;
-position: relative;
-overflow: hidden;
-}
-
-.element-fill {
-height: 100%;
-border-radius: 12px;
-background: linear-gradient(90deg, #667eea, #764ba2);
-transition: width 1.5s ease;
-position: relative;
-}
-
-.element-fill::after {
-content: '';
-position: absolute;
-top: 0;
-left: -100%;
-width: 100%;
-height: 100%;
-background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-animation: progress-shine 2s ease-in-out infinite;
-}
-
-@keyframes progress-shine {
-0% { left: -100%; }
-100% { left: 100%; }
-}
-
-.element-percentage {
-font-size: 13px;
-font-weight: bold;
-color: #667eea;
-min-width: 40px;
-text-align: right;
-}
-
-/* 정보 박스 */
-.info-box {
-background: rgba(102, 126, 234, 0.05);
-border: 1px dashed rgba(102, 126, 234, 0.3);
-border-radius: 12px;
-padding: 16px;
-margin-top: 20px;
-}
-
-.info-box .info-title {
-font-size: 14px;
-font-weight: bold;
-color: #667eea;
-margin-bottom: 8px;
-}
-
-.info-box .info-content {
-font-size: 13px;
-line-height: 1.5;
-color: #666;
-}
-
-/* 십신 정보 카드 */
-.shishen-card {
-background: linear-gradient(135deg, #fff8e1 0%, #f3e5f5 100%);
-border: 1px solid rgba(255, 193, 7, 0.3);
-}
-
-.shishen-card .card-icon {
-background: linear-gradient(135deg, #ffc107, #ff9800);
-}
-
-/* 운세풀이 카드 특별 스타일 */
-.result-card.fortune-detail-card {
-border-left: 4px solid #667eea;
-margin-bottom: 20px;
-}
-
-.result-card.fortune-detail-card .card-description {
-font-size: 14px;
-line-height: 1.8;
-text-align: justify;
-word-break: keep-all;
-}
-
-.result-card.fortune-detail-card.lifetime {
-background: linear-gradient(135deg, #fff8e1 0%, #f3e5f5 100%);
-border-left-color: #ffc107;
-}
-
-.result-card.fortune-detail-card.daeun {
-background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
-border-left-color: #4caf50;
-}
-
-.result-card.fortune-detail-card.timing {
-background: linear-gradient(135deg, #e3f2fd 0%, #f0f8ff 100%);
-border-left-color: #2196f3;
-}
-
-.result-card.fortune-detail-card.caution {
-background: linear-gradient(135deg, #fff3e0 0%, #ffeaa7 100%);
-border-left-color: #ff9800;
-}
-
-/* 결과 화면 손금 이미지 */
-.palm-result-image {
-display: flex;
-justify-content: center;
-margin: 20px 0 30px;
-}
-
-.palm-result-image svg {
-border-radius: 16px;
-box-shadow: 0 12px 32px rgba(0,0,0,0.2);
-transition: transform 0.3s ease;
-}
-
-.result-card.fortune-detail-card.advice {
-background: linear-gradient(135deg, #f3e5f5 0%, #fce4ec 100%);
-border-left-color: #e91e63;
-}
-
-/* 카드 아이콘별 특별 색상 */
-.result-card .card-icon.lifetime {
-background: linear-gradient(135deg, #ffc107, #ff9800);
-}
-
-.result-card .card-icon.daeun {
-background: linear-gradient(135deg, #4caf50, #8bc34a);
-}
-
-.result-card .card-icon.timing {
-background: linear-gradient(135deg, #2196f3, #03a9f4);
-}
-
-.result-card .card-icon.caution {
-background: linear-gradient(135deg, #ff9800, #ffc107);
-}
-
-.result-card .card-icon.advice {
-background: linear-gradient(135deg, #e91e63, #f06292);
-}
-
-/* ===== 손금 보기 시스템 ===== */
-.palm-types-grid {
-display: grid;
-grid-template-columns: repeat(3, 1fr);
-gap: 12px;
-margin-bottom: 20px;
-}
-
-.palm-type-card {
-background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
-border-radius: 16px;
-padding: 16px;
-text-align: center;
-border: 2px solid rgba(102, 126, 234, 0.1);
-cursor: pointer;
-transition: all 0.3s ease;
-position: relative;
-overflow: hidden;
-}
-
-.palm-type-card:hover {
-transform: translateY(-4px);
-box-shadow: 0 12px 32px rgba(102, 126, 234, 0.15);
-border-color: rgba(102, 126, 234, 0.3);
-}
-
-.palm-type-card::before {
-content: '';
-position: absolute;
-top: 0;
-left: -100%;
-width: 100%;
-height: 100%;
-background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-transition: left 0.5s;
-}
-
-.palm-type-card:hover::before {
-left: 100%;
-}
-
-.palm-image {
-margin-bottom: 12px;
-border-radius: 8px;
-overflow: hidden;
-}
-
-.palm-icon {
-width: 100%;
-height: 80px;
-border-radius: 6px;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 14px;
-transition: transform 0.2s ease;
-text-align: center;
-line-height: 1.2;
-}
-
-.palm-type-card:hover .palm-icon {
-transform: scale(1.1);
-}
-
-.palm-title {
-font-size: 14px;
-font-weight: bold;
-color: #333;
-margin-bottom: 6px;
-}
-
-.palm-description {
-font-size: 11px;
-color: #666;
-line-height: 1.4;
-}
-
-.palm-actions {
-margin-top: 20px;
-display: flex;
-justify-content: center;
-}
-
-/* 선택된 손금 타입 스타일 */
-.palm-type-card.selected {
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-color: white;
-border-color: #667eea;
-}
-
-.palm-type-card.selected .palm-title,
-.palm-type-card.selected .palm-description {
-color: white;
-}
-
-/* 손금별 특별 색상 */
-.palm-type-card[data-palm-type="life"]:hover {
-border-color: #4CAF50;
-}
-
-.palm-type-card[data-palm-type="head"]:hover {
-border-color: #2196F3;
-}
-
-.palm-type-card[data-palm-type="heart"]:hover {
-border-color: #E91E63;
-}
-
-.palm-type-card[data-palm-type="fate"]:hover {
-border-color: #FF9800;
-}
-
-.palm-type-card[data-palm-type="sun"]:hover {
-border-color: #FFC107;
-}
-
-.palm-type-card[data-palm-type="marriage"]:hover {
-border-color: #9C27B0;
-}
-
-.palm-type-card[data-palm-type="health"]:hover {
-border-color: #00BCD4;
-}
-
-.palm-type-card[data-palm-type="intuition"]:hover {
-border-color: #673AB7;
-}
-
-.palm-type-card[data-palm-type="venus"]:hover {
-border-color: #795548;
-}
-
-.tarot-card-selection {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 16px;
-padding: 20px 0;
-}
-
-.tarot-row {
-display: flex;
-justify-content: center;
-gap: 12px;
-flex-wrap: wrap;
-}
-
-.tarot-card-back {
-width: 70px;
-height: 105px;
-background: linear-gradient(145deg, #2c3e50 0%, #34495e 100%);
-border-radius: 12px;
-border: 3px solid #667eea;
-cursor: pointer;
-transition: all 0.3s ease;
-position: relative;
-box-shadow: 0 8px 25px rgba(0,0,0,0.15), inset 0 1px 3px rgba(255,255,255,0.1);
-display: flex;
-align-items: center;
-justify-content: center;
-transform-style: preserve-3d;
-}
-
-.tarot-card-back:hover {
-transform: translateY(-8px) scale(1.05);
-box-shadow: 0 15px 35px rgba(0,0,0,0.25), 0 0 20px rgba(102,126,234,0.4);
-border-color: #ffd700;
-}
-
-.tarot-card-back.flipped {
-transform: rotateY(180deg);
-}
-
-.card-back-design {
-font-size: 22px;
-color: #ffd700;
-text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-filter: drop-shadow(0 0 8px rgba(255,215,0,0.3));
-animation: twinkle 2s ease-in-out infinite;
-}
-
-@keyframes twinkle {
-0%, 100% { opacity: 0.7; transform: scale(1); }
-50% { opacity: 1; transform: scale(1.1); }
-}
-
-.tarot-card-front {
-position: absolute;
-inset: 0;
-background: #fff;
-border-radius: 9px;
-padding: 6px;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-text-align: center;
-font-size: 9px;
-color: #333;
-border: 2px solid #ffd700;
-box-shadow: inset 0 2px 8px rgba(255,215,0,0.2);
-transform: rotateY(180deg);
-backface-visibility: hidden;
-opacity: 0;
-transition: opacity 0.5s ease;
-}
-
-.tarot-card-back.revealed .tarot-card-front {
-opacity: 1;
-}
-
-.tarot-actions {
-margin-top: 20px;
-display: flex;
-gap: 10px;
-justify-content: center;
-flex-wrap: wrap;
-}
-
-/* ===== 타로 모달 ===== */
-.tarot-modal-overlay {
-display: none;
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background: rgba(0,0,0,0.8);
-z-index: 1000;
-align-items: center;
-justify-content: center;
-padding: 20px;
-backdrop-filter: blur(5px);
-}
-
-.tarot-modal-overlay.show {
-display: flex;
-}
-
-.tarot-modal {
-background: linear-gradient(145deg, #2c3e50 0%, #34495e 100%);
-border-radius: 20px;
-padding: 30px;
-max-width: 500px;
-width: 100%;
-max-height: 80vh;
-overflow-y: auto;
-box-shadow: 0 25px 60px rgba(0,0,0,0.8), inset 0 2px 5px rgba(255,255,255,0.1);
-border: 2px solid #667eea;
-position: relative;
-color: white;
-animation: modalIn 0.3s ease-out;
-}
-
-@keyframes modalIn {
-from {
-opacity: 0;
-transform: scale(0.9) translateY(-20px);
-}
-to {
-opacity: 1;
-transform: scale(1) translateY(0);
-}
-}
-
-.tarot-close-btn {
-position: absolute;
-top: 15px;
-right: 20px;
-background: none;
-border: none;
-color: #ffd700;
-font-size: 24px;
-cursor: pointer;
-width: 32px;
-height: 32px;
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-transition: all 0.2s ease;
-}
-
-.tarot-close-btn:hover {
-background: rgba(255,215,0,0.1);
-transform: scale(1.1);
-}
-
-/* 구슬 속 카드 표시 */
-.main-crystal.crystal-reveal {
-background: radial-gradient(circle at 30% 30%, rgba(255,215,0,.9), rgba(255,20,147,.7), rgba(138,43,226,.5));
-}
-
-.crystal-card {
-width: 80px;
-height: 110px;
-border-radius: 8px;
-background: #fff;
-border: 1px solid #eee;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-padding: 6px;
-text-align: center;
-box-shadow: 0 8px 20px rgba(0,0,0,.25);
-transform: translateY(8px) scale(.85);
-opacity: 0;
-animation: crystalIn .45s ease forwards;
-}
-
-.crystal-card .title {
-font-size: 11px;
-color: #111827;
-line-height: 1.2;
-}
-
-.crystal-card .dir {
-margin-top: 4px;
-font-size: 10px;
-color: #6b7280;
-}
-
-@keyframes crystalIn {
-to {
-transform: translateY(0) scale(1);
-opacity: 1;
-}
-}
-
-.btn-ghost{background:#f6f6f6;color:#333}
+/* ===== 반응형 수정 ===== */
+@media (max-width: 900px) {
+    .mt-hero-split .mt-wrap {
+        grid-template-columns: 1fr !important;
+        gap: 20px;
+    }
+    
+    .mt-hero-left h1 {
+        font-size: 30px;
+    }
+    
+    .mt-nav {
+        display: none !important; /* 모바일에서는 네비 숨김 */
+    }
+    
+    .main-buttons {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .pillars-grid {
+        gap: 8px;
+    }
+    
+    .pillar-card {
+        padding: 12px 6px;
+    }
+    
+    .result-card {
+        padding: 16px;
+    }
+}
+
+/* ===== 강제 표시 규칙 (failsafe) ===== */
+body {
+    position: relative;
+}
+
+/* 모든 핵심 요소들 강제 표시 */
+.mt-header,
+.mt-hero-split,
+.mt-hero-left,
+.mt-nav,
+.main-buttons,
+.btn-primary {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* 스플래시가 숨겨진 후에는 다른 요소들이 클릭 가능하도록 */
+.splash-screen.hidden {
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
+/* 기타 유틸리티 */
+.btn-ghost{background:#f6f6f6;color:#333;text-decoration:none !important;}
 .spacer{height:100px}
 
-:root { --sheetW: 640px; }
-
-#sheetContent .palm-result-image,
-#sheetContent .result-card,
-#sheetContent .info-box,
-#sheetContent .result-section {
-  max-width: var(--sheetW);
-  margin-left: auto;
-  margin-right: auto;
-}
-
-#sheetContent .palm-photo-wrap {
-  margin: 12px auto 18px;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #fff;
-}
-
-#sheetContent .palm-result-image img,
-#sheetContent .palm-result-image svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-/* ===== MysticTell Policy/Footer (scoped with .mt-*) ===== */
-.mt-footer{
-  background:#f8f9fa; padding:24px 0; text-align:center;
-  margin-top:48px; border-top:1px solid #e2e8f0;
-}
-.mt-footer-links{ margin-bottom:8px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
-.mt-footer-links a{ color:#667eea; text-decoration:none; }
-.mt-footer-links a:hover{ text-decoration:underline; }
-.mt-footer-info{ color:#718096; font-size:.9rem; }
-
-.mt-sheet-backdrop{
-  position:fixed; inset:0; display:none;
-  align-items:center; justify-content:center;
-  background:rgba(0,0,0,.45); opacity:0;
-  transition:opacity .25s ease; z-index:1000;
-}
-.mt-sheet-backdrop.mt-show{ display:flex; opacity:1; }
-.mt-sheet{
-  background:#fff; border-radius:16px; width:min(92vw,800px);
-  max-height:80vh; overflow:auto; box-shadow:0 10px 30px rgba(0,0,0,.2);
-}
-.mt-sheet-header{
-  display:flex; align-items:center; justify-content:space-between;
-  padding:16px 20px; border-bottom:1px solid #eee;
-}
-.mt-sheet-title{ font-size:1.2rem; font-weight:700; margin:0; }
-.mt-sheet-close{ background:none; border:0; font-size:24px; line-height:1; cursor:pointer; }
-.mt-sheet-content{ padding:20px; }
-
-.mt-policy-content{ line-height:1.7; color:#2d3748; }
-.mt-policy-section{ margin-bottom:20px; }
-.mt-policy-section h4{ font-size:1rem; margin:0 0 .5rem; color:#4a5568; font-weight:700; }
-:root{--max:1040px;--gap:20px;--brand:#667eea;--ink:#1f2937;}
 html{scroll-behavior:smooth;}
-/* 앵커 이동 시 헤더 높이 보정 */
 .mt-section, .mt-hero-split{scroll-margin-top:72px;}
 
 .mt-wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gap);}
 .mt-section{padding:48px 0;border-top:1px solid #f1f5f9;background:#fff;}
 .mt-section h2{margin:0 0 16px;color:var(--ink)}
 
-/* Header */
-.mt-header{position:sticky;top:0;background:#ffffffcc;backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid #eef2f7;z-index:50}
-.mt-header .mt-wrap{display:flex;align-items:center;justify-content:space-between;height:56px;}
-.mt-logo{font-weight:700;color:#2b2f36;text-decoration:none}
-.mt-nav a{margin-left:14px;color:#4b5563;text-decoration:none}
-.mt-nav a:hover{text-decoration:underline}
-
-/* Hero split */
-.mt-hero-split{padding:56px 0;background:linear-gradient(180deg,#f6f8ff,#ffffff);}
-.mt-hero-split .mt-wrap{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;}
-.mt-hero-left .eyebrow{color:#6b7280;margin:0 0 8px}
-.mt-hero-left h1{margin:0 0 10px;font-size:40px;line-height:1.2}
-.mt-hero-left .accent{color:var(--brand)}
-.ticks{margin:12px 0 18px;padding-left:20px}
-.ticks li{margin:6px 0}
-.btn-primary{display:inline-block;background:var(--brand);color:#fff;padding:12px 18px;border-radius:999px}
-.btn-ghost{display:inline-block;margin-left:8px;padding:12px 16px;border-radius:999px;border:1px solid #d1d5db;color:#374151}
-
-.mt-hero-right .hero-card{border:1px solid #e5e7eb;border-radius:16px;padding:18px;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.06);}
-.hero-card h3{margin:0 0 6px}
-.btn-sm{display:inline-block;margin-top:10px;font-size:14px;border:1px solid #d1d5db;border-radius:999px;padding:8px 12px}
-
-/* 기능 그리드(필요 시) */
-.feature-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.feature{display:flex;align-items:center;gap:8px;border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fff}
-
-/* 기타 */
-.mt-ad{margin:20px 0}
-.howto ol{margin:0;padding-left:20px}
-.faq details{border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;margin:10px 0;background:#fcfcff}
-
-@media (max-width:900px){
-  .mt-hero-split .mt-wrap{grid-template-columns:1fr;}
-  .feature-grid{grid-template-columns:repeat(2,1fr);}
-  .mt-hero-left h1{font-size:30px}
+/* 추가 안전장치 */
+#splashScreen {
+    /* 스플래시는 JavaScript로 제어 */
 }
 
-/* ===== 수정사항 (핵심) ===== */
-
-/* 스플래시 숨김 처리 */
-#splashScreen, #splash {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  display: block;
-  pointer-events: auto;
-}
-
-#splashScreen.hidden, #splash.hidden {
-  opacity: 0;
-  visibility: hidden;
-  display: none !important;
-  pointer-events: none;
-}
-
-/* 메인 콘텐츠 항상 표시 가능하도록 */
 #mainContent {
-  display: block !important;
-  position: relative;
-  z-index: 1;
+    display: block !important;
 }
 
-/* 스플래시가 숨겨졌을 때 메인 콘텐츠가 보이도록 */
-body.splash-hidden #mainContent {
-  display: block !important;
+/* 모든 링크 밑줄 제거 */
+a {
+    text-decoration: none !important;
 }
 
-/* 네비게이션 복구 */
-.mt-nav {
-  display: block !important;
-}
-
-/* 히어로 섹션 텍스트 복구 */
-.mt-hero-left {
-  display: block !important;
-}
-
-/* 버튼 클릭 가능하도록 */
-.btn, .start-image-btn {
-  pointer-events: auto;
-  cursor: pointer;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 768px) {
-  .pillars-grid {
-    gap: 8px;
-  }
-  
-  .pillar-card {
-    padding: 12px 6px;
-  }
-  
-  .pillar-value {
-    font-size: 16px;
-  }
-  
-  .result-card {
-    padding: 16px;
-  }
-  
-  .card-value {
-    font-size: 18px;
-  }
-  
-  .tarot-card-back {
-    width: 60px;
-    height: 90px;
-  }
-  
-  .card-back-design {
-    font-size: 18px;
-  }
-  
-  .tarot-modal {
-    padding: 20px;
-    margin: 10px;
-  }
-  
-  .palm-types-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-  
-  .palm-type-card {
-    padding: 12px;
-  }
-  
-  .palm-icon {
-    height: 60px;
-    font-size: 12px;
-  }
-  
-  .palm-title {
-    font-size: 12px;
-  }
-  
-  .palm-description {
-    font-size: 9px;
-  }
-}
-
-/* ===== 전역 안전 규칙 ===== */
-img, svg, video { max-width: 100%; height: auto; }
-
-/* 키보드 사용자 친화 */
-.btn:focus,
-.sheet-close-btn:focus,
-.tarot-close-btn:focus {
-  outline: 3px solid rgba(102,126,234,.45);
-  outline-offset: 2px;
-}
-
-/* 버튼/네비 앵커 기본 밑줄 제거 */
-a.btn, .btn, .mt-nav a { text-decoration: none !important; }
-a.btn:hover, .btn:hover { text-decoration: none; }
-
-/* 전역 애니메이션 접근성 */
-@media (prefers-reduced-motion: reduce){
-  * { animation: none !important; transition: none !important; }
+a:hover {
+    text-decoration: none !important;
 }
     </style>
 </head>
 <body>
-    <!-- 예시 HTML 구조 -->
+    <!-- 실제 HTML 구조 예시 -->
+    
+    <!-- 상단 헤더 네비게이션 -->
+    <header class="mt-header">
+        <div class="mt-wrap">
+            <a href="#/home" class="mt-logo">MysticTell</a>
+            <nav class="mt-nav">
+                <a href="#/home" class="btn-ghost">홈</a>
+                <a href="#/fortune/today" class="btn-ghost">오늘의 운세</a>
+                <a href="#/fortune/saju" class="btn-ghost">정통 사주</a>
+                <a href="#/fortune/lotto" class="btn-ghost">행운번호</a>
+                <a href="#guide" class="btn-ghost">이용 가이드</a>
+                <a href="#contact" class="btn-ghost">문의</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 히어로 섹션 -->
+    <section class="mt-hero-split" id="home">
+        <div class="mt-wrap">
+            <div class="mt-hero-left">
+                <p class="eyebrow">오늘을 시작하며,</p>
+                <h1>내일을 본다,<br><span class="accent">맞춤 운세</span> 미스틱텔</h1>
+                <ul class="ticks">
+                    <li>✨ 매일 업데이트 되는 신규 운세</li>
+                    <li>😊 개인정보 저장 없이 결과 확인</li>
+                    <li>🎁 무료로 보는 내일</li>
+                </ul>
+                <div class="main-buttons">
+                    <a href="#/fortune/today" class="btn btn-primary">오늘의 운세</a>
+                    <a href="#/fortune/saju" class="btn btn-primary">정통 사주</a>
+                    <a href="#/fortune/lotto" class="btn btn-primary">행운번호</a>
+                    <a href="#/home" class="btn btn-primary">바로 시작</a>
+                </div>
+            </div>
+            
+            <div class="mt-hero-right">
+                <div class="card hero-card">
+                    <div class="card-body">
+                        <h3>고민을 구슬에 담아보세요</h3>
+                        <p>간단한 입력으로 빠르게 결과를 받아보세요.</p>
+                        <a href="#today" class="btn-sm">바로 시작</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <div class="container">
         <!-- 스플래시 스크린 -->
-        <div id="splashScreen" class="splash-screen">
+        <div class="splash-screen" id="splashScreen">
             <button class="start-image-btn" id="startBtn"></button>
         </div>
-        
+
         <!-- 메인 콘텐츠 -->
-        <div id="mainContent" class="main-content show">
-            <!-- 헤더 -->
-            <div class="mt-header">
-                <div class="mt-wrap">
-                    <a href="/" class="mt-logo">MysticTell</a>
-                    <nav class="mt-nav">
-                        <a href="#home">홈</a>
-                        <a href="#fortune">오늘의 운세</a>
-                        <a href="#saju">정통 사주</a>
-                        <a href="#lucky">행운번호</a>
-                        <a href="#guide">이용 가이드</a>
-                        <a href="#help">문의</a>
-                    </nav>
-                </div>
+        <div class="main-content" id="mainContent">
+            <div class="header">
+                <div class="logo">🔮 MysticTell</div>
+                <div class="subtitle">신비로운 미래를 알려드리는 디지털 점술사</div>
+                <div class="main-crystal" id="mainCrystal">구슬 속 미래를<br/>확인해보세요</div>
             </div>
-            
-            <!-- 히어로 섹션 -->
-            <div class="mt-hero-split">
-                <div class="mt-wrap">
-                    <div class="mt-hero-left">
-                        <div class="eyebrow">맞춤 운세</div>
-                        <h1>미스틱텔</h1>
-                        <ul class="ticks">
-                            <li>✨ 매일 업데이트 되는 신규 운세</li>
-                            <li>😊 개인정보 저장 없이 결과 확인</li>
-                            <li>🔮 무료로 보는 내일</li>
-                        </ul>
-                        <div>
-                            <a href="#fortune" class="btn-primary">오늘의 운세</a>
-                            <a href="#saju" class="btn">정통 사주</a>
-                            <a href="#lucky" class="btn">행운번호</a>
-                            <a href="#palm" class="btn">바로 시작</a>
-                        </div>
+
+            <!-- 홈 페이지 -->
+            <section id="page-home" class="page show">
+                <div class="section-title">✨ 핵심 운세 서비스</div>
+                <div class="service-grid">
+                    <div class="service-item" data-route="fortune-today">
+                        <span class="service-icon">🗓️</span>
+                        <div class="service-name">오늘의 운세</div>
+                        <div class="service-desc">매일 새로운 운세를 확인하세요</div>
                     </div>
-                    <div class="mt-hero-right">
-                        <div class="hero-card">
-                            <h3>🔮 MysticTell</h3>
-                            <p>신비로운 미래를 알려드리는 디지털 점술사</p>
-                            <div class="main-crystal">
-                                구슬 속 미래를<br>확인해보세요
-                            </div>
-                        </div>
+                    <div class="service-item" data-route="fortune-lotto">
+                        <span class="service-icon">🎲</span>
+                        <div class="service-name">행운번호</div>
+                        <div class="service-desc">통계 기반 로또 번호</div>
+                    </div>
+                    <div class="service-item" data-route="fortune-saju">
+                        <span class="service-icon">📜</span>
+                        <div class="service-name">정통 사주</div>
+                        <div class="service-desc">생년월일로 보는 인생 운세</div>
+                    </div>
+                    <div class="service-item" data-route="fortune-tarot">
+                        <span class="service-icon">🃏</span>
+                        <div class="service-name">타로 점</div>
+                        <div class="service-desc">카드가 전하는 미래 메시지</div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- 서비스 그리드 -->
-            <div class="service-grid">
-                <div class="service-item">
-                    <div class="service-icon">🎴</div>
-                    <div class="service-name">오늘의 운세</div>
-                    <div class="service-desc">매일 새로운 운세를 확인하세요</div>
+
+                <div class="section-title">🌟 특별 서비스</div>
+                <div class="special-grid">
+                    <div class="special-item" data-route="fortune-year">
+                        <div class="special-icon">🎊</div>
+                        <div class="special-title">신년 운세</div>
+                        <div class="special-desc">2025년 한 해 운세</div>
+                    </div>
+                    <div class="special-item" data-route="fortune-palm">
+                        <div class="special-icon">🖐️</div>
+                        <div class="special-title">손금 보기</div>
+                        <div class="special-desc">손바닥으로 보는 운명</div>
+                    </div>
                 </div>
-                <div class="service-item">
-                    <div class="service-icon">🔢</div>
-                    <div class="service-name">정통 사주</div>
-                    <div class="service-desc">생년월일로 운명을 분석합니다</div>
+            </section>
+
+            <div class="spacer"></div>
+        </div>
+
+        <!-- 결과 시트 -->
+        <div class="sheet-backdrop" id="sheetBackdrop">
+            <div class="sheet">
+                <div class="sheet-header">
+                    <div class="sheet-title" id="sheetTitle">결과</div>
+                    <button class="sheet-close-btn" id="btnClose">✕</button>
                 </div>
-                <div class="service-item">
-                    <div class="service-icon">🍀</div>
-                    <div class="service-name">행운번호</div>
-                    <div class="service-desc">오늘의 행운을 가져다줄 숫자</div>
-                </div>
-                <div class="service-item">
-                    <div class="service-icon">👋</div>
-                    <div class="service-name">바로 시작</div>
-                    <div class="service-desc">간단한 질문으로 바로 시작</div>
-                </div>
+                <div class="sheet-content" id="sheetContent">내용</div>
             </div>
         </div>
     </div>
+
+    <script>
+        // 간단한 스플래시 제어 스크립트
+        document.addEventListener('DOMContentLoaded', function() {
+            const startBtn = document.getElementById('startBtn');
+            const splashScreen = document.getElementById('splashScreen');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (startBtn) {
+                startBtn.addEventListener('click', function() {
+                    if (splashScreen) {
+                        splashScreen.classList.add('hidden');
+                    }
+                    if (mainContent) {
+                        mainContent.classList.add('show');
+                    }
+                });
+            }
+
+            // 자동으로 스플래시를 숨기고 메인 콘텐츠 표시 (테스트용)
+            setTimeout(() => {
+                if (splashScreen) {
+                    splashScreen.style.display = 'none';
+                }
+                if (mainContent) {
+                    mainContent.style.display = 'block';
+                }
+            }, 100);
+        });
+    </script>
 </body>
 </html>
