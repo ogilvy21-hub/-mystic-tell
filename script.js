@@ -1,7 +1,13 @@
 // DOM 헬퍼 + 로컬스토리지 키 (맨 위에 추가)
 const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+const $$ = (sel) => Array.from(document.querySelectorAll(sel) || []);  // 안전한 버전
 const LS_KEY = 'mystictell_recent_results';
+
+// forEach를 지원하는 안전한 선택자
+const $all = (sel) => {
+    const elements = document.querySelectorAll(sel);
+    return elements ? Array.from(elements) : [];
+};
 
 // lunar-javascript 글로벌 보정 (보강)
 (function fixLunarGlobals(){
@@ -1397,7 +1403,7 @@ function ensurePalmMenuLabels(){
         venus:{t:'금성대', e:'💫'}
     };
     
-    $('.palm-type-card').forEach(card=>{
+   $$('.palm-type-card').forEach(card=>{
         const type = card.dataset.palmType;
         const meta = labels[type];
         if (!meta) return;
@@ -1470,7 +1476,7 @@ function showPalmSubTypes(palmType) {
     });
     
     setTimeout(() => {
-        $('.palm-subtype-card').forEach(card => {
+        $$('.palm-subtype-card').forEach(card => {
             card.addEventListener('click', () => {
                 const palmType = card.dataset.palmType;
                 const subType = card.dataset.subtype;
@@ -1557,7 +1563,7 @@ function initializePalmReading() {
 }
 
 function selectPalmType(cardElement, palmType) {
-    $('.palm-type-card').forEach(card => card.classList.remove('selected'));
+   $$('.palm-type-card').forEach(card => card.classList.remove('selected'));
     cardElement.classList.add('selected');
     showPalmReading(palmType);
 }
@@ -1852,7 +1858,7 @@ function drawRandomTarotCard(){
 }
 
 function resetTarotCards(){
-    $('.tarot-card-back').forEach(card=>{
+    $$('.tarot-card-back').forEach(card=>{
         card.classList.remove('flipped','revealed');
         card.style.transform='';
         card.querySelector('.tarot-card-front')?.remove();
@@ -2143,7 +2149,7 @@ function buildEnhancedSajuResult(r, name = '') {
 // ===== 버튼 이벤트 리스너들 =====
 
 // 네비게이션 클릭 이벤트
-$('.nav-item[data-tab]').forEach(item=>{
+$$('.nav-item[data-tab]').forEach(item=>{
     item.addEventListener('click', ()=>{
         const tab = item.dataset.tab || 'home';
         location.hash = '#/' + tab;
@@ -2151,7 +2157,7 @@ $('.nav-item[data-tab]').forEach(item=>{
     });
 });
 
-$('.service-item,.special-item').forEach(card=>{
+$$().forEach
     card.addEventListener('click', ()=>{
         const r = card.dataset.route || 'fortune-today';
         location.hash = '#/fortune/' + r.replace('fortune-','');
@@ -2486,11 +2492,11 @@ function showComingSoonNotification() {
     });
     
     // close triggers (X 버튼, 배경 클릭)
-    $('.mt-sheet-close').forEach(btn=>{
+    $$('.mt-sheet-close').forEach(btn=>{
         btn.addEventListener('click', closeAll);
     });
     
-    $('.mt-sheet-backdrop').forEach(bg=>{
+    $$('.mt-sheet-backdrop').forEach(bg=>{
         bg.addEventListener('click', (e)=>{
             if(e.target === bg) closeAll();
         });
