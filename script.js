@@ -3473,7 +3473,7 @@ function routeFromHash() {
   }
 }
 
-// 전역 리스너
+// 전역 리스너: 모든 해시 링크 클릭 처리
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href^="#/"]');
   if (!a) return;
@@ -3484,32 +3484,35 @@ document.addEventListener('click', (e) => {
   if (to && location.hash !== to) location.hash = to;
 }, true);
 
-window.addEventListener('hashchange', routeFromHash);
+// 에러 핸들러
 window.addEventListener('error', () => closeSheetSafe());
 
 // 초기화
 window.addEventListener('load', () => {
-    document.getElementById('bottomNav')?.classList.add('show');
+  // 네비게이션 표시
+  document.getElementById('bottomNav')?.classList.add('show');
 
-    // Start 버튼 이벤트
-    const start = document.getElementById('startBtn');
-    start?.addEventListener('click', () => forceHideSplash());
+  // Start 버튼 이벤트
+  const start = document.getElementById('startBtn');
+  start?.addEventListener('click', () => forceHideSplash());
 
-    // 로드 직후 스플래시 제거
-    forceHideSplash();
+  // 스플래시 제거
+  forceHideSplash();
 
-    // 보정 함수 실행
-    ensureFortuneSectionWrap();
-    bindCalToggle?.('today');
-    bindCalToggle?.('saju');
-    bindLotto?.();
+  // 보정 함수 실행
+  ensureFortuneSectionWrap();
+  bindCalToggle?.('today');
+  bindCalToggle?.('saju');
 
-    // 해시가 있으면 스플래시 숨기기
-if (location.hash && location.hash !== '#/home') {
-  hideSplash();
-}
-routeFromHash();
+  // 첫 진입 시 라우팅
+  if (location.hash && location.hash !== '#/home') {
+    hideSplash();
+  }
+  routeFromHash();
+});
 
-// 이벤트 연결
-window.addEventListener("hashchange", routeFromHash);
-document.addEventListener("DOMContentLoaded", routeFromHash);
+// 해시 변경 시 라우팅 실행
+window.addEventListener('hashchange', () => {
+  routeFromHash();
+  resetLottoListeners?.();   // ✅ lotto 버튼이 새로 생길 때 다시 바인딩
+});
