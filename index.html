@@ -29,20 +29,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <link rel="preload" as="image" href="https://github.com/user-attachments/assets/8f6cc52c-adae-4dee-ac35-f7de76992bef">
 <!-- 스플래시 배경 강제 적용 -->
 <style>
-    #splashScreen, .splash-screen {
-        background-image: url('https://github.com/user-attachments/assets/8f6cc52c-adae-4dee-ac35-f7de76992bef') !important;
-        background-size: cover !important;
-        background-position: center !important;
-        background-repeat: no-repeat !important;
+    /* 모든 스플래시 관련 강제 초기화 */
+    #splashScreen, .splash-screen, 
+    div[id*="splash"], div[class*="splash"] {
+        background: url('https://github.com/user-attachments/assets/8f6cc52c-adae-4dee-ac35-f7de76992bef') center/cover no-repeat !important;
         min-height: 100vh !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
     }
     
-    /* Start 버튼 숨기기 (자동 전환이므로) */
-    #startBtn, .start-image-btn {
+    /* Start 버튼 완전 숨김 */
+    #startBtn, .start-image-btn, 
+    button[id*="start"], button[class*="start"] {
         display: none !important;
+        visibility: hidden !important;
     }
 </style>
 </head>
