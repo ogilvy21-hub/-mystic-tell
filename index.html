@@ -681,6 +681,77 @@ setTimeout(() => {
   document.getElementById('startBtn')?.addEventListener('click', hideSplashNow);
 })();
 </script>
+  
+<!-- ===== 스플래시 제거 + 버튼 활성화 ===== -->
+<style>
+#splashScreen,
+.splash-screen,
+[data-role="splash"],
+div[id="splash"] {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    background-image: none !important;
+}
 
+:root {
+    --splash-bg-url: none !important;
+}
+
+.splash-overlay,
+.loading-screen,
+.sheet-backdrop,
+.mt-sheet-backdrop,
+[class*="backdrop"],
+[class*="overlay"] {
+    display: none !important;
+}
+</style>
+
+<script>
+(function() {
+    console.log('🚀 MysticTell 자동 수정 시작');
+    
+    function removeOverlays() {
+        var overlays = document.querySelectorAll('.sheet-backdrop, .mt-sheet-backdrop, [class*="backdrop"], [class*="overlay"]');
+        overlays.forEach(function(el) {
+            el.style.setProperty('display', 'none', 'important');
+        });
+    }
+    
+    function activateAllButtons() {
+        var allButtons = document.querySelectorAll('button, a, .btn, [role="button"], [data-route]');
+        
+        allButtons.forEach(function(btn) {
+            btn.disabled = false;
+            btn.style.pointerEvents = 'auto';
+            
+            if (!btn.getAttribute('data-has-listener')) {
+                btn.setAttribute('data-has-listener', 'true');
+                
+                btn.addEventListener('click', function(e) {
+                    var route = this.getAttribute('data-route') || this.getAttribute('href');
+                    if (route && route.includes('#/')) {
+                        location.hash = route.includes('#') ? route : '#/' + route;
+                    }
+                });
+            }
+        });
+    }
+    
+    function executeAllFixes() {
+        removeOverlays();
+        activateAllButtons();
+    }
+    
+    executeAllFixes();
+    setTimeout(executeAllFixes, 1000);
+    window.addEventListener('load', executeAllFixes);
+    window.addEventListener('hashchange', function() {
+        setTimeout(activateAllButtons, 100);
+    });
+    
+})();
+</script>
 </body>
 </html>
