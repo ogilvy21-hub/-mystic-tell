@@ -1767,7 +1767,7 @@ if (!window.__tarotEscBound){
 function initializeTarot() {
     if (!ensureTarotReady()) return;
     
-    const tarotCards = $('.tarot-card-back');
+    const tarotCards = document.querySelectorAll('.tarot-card-back');
     tarotCards.forEach(card => {
         if (card.__bound) return;
         card.addEventListener('click', () => selectTarotCard(card));
