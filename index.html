@@ -654,5 +654,33 @@ setTimeout(() => {
     }
 }, 4000);
 </script>
+<script>
+(function(){
+  const SEL = '#splashScreen, .splash-screen, [data-role="splash"]';
+
+  function hideSplashNow(){
+    const el = document.querySelector(SEL);
+    if(!el) return;
+    el.classList.add('is-hidden', 'hidden');
+    el.style.setProperty('display','none','important');
+    el.style.setProperty('background-image','none','important'); // ← 바로 이 줄
+    el.setAttribute('aria-hidden','true');
+  }
+
+  // 어디서 불러도 동작하도록 바인딩
+  window.hideSplash = hideSplashNow;
+  window.forceHideSplash = hideSplashNow;
+
+  // 타이밍/라우팅 세이프가드
+  document.addEventListener('DOMContentLoaded', hideSplashNow, { once:true });
+  window.addEventListener('load', hideSplashNow, { once:true });
+  window.addEventListener('hashchange', hideSplashNow);
+  setTimeout(hideSplashNow, 1500);
+
+  // Start 버튼이 있다면
+  document.getElementById('startBtn')?.addEventListener('click', hideSplashNow);
+})();
+</script>
+
 </body>
 </html>
