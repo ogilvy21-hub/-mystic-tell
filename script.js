@@ -2,7 +2,79 @@
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel) || []);  // 안전한 버전
 const LS_KEY = 'mystictell_recent_results';
+// 타로 카드 하루 2회 제한 클래스 ← 여기에 추가!
+class TarotDailyLimit {
+    constructor() {
+        this.maxDaily = 2;
+        this.storageKey = 'tarot_daily_usage';
+    }
 
+    getTodayString() {
+        return new Date().toISOString().split('T')[0];
+    }
+
+    getTodayUsage() {
+        try {
+            const data = localStorage.getItem(this.storageKey);
+            if (!data) return { date: this.getTodayString(), count: 0 };
+            
+            const parsed = JSON.parse(data);
+            const today = this.getTodayString();
+            
+            if (parsed.date !== today) {
+                return { date: today, count: 0 };
+            }
+            return parsed;
+        } catch (e) {
+            return { date: this.getTodayString(), count: 0 };
+        }
+    }
+
+    saveTodayUsage(count) {
+        try {
+            const data = { date: this.getTodayString(), count: count };
+            localStorage.setItem(this.storageKey, JSON.stringify(data));
+        } catch (e) {
+            console.error('타로 사용 기록 저장 실패:', e);
+        }
+    }
+
+    canUseTarot() {
+        const usage = this.getTodayUsage();
+        return usage.count < this.maxDaily;
+    }
+
+    getRemainingCount() {
+        const usage = this.getTodayUsage();
+        return Math.max(0, this.maxDaily - usage.count);
+    }
+
+    useTarot() {
+        const usage = this.getTodayUsage();
+        if (usage.count >= this.maxDaily) return false;
+        
+        this.saveTodayUsage(usage.count + 1);
+        return true;
+    }
+
+    showLimitAlert() {
+        const resetTime = new Date();
+        resetTime.setDate(resetTime.getDate() + 1);
+        resetTime.setHours(0, 0, 0, 0);
+        
+        const resetString = resetTime.toLocaleDateString('ko-KR', {
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        alert(`🔮 오늘의 타로 카드 사용 횟수를 모두 사용하셨습니다.\n\n하루 최대 ${this.maxDaily}번까지 이용 가능합니다.\n✨ 다음 이용: ${resetString}\n\n더 깊이 있는 통찰을 원하신다면 내일 다시 찾아주세요! 💫`);
+    }
+}
+
+// 전역 인스턴스 생성
+const tarotLimit = new TarotDailyLimit();
 // forEach를 지원하는 안전한 선택자
 const $all = (sel) => {
     const elements = document.querySelectorAll(sel);
@@ -1770,8 +1842,19 @@ function initializeTarot() {
     const tarotCards = document.querySelectorAll('.tarot-card-back');
     tarotCards.forEach(card => {
         if (card.__bound) return;
-        card.addEventListener('click', () => selectTarotCard(card));
-        card.__bound = true;
+        card.addEventListener('click', () => {
+            if (!tarotLimit.canUseTarot()) {
+                tarotLimit.showLimitAlert();
+                return;
+            }
+            if (!tarotLimit.useTarot()) {
+                tarotLimit.showLimitAlert();
+                return;
+            }
+            console.log(`💫 타로 카드 사용 (남은 횟수: ${tarotLimit.getRemainingCount()}번)`);
+            selectTarotCard(card);
+        });
+        card.__bound = true; // ← 이 줄이 빠져있었음!
     });
     
     // 안정성 보강: DOM에 카드가 없으면 더 진행하지 않음
@@ -1779,7 +1862,18 @@ function initializeTarot() {
     
     const randomBtn = $('#btnRandomTarot');
     if (randomBtn && !randomBtn.__bound) {
-        randomBtn.addEventListener('click', drawRandomTarotCard);
+        randomBtn.addEventListener('click', () => {
+            if (!tarotLimit.canUseTarot()) {
+                tarotLimit.showLimitAlert();
+                return;
+            }
+            if (!tarotLimit.useTarot()) {
+                tarotLimit.showLimitAlert();
+                return;
+            }
+            console.log(`💫 랜덤 타로 사용 (남은 횟수: ${tarotLimit.getRemainingCount()}번)`);
+            drawRandomTarotCard();
+        }); // ← 이 닫는 괄호가 빠져있었음!
         randomBtn.__bound = true;
     }
     
