@@ -1570,6 +1570,17 @@ a, a:hover, a:focus, a:active, a:visited {
   border-bottom: none !important;
 }
 
+/* === Splash 강제 정정(배포본에 남아 있는 광범위 규칙 무력화) === */
+
+/* 1) 정확 타깃 하나에만 배경을 준다 */
+#splashScreen,
+.splash-screen {
+  background-image: var(--splash-bg-url) !important;
+  background-position: center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+}
+
 /* 손금 "준비중" 처리 - 일단 주석 처리 (필요시 활성화) */
 /*
 .service-item[data-route="fortune-palm"],
@@ -1597,16 +1608,7 @@ a, a:hover, a:focus, a:active, a:visited {
   z-index: 10;
 }
 */
-/* === Splash 강제 정정(배포본에 남아 있는 광범위 규칙 무력화) === */
 
-/* 1) 정확 타깃 하나에만 배경을 준다 */
-#splashScreen,
-.splash-screen {
-  background-image: var(--splash-bg-url) !important;
-  background-position: center !important;
-  background-size: cover !important;
-  background-repeat: no-repeat !important;
-}
 
 /* 2) 이름에 'splash'만 들어가도 다 먹이던 배경 이미지를 차단 */
 div[id*="splash"],
