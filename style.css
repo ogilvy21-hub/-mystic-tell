@@ -1580,10 +1580,12 @@ a, a:hover, a:focus, a:active, a:visited {
   background-size: cover !important;
   background-repeat: no-repeat !important;
 }
-/* 2) 이름에 'splash'만 들어가도 다 먹이던 배경 이미지를 차단 */
-div[id*="splash"],
-div[class*="splash"] {
-  background-image: none !important;
+/* 정확한 스플래시만 제거 */
+#splashScreen,
+.splash-screen[data-role="splash"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 /* 손금 "준비중" 처리 - 일단 주석 처리 (필요시 활성화) */
