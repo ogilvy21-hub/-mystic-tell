@@ -2157,7 +2157,7 @@ $$('.nav-item[data-tab]').forEach(item=>{
     });
 });
 
-$$().forEach
+$$().forEach((card) => {
     card.addEventListener('click', ()=>{
         const r = card.dataset.route || 'fortune-today';
         location.hash = '#/fortune/' + r.replace('fortune-','');
