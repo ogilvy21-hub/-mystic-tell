@@ -608,9 +608,51 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
   </div>
 </div>
+  
 <!-- ========= /MysticTell: Policy Modals ========= -->
-
 <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.12/lunar.min.js"></script>
-<script src="script.js"></script> 
+<script src="script.js"></script>
+
+<!-- 스플래시 자동 제거 추가 코드 -->
+<script>
+console.log('🚨 HTML 직접 백업 시작');
+
+function initSplashHide() {
+    console.log('🔄 스플래시 숨김 초기화');
+    setTimeout(() => {
+        console.log('🚀 강제 스플래시 전환');
+        const splash = document.getElementById('splashScreen') || document.querySelector('.splash-screen');
+        const main = document.querySelector('.container') || document.getElementById('mainScreen');
+        
+        if (splash && splash.style.display !== 'none') {
+            splash.style.display = 'none';
+            if (main) main.style.display = 'block';
+            console.log('✅ 강제 전환 완료');
+        } else {
+            console.log('ℹ️ 스플래시 이미 숨겨짐');
+        }
+    }, 2000); // 2초로 단축
+}
+
+// DOM 상태 확인 후 실행
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSplashHide);
+    console.log('📱 DOMContentLoaded 대기');
+} else {
+    initSplashHide();
+    console.log('🏃‍♂️ 즉시 실행');
+}
+
+// 안전망 (4초)
+setTimeout(() => {
+    const splash = document.getElementById('splashScreen');
+    if (splash && splash.style.display !== 'none') {
+        splash.style.display = 'none';
+        const main = document.querySelector('.container');
+        if (main) main.style.display = 'block';
+        console.log('🛡️ 안전망 완료');
+    }
+}, 4000);
+</script>
 </body>
 </html>
