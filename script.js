@@ -2626,7 +2626,55 @@ function showComingSoonNotification() {
             hideSplash();
         }, 4000);
     });
+    // ===== 스플래시 자동 전환 백업 시스템 =====
+
+// 백업 1: DOMContentLoaded (더 빠른 실행)
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('📱 DOM 준비 완료, 백업 타이머 시작');
+    setTimeout(() => {
+        console.log('🚀 백업 자동 전환 시작');
+        const splash = document.getElementById('splashScreen');
+        const main = document.querySelector('.container');
+        
+        if (splash && splash.style.display !== 'none') {
+            splash.style.display = 'none';
+            if (main) main.style.display = 'block';
+            console.log('✅ 백업 전환 완료');
+        }
+    }, 3000); // 3초 후
+});
+
+// 백업 2: 즉시 실행 안전망 (5초)
+setTimeout(() => {
+    console.log('🛡️ 안전망 전환 체크');
+    const splash = document.getElementById('splashScreen');
+    const main = document.querySelector('.container');
     
+    if (splash && splash.style.display !== 'none') {
+        splash.style.display = 'none';
+        if (main) main.style.display = 'block';
+        console.log('✅ 안전망 전환 완료');
+    } else {
+        console.log('ℹ️ 이미 전환됨 - 안전망 건너뜀');
+    }
+}, 5000); // 5초 후 (최종 안전망)
+
+// 백업 3: 페이지 완전 로드 후에도 체크
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        console.log('🔄 페이지 로드 후 추가 체크');
+        const splash = document.getElementById('splashScreen');
+        const main = document.querySelector('.container');
+        
+        if (splash && splash.style.display !== 'none') {
+            splash.style.display = 'none';
+            if (main) main.style.display = 'block';
+            console.log('✅ 로드 후 전환 완료');
+        }
+    }, 1000);
+});
+
+console.log('🔧 스플래시 백업 시스템 초기화 완료');
     // ② Start 버튼 클릭으로 닫기
     startBtn?.addEventListener('click', (e) => {
         e.preventDefault();
