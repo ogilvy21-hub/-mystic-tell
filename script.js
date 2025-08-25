@@ -2579,7 +2579,7 @@ function showComingSoonNotification() {
     };
     
     const closeAll = ()=>{
-        $('.mt-sheet-backdrop').forEach(el=>{
+        $$('.mt-sheet-backdrop').forEach(el=>{
             el.classList.remove('mt-show');
         });
     };
