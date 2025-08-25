@@ -2621,7 +2621,10 @@ function showComingSoonNotification() {
     
     // ① 페이지 로드 후 자동 닫기
     window.addEventListener('load', () => {
-        setTimeout(hideSplash, 800); // 0.8초 뒤 자동 닫기
+     setTimeout(() => {
+            console.log('🚀 자동 전환 시작');
+            hideSplash();
+        }, 4000);
     });
     
     // ② Start 버튼 클릭으로 닫기
