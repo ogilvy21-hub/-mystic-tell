@@ -2579,7 +2579,7 @@ function showComingSoonNotification() {
     };
     
     const closeAll = ()=>{
-        $$('.mt-sheet-backdrop').forEach(el=>{
+        $$$$$$('.mt-sheet-backdrop').forEach(el=>{
             el.classList.remove('mt-show');
         });
     };
@@ -2600,7 +2600,7 @@ function showComingSoonNotification() {
         btn.addEventListener('click', closeAll);
     });
     
-    $$('.mt-sheet-backdrop').forEach(bg=>{
+    $$$$$$('.mt-sheet-backdrop').forEach(bg=>{
         bg.addEventListener('click', (e)=>{
             if(e.target === bg) closeAll();
         });
