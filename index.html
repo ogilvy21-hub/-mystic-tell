@@ -48,47 +48,49 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <!-- 이미지 프리로드 -->
 
-<link rel="preload" as="image" href="https://i.imgur.com/zjaoFlI.png">
+<link rel="icon" type="image/png" href="https://github.com/user-attachments/assets/b19a5cf0-1f68-421a-8bd6-b89a41ed9188">
 
-<link rel="preload" as="image" href="https://i.imgur.com/SmhPkiD.png">
+<link rel="apple-touch-icon" href="https://github.com/user-attachments/assets/b19a5cf0-1f68-421a-8bd6-b89a41ed9188">
+
+<!-- 스플래시 이미지 프리로드 -->
+
+<link rel="preload" as="image" href="https://github.com/user-attachments/assets/8f6cc52c-adae-4dee-ac35-f7de76992bef">
+
+<!-- 스플래시 배경 강제 적용 -->
 
 <style>
 
- /* 스플래시 배경 이미지 강제 적용 */
+    #splashScreen, .splash-screen {
 
-  #splashScreen, .splash-screen {
+        background-image: url('https://github.com/user-attachments/assets/8f6cc52c-adae-4dee-ac35-f7de76992bef') !important;
 
-    background-image: url('https://i.imgur.com/zjaoFlI.png') !important;
+        background-size: cover !important;
 
-    background-size: cover !important;
+        background-position: center !important;
 
-    background-position: center !important;
+        background-repeat: no-repeat !important;
 
-    background-repeat: no-repeat !important;
+        min-height: 100vh !important;
 
-    background-color: #9b6dd1; /* 이미지 로드 실패시 보라색 배경 */
+        display: flex !important;
 
-  }
+        align-items: center !important;
 
-  
+        justify-content: center !important;
 
-  /* Start 버튼 이미지 */
+    }
 
-  #startBtn, .start-image-btn {
+    
 
-    background-image: url('https://i.imgur.com/SmhPkiD.png') !important;
+    /* Start 버튼 숨기기 (자동 전환이므로) */
 
-    background-size: contain !important;
+    #startBtn, .start-image-btn {
 
-    background-position: center !important;
+        display: none !important;
 
-    background-repeat: no-repeat !important;
-
-  }
+    }
 
 </style>
-
-
 
 </head>
 
