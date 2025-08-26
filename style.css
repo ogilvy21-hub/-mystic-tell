@@ -1314,33 +1314,6 @@ a, a:hover, a:focus, a:active, a:visited {
   border-bottom: none !important;
 }
 
-/* 손금 "준비중" 처리 - 일단 주석 처리 (필요시 활성화) */
-/*
-.service-item[data-route="fortune-palm"],
-.special-item[data-route="fortune-palm"] {
-  opacity: 0.7;
-  pointer-events: none;
-  position: relative;
-  filter: grayscale(30%);
-  cursor: not-allowed;
-}
-.service-item[data-route="fortune-palm"]::after,
-.special-item[data-route="fortune-palm"]::after {
-  content: "🚧 준비중";
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: linear-gradient(135deg, #ff9800, #f57c00);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: bold;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  z-index: 10;
-}
-*/
-
 /* 스플래시가 사라질 때 */
 #splashScreen.hidden,
 .splash-screen.hidden{
@@ -1359,3 +1332,11 @@ a, a:hover, a:focus, a:active, a:visited {
 /* 초기 상태(선택) – 스플래시만 보이게 */
 #mainContent, #bottomNav { display:none; }
 
+/* style.css 맨 아래에 추가 */
+.mt-header .mt-nav a {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
