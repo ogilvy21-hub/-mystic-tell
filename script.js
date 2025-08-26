@@ -1,23 +1,3 @@
-// 전역 에러 핸들러 (AdSense 심사 대비)
-
-window.addEventListener('error', (e) => {
-
-    // 개발 환경에서만 에러 표시
-
-    if (location.hostname.includes('localhost') || location.hostname.includes('127.0.0.1')) {
-
-        console.error('개발 에러:', e);
-
-    }
-
-    // 프로덕션에서는 에러 무시하고 계속 진행
-
-    e.preventDefault();
-
-    return true;
-
-});
-
 // DOM 헬퍼 + 로컬스토리지 키 (맨 위에 추가)
 
 const $ = (sel) => document.querySelector(sel);
@@ -26,151 +6,7 @@ const $$ = (sel) => Array.from(document.querySelectorAll(sel) || []);  // 안전
 
 const LS_KEY = 'mystictell_recent_results';
 
-// 타로 카드 하루 2회 제한 클래스 ← 여기에 추가!
 
-class TarotDailyLimit {
-
-    constructor() {
-
-        this.maxDaily = 2;
-
-        this.storageKey = 'tarot_daily_usage';
-
-    }
-
-
-
-    getTodayString() {
-
-        return new Date().toISOString().split('T')[0];
-
-    }
-
-
-
-    getTodayUsage() {
-
-        try {
-
-            const data = localStorage.getItem(this.storageKey);
-
-            if (!data) return { date: this.getTodayString(), count: 0 };
-
-            
-
-            const parsed = JSON.parse(data);
-
-            const today = this.getTodayString();
-
-            
-
-            if (parsed.date !== today) {
-
-                return { date: today, count: 0 };
-
-            }
-
-            return parsed;
-
-        } catch (e) {
-
-            return { date: this.getTodayString(), count: 0 };
-
-        }
-
-    }
-
-
-
-    saveTodayUsage(count) {
-
-        try {
-
-            const data = { date: this.getTodayString(), count: count };
-
-            localStorage.setItem(this.storageKey, JSON.stringify(data));
-
-        } catch (e) {
-
-            console.error('타로 사용 기록 저장 실패:', e);
-
-        }
-
-    }
-
-
-
-    canUseTarot() {
-
-        const usage = this.getTodayUsage();
-
-        return usage.count < this.maxDaily;
-
-    }
-
-
-
-    getRemainingCount() {
-
-        const usage = this.getTodayUsage();
-
-        return Math.max(0, this.maxDaily - usage.count);
-
-    }
-
-
-
-    useTarot() {
-
-        const usage = this.getTodayUsage();
-
-        if (usage.count >= this.maxDaily) return false;
-
-        
-
-        this.saveTodayUsage(usage.count + 1);
-
-        return true;
-
-    }
-
-
-
-    showLimitAlert() {
-
-        const resetTime = new Date();
-
-        resetTime.setDate(resetTime.getDate() + 1);
-
-        resetTime.setHours(0, 0, 0, 0);
-
-        
-
-        const resetString = resetTime.toLocaleDateString('ko-KR', {
-
-            month: 'long',
-
-            day: 'numeric',
-
-            hour: '2-digit',
-
-            minute: '2-digit'
-
-        });
-
-
-
-        alert(`🔮 오늘의 타로 카드 사용 횟수를 모두 사용하셨습니다.\n\n하루 최대 ${this.maxDaily}번까지 이용 가능합니다.\n✨ 다음 이용: ${resetString}\n\n더 깊이 있는 통찰을 원하신다면 내일 다시 찾아주세요! 💫`);
-
-    }
-
-}
-
-
-
-// 전역 인스턴스 생성
-
-const tarotLimit = new TarotDailyLimit();
 
 // forEach를 지원하는 안전한 선택자
 
@@ -3706,31 +3542,9 @@ function initializeTarot() {
 
         if (card.__bound) return;
 
-        card.addEventListener('click', () => {
+        card.addEventListener('click', () => selectTarotCard(card));
 
-            if (!tarotLimit.canUseTarot()) {
-
-                tarotLimit.showLimitAlert();
-
-                return;
-
-            }
-
-            if (!tarotLimit.useTarot()) {
-
-                tarotLimit.showLimitAlert();
-
-                return;
-
-            }
-
-            console.log(`💫 타로 카드 사용 (남은 횟수: ${tarotLimit.getRemainingCount()}번)`);
-
-            selectTarotCard(card);
-
-        });
-
-        card.__bound = true; // ← 이 줄이 빠져있었음!
+        card.__bound = true;
 
     });
 
@@ -3746,29 +3560,7 @@ function initializeTarot() {
 
     if (randomBtn && !randomBtn.__bound) {
 
-        randomBtn.addEventListener('click', () => {
-
-            if (!tarotLimit.canUseTarot()) {
-
-                tarotLimit.showLimitAlert();
-
-                return;
-
-            }
-
-            if (!tarotLimit.useTarot()) {
-
-                tarotLimit.showLimitAlert();
-
-                return;
-
-            }
-
-            console.log(`💫 랜덤 타로 사용 (남은 횟수: ${tarotLimit.getRemainingCount()}번)`);
-
-            drawRandomTarotCard();
-
-        }); // ← 이 닫는 괄호가 빠져있었음!
+        randomBtn.addEventListener('click', drawRandomTarotCard);
 
         randomBtn.__bound = true;
 
@@ -5160,7 +4952,7 @@ function showComingSoonNotification() {
 
     const closeAll = ()=>{
 
-        $$$$$$('.mt-sheet-backdrop').forEach(el=>{
+        $('.mt-sheet-backdrop').forEach(el=>{
 
             el.classList.remove('mt-show');
 
@@ -5202,7 +4994,7 @@ function showComingSoonNotification() {
 
     
 
-    $$$$$$('.mt-sheet-backdrop').forEach(bg=>{
+    $$('.mt-sheet-backdrop').forEach(bg=>{
 
         bg.addEventListener('click', (e)=>{
 
@@ -5244,113 +5036,11 @@ function showComingSoonNotification() {
 
     window.addEventListener('load', () => {
 
-     setTimeout(() => {
-
-            console.log('🚀 자동 전환 시작');
-
-            hideSplash();
-
-        }, 4000);
+        setTimeout(hideSplash, 800); // 0.8초 뒤 자동 닫기
 
     });
 
-    // ===== 스플래시 자동 전환 백업 시스템 =====
-
-
-
-// 백업 1: DOMContentLoaded (더 빠른 실행)
-
-document.addEventListener('DOMContentLoaded', () => {
-
-    console.log('📱 DOM 준비 완료, 백업 타이머 시작');
-
-    setTimeout(() => {
-
-        console.log('🚀 백업 자동 전환 시작');
-
-        const splash = document.getElementById('splashScreen');
-
-        const main = document.querySelector('.container');
-
-        
-
-        if (splash && splash.style.display !== 'none') {
-
-            splash.style.display = 'none';
-
-            if (main) main.style.display = 'block';
-
-            console.log('✅ 백업 전환 완료');
-
-        }
-
-    }, 3000); // 3초 후
-
-});
-
-
-
-// 백업 2: 즉시 실행 안전망 (5초)
-
-setTimeout(() => {
-
-    console.log('🛡️ 안전망 전환 체크');
-
-    const splash = document.getElementById('splashScreen');
-
-    const main = document.querySelector('.container');
-
     
-
-    if (splash && splash.style.display !== 'none') {
-
-        splash.style.display = 'none';
-
-        if (main) main.style.display = 'block';
-
-        console.log('✅ 안전망 전환 완료');
-
-    } else {
-
-        console.log('ℹ️ 이미 전환됨 - 안전망 건너뜀');
-
-    }
-
-}, 5000); // 5초 후 (최종 안전망)
-
-
-
-// 백업 3: 페이지 완전 로드 후에도 체크
-
-window.addEventListener('load', () => {
-
-    setTimeout(() => {
-
-        console.log('🔄 페이지 로드 후 추가 체크');
-
-        const splash = document.getElementById('splashScreen');
-
-        const main = document.querySelector('.container');
-
-        
-
-        if (splash && splash.style.display !== 'none') {
-
-            splash.style.display = 'none';
-
-            if (main) main.style.display = 'block';
-
-            console.log('✅ 로드 후 전환 완료');
-
-        }
-
-    }, 1000);
-
-});
-
-
-
-console.log('🔧 스플래시 백업 시스템 초기화 완료');
 
     // ② Start 버튼 클릭으로 닫기
 
