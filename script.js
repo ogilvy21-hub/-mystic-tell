@@ -1884,6 +1884,7 @@ function buildEnhancedSajuResult(r, name = '') {
     </div>`;
     return html;
 }
+
 // ===== 버튼 이벤트 리스너들 =====
 // 네비게이션 클릭 이벤트
 $$('.nav-item[data-tab]').forEach(item=>{
