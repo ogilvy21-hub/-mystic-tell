@@ -12,6 +12,107 @@ window.addEventListener('error', (e) => {
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel) || []);  // 안전한 버전
 const LS_KEY = 'mystictell_recent_results';
+
+// DOM 헬퍼 + 로컬스토리지 키 (맨 위에 추가)
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => Array.from(document.querySelectorAll(sel) || []);
+const LS_KEY = 'mystictell_recent_results';
+
+// DOM 캐시 시스템 추가
+const DOM = {
+    // 캐시된 요소들
+    cache: new Map(),
+    
+    // 안전한 쿼리 함수
+    get(selector) {
+        if (!this.cache.has(selector)) {
+            this.cache.set(selector, document.querySelector(selector));
+        }
+        return this.cache.get(selector);
+    },
+    
+    // 캐시 초기화
+    init() {
+        const selectors = [
+            '#splashScreen', '#mainContent', '#bottomNav',
+            '#fortuneTitle', '#sheetBackdrop', '#sheetTitle', '#sheetContent',
+            '#mainCrystal'
+        ];
+        
+        selectors.forEach(sel => this.get(sel));
+    },
+    
+    // 안전한 조작 함수들
+    safeText(selector, text) {
+        const el = this.get(selector);
+        if (el) el.textContent = text;
+    },
+    
+    safeClass(selector, action, className) {
+        const el = this.get(selector);
+        if (el) el.classList[action](className);
+    }
+};
+
+// 이벤트 관리 시스템
+class EventManager {
+    constructor() {
+        this.boundElements = new WeakSet();
+        this.listeners = new Map();
+    }
+    
+    bindOnce(element, event, handler, options = {}) {
+        if (!element) return false;
+        
+        const key = `${element.tagName}-${event}`;
+        if (this.boundElements.has(element)) {
+            return false;
+        }
+        
+        element.addEventListener(event, handler, options);
+        this.boundElements.add(element);
+        return true;
+    }
+    
+    bindAll(selector, event, handler, options = {}) {
+        const elements = document.querySelectorAll(selector);
+        let count = 0;
+        elements.forEach(el => {
+            if (this.bindOnce(el, event, handler, options)) {
+                count++;
+            }
+        });
+        return count;
+    }
+}
+
+const eventManager = new EventManager();
+
+// 안전 실행 래퍼
+function safeExecute(fn, context = 'Unknown', defaultReturn = null) {
+    try {
+        return fn();
+    } catch (error) {
+        console.error(`Error in ${context}:`, error);
+        return defaultReturn;
+    }
+}
+
+// 안전한 DOM 조작 함수들
+function safeQuerySelector(selector) {
+    return safeExecute(() => document.querySelector(selector), `Query: ${selector}`);
+}
+
+function safeAddEventListener(element, event, handler, options = {}) {
+    return safeExecute(() => {
+        if (element) {
+            element.addEventListener(event, handler, options);
+            return true;
+        }
+        return false;
+    }, `Event binding: ${event}`);
+}
+
 // 타로 카드 하루 2회 제한 클래스 ← 여기에 추가!
 class TarotDailyLimit {
     constructor() {
@@ -362,6 +463,62 @@ function computeBaZi(dateStrRaw, timeStrRaw, calMode='solar', isLeap=false) {
     return { pillars, countsGan, countsZhi, countsAll, lunar, solar, tenGods, calMode, isLeap };
 }
 
+// ===== 스플래시 화면 (통합된 버전) ===== 
+// 기존 hideSplash() 함수 위에 추가
+class SplashManager {
+    constructor() {
+        this.isHidden = false;
+        this.hideTimer = null;
+    }
+    
+    hide() {
+        if (this.isHidden) return;
+        this.isHidden = true;
+        
+        if (this.hideTimer) {
+            clearTimeout(this.hideTimer);
+            this.hideTimer = null;
+        }
+        
+        const splash = $('#splashScreen');
+        const main = $('#mainContent');
+        const nav = $('#bottomNav');
+        
+        console.log('🚀 스플래시 숨김 시작...');
+        
+        if (splash) {
+            splash.style.display = 'none';
+            splash.classList.add('hidden');
+        }
+        
+        if (main) {
+            main.style.display = 'block';
+            main.classList.add('show');
+        }
+        
+        if (nav) {
+            nav.style.display = 'flex';
+            nav.classList.add('show');
+        }
+        
+        if (!location.hash) location.hash = '#/home';
+    }
+    
+    autoHide(delay = 3000) {
+        if (this.isHidden) return;
+        this.hideTimer = setTimeout(() => this.hide(), delay);
+    }
+}
+
+const splashManager = new SplashManager();
+
+function hideSplash() {
+    splashManager.hide();
+}
+
+function startApp() {
+    splashManager.hide();
+}
 // ===== 스플래시 화면 (통합된 버전) =====
 function hideSplash(){
     const splash = $('#splashScreen');
@@ -680,49 +837,62 @@ const views = {
 };
 
 function showFortuneView(route){
-    closeAllOverlays();
-    Object.values(views).forEach(v => v && (v.style.display = 'none'));
-    
-    switch (route) {
-        case 'fortune-today':
-            fortuneTitle.textContent = '오늘의 운세';
-            views['fortune-today'].style.display = 'block';
-            bindCalToggle('today');
-            break;
-        case 'fortune-saju':
-            fortuneTitle.textContent = '정통 사주';
-            views['fortune-saju'].style.display = 'block';
-            bindCalToggle('saju');
-            break;
-        case 'fortune-tarot':
-            fortuneTitle.textContent = '타로 점';
-            views['fortune-tarot'].style.display = 'block';
-            initializeTarot();
-            break;
-        case 'fortune-palm':
-            fortuneTitle.textContent = '손금 보기';
-            views['fortune-palm'].style.display = 'block';
-            setTimeout(() => initializePalmReading(), 50);
-            break;
-        case 'fortune-match':
-            fortuneTitle.textContent = '궁합 보기';
-            views['fortune-match'].style.display = 'block';
-            break;
-        case 'fortune-year':
-            fortuneTitle.textContent = '신년 운세 (2025)';
-            views['fortune-year'].style.display = 'block';
-            break;
-        case 'fortune-lotto':
-            fortuneTitle.textContent = '행운번호';
-            views['fortune-lotto'].style.display = 'block';
-            break;
-        default:
-            fortuneTitle.textContent = '준비중';
-            reactCrystal('✨ 준비중입니다...');
-            break;
-    }
-    
-    reactCrystal(`${fortuneTitle.textContent}을(를) 준비합니다…`);
+    safeExecute(() => {
+        closeAllOverlays();
+        
+        // 안전하게 모든 뷰 숨기기
+        Object.values(views).forEach(v => {
+            if (v) v.style.display = 'none';
+        });
+        
+        const fortuneTitle = DOM.get('#fortuneTitle');
+        
+        switch (route) {
+            case 'fortune-today':
+                DOM.safeText('#fortuneTitle', '오늘의 운세');
+                if (views['fortune-today']) views['fortune-today'].style.display = 'block';
+                safeExecute(() => bindCalToggle('today'), 'Today calendar toggle');
+                break;
+            case 'fortune-saju':
+                DOM.safeText('#fortuneTitle', '정통 사주');
+                if (views['fortune-saju']) views['fortune-saju'].style.display = 'block';
+                safeExecute(() => bindCalToggle('saju'), 'Saju calendar toggle');
+                break;
+            case 'fortune-tarot':
+                DOM.safeText('#fortuneTitle', '타로 점');
+                if (views['fortune-tarot']) views['fortune-tarot'].style.display = 'block';
+                safeExecute(() => initializeTarot(), 'Tarot initialization');
+                break;
+            case 'fortune-palm':
+                DOM.safeText('#fortuneTitle', '손금 보기');
+                if (views['fortune-palm']) views['fortune-palm'].style.display = 'block';
+                safeExecute(() => {
+                    setTimeout(() => initializePalmReading(), 50);
+                }, 'Palm reading initialization');
+                break;
+            case 'fortune-match':
+                DOM.safeText('#fortuneTitle', '궁합 보기');
+                if (views['fortune-match']) views['fortune-match'].style.display = 'block';
+                break;
+            case 'fortune-year':
+                DOM.safeText('#fortuneTitle', '신년 운세 (2025)');
+                if (views['fortune-year']) views['fortune-year'].style.display = 'block';
+                break;
+            case 'fortune-lotto':
+                DOM.safeText('#fortuneTitle', '행운번호');
+                if (views['fortune-lotto']) views['fortune-lotto'].style.display = 'block';
+                break;
+            default:
+                DOM.safeText('#fortuneTitle', '준비중');
+                safeExecute(() => reactCrystal('✨ 준비중입니다...'), 'Crystal reaction');
+                break;
+        }
+        
+        // 안전하게 크리스탈 반응 실행
+        const titleText = fortuneTitle ? fortuneTitle.textContent : route;
+        safeExecute(() => reactCrystal(`${titleText}을(를) 준비합니다…`), 'Crystal reaction');
+        
+    }, 'showFortuneView');
 }
 
 // ===== 최근 결과 저장 =====
@@ -2820,68 +2990,55 @@ window.addEventListener('load', removeAllUnderlines);
 // 동적으로 추가되는 요소에도 적용
 const observer = new MutationObserver(removeAllUnderlines);
 observer.observe(document.body, { childList: true, subtree: true });
+
 // ===== 최종 초기화 =====
-
-// Start 버튼 이벤트 제거 (자동 전환이므로)
-// document.getElementById('startBtn')?.addEventListener('click', startApp);
-
 // 해시 변경 시 라우팅
 window.addEventListener('hashchange', handleRoute);
-// 페이지 로드 시 초기화
+
+// 페이지 로드 시 초기화 (단일 통합 버전)
 window.addEventListener('load', () => {
-    // 1) 새 스플래시 이미지 로드 확인 후 자동 숨김
-    const splashImg = new Image();
-    splashImg.onload = () => {
-        console.log('✅ 새 스플래시 이미지 로드 완료');
-        // 이미지 로드 완료 후 3초 대기
-        setTimeout(hideSplash, 3000);
-    };
-    splashImg.onerror = () => {
-        console.log('⚠️ 스플래시 이미지 로드 실패, 기본 전환 진행');
-        // 이미지 로드 실패해도 3초 후 전환
-        setTimeout(hideSplash, 3000);
-    };
-    // 새로운 GitHub 이미지 URL로 로드 시작
-    splashImg.src = 'https://github.com/user-attachments/assets/8f6cc52c-adae-4dee-ac35-f7de76992bef';
-    
-    // Start 버튼이 있다면 숨기기 (HTML에서도 숨겼지만 추가 보장)
-    const startBtn = document.getElementById('startBtn');
-    if (startBtn) {
-        startBtn.style.display = 'none';
-    }
-    
-    // 2) 하단 네비 먼저 보여주고
-    document.getElementById('bottomNav')?.classList.add('show');
-    
-    // 3) 캘린더 토글 초기화
-    bindCalToggle('today');
-    bindCalToggle('saju');
-    
-    // 4) 해시 진입이면 스플래시 닫기
-    if (location.hash && location.hash !== '#/home') hideSplash();
-    
-    // 5) 손금 준비중 처리
-    setPalmAsComingSoon();
-    showPalmComingSoonAlert();
-    
-    // 6) 손금 타이틀 (예정) 붙이기
-    setTimeout(() => {
-        document
-            .querySelectorAll('[data-route="fortune-palm"] h3, [data-route="fortune-palm"] .title')
-            .forEach((title) => {
-                if (title && !title.textContent.includes('(예정)')) {
-                    title.textContent = title.textContent.replace('손금 보기', '손금 보기 (예정)');
-                }
-            });
-    }, 100);
-    
-    // 7) 마지막에 라우팅 실행 (DOM/리스너 준비 후)
-    if (!location.hash) location.hash = '#/home';
-    handleRoute();
+    safeExecute(() => {
+        // 1. DOM 캐시 초기화
+        DOM.init();
+        
+        // 2. 스플래시 자동 숨기기 (단일 타이머)
+        splashManager.autoHide(3000);
+        
+        // 3. 네비게이션 초기화
+        DOM.safeClass('#bottomNav', 'add', 'show');
+        
+        // 4. 캘린더 토글 초기화
+        safeExecute(() => bindCalToggle('today'), 'Today calendar toggle');
+        safeExecute(() => bindCalToggle('saju'), 'Saju calendar toggle');
+        
+        // 5. 손금 준비중 처리
+        safeExecute(() => {
+            setPalmAsComingSoon();
+            showPalmComingSoonAlert();
+        }, 'Palm coming soon setup');
+        
+        // 6. 손금 타이틀 (예정) 붙이기
+        setTimeout(() => {
+            safeExecute(() => {
+                document
+                    .querySelectorAll('[data-route="fortune-palm"] h3, [data-route="fortune-palm"] .title')
+                    .forEach((title) => {
+                        if (title && !title.textContent.includes('(예정)')) {
+                            title.textContent = title.textContent.replace('손금 보기', '손금 보기 (예정)');
+                        }
+                    });
+            }, 'Palm title update');
+        }, 100);
+        
+        // 7. 초기 라우팅
+        if (!location.hash) location.hash = '#/home';
+        handleRoute();
+        
+    }, 'Initial load setup');
 });
 
 // ===== 뒤로가기/탭 전환 때 열려있던 오버레이 닫기 =====
-document.addEventListener('visibilitychange', ()=>{
+document.addEventListener('visibilitychange', () => {
     if (document.hidden) closeAllOverlays();
 });
 
