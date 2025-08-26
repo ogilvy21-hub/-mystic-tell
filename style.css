@@ -1,65 +1,41 @@
 /* ===== MysticTell Complete CSS ===== */
 
-
-
 /* ---- 기본 변수 설정 ---- */
-
 :root {
-
-  /* 스플래시 이미지 */
-
-  --splash-bg-url: url('https://github.com/ogilvy21-hub/-mystic-tell/issues/3#issue-3354045436');
-
-  
-
-  /* 깜박임(펄스) 애니메이션 변수 */
-
-  --start-blink-duration: 1700ms;
-
-  --start-blink-scale-min: 1;
-
-  --start-blink-scale-max: 1.06;
-
-  --start-blink-opacity-min: .85;
-
-  
+  /* 새 스플래시 배경 이미지 (GitHub user-attachments) */
+  --splash-bg-url: url('https://github.com/user-attachments/assets/dc813886-873c-4a6d-be52-43c0962bf26e');
 
   /* 레이아웃 변수 */
-
   --max: 1040px;
-
   --gap: 20px;
-
   --brand: #667eea;
-
   --ink: #1f2937;
-
   --sheetW: 640px;
-
 }
-
-
 
 /* ===== 리셋 & 기본 스타일 ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-* {
+html { scroll-behavior: smooth; }
 
-  margin: 0;
+/* ===== 스플래시 ===== */
+#splashScreen,
+.splash-screen {
+  background-image: var(--splash-bg-url);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 
-  padding: 0;
+  /* 레이아웃 */
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  box-sizing: border-box;
-
+  /* 필요시 기본 배경색 */
+  background-color: #000;
 }
-
-
-
-html {
-
-  scroll-behavior: smooth;
-
-}
-
 
 
 body {
@@ -2988,14 +2964,6 @@ body {
     animation: none !important;
 
     transition: none !important;
-
-  }
-
-  
-
-  .start-image-btn {
-
-    animation: none;
 
   }
 
