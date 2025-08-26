@@ -3536,7 +3536,7 @@ function initializeTarot() {
 
     
 
-    const tarotCards = document.querySelectorAll('.tarot-card-back');
+    const tarotCards = $('.tarot-card-back');
 
     tarotCards.forEach(card => {
 
@@ -4316,7 +4316,7 @@ $$('.nav-item[data-tab]').forEach(item=>{
 
 
 
-$$().forEach((card) => {
+$$().forEach
 
     card.addEventListener('click', ()=>{
 
@@ -5332,13 +5332,11 @@ const observer = new MutationObserver(removeAllUnderlines);
 
 observer.observe(document.body, { childList: true, subtree: true });
 
+
+
 // ===== 최종 초기화 =====
 
-
-
-// Start 버튼 이벤트 제거 (자동 전환이므로)
-
-// document.getElementById('startBtn')?.addEventListener('click', startApp);
+document.getElementById('startBtn')?.addEventListener('click', startApp);
 
 
 
@@ -5346,49 +5344,15 @@ observer.observe(document.body, { childList: true, subtree: true });
 
 window.addEventListener('hashchange', handleRoute);
 
+
+
 // 페이지 로드 시 초기화
 
 window.addEventListener('load', () => {
 
-    // 1) 새 스플래시 이미지 로드 확인 후 자동 숨김
+    // 1) 스플래시 자동 숨김
 
-    const splashImg = new Image();
-
-    splashImg.onload = () => {
-
-        console.log('✅ 새 스플래시 이미지 로드 완료');
-
-        // 이미지 로드 완료 후 3초 대기
-
-        setTimeout(hideSplash, 3000);
-
-    };
-
-    splashImg.onerror = () => {
-
-        console.log('⚠️ 스플래시 이미지 로드 실패, 기본 전환 진행');
-
-        // 이미지 로드 실패해도 3초 후 전환
-
-        setTimeout(hideSplash, 3000);
-
-    };
-
-    // 새로운 GitHub 이미지 URL로 로드 시작
-
-    splashImg.src = 'https://github.com/user-attachments/assets/8f6cc52c-adae-4dee-ac35-f7de76992bef';
-
-    
-
-    // Start 버튼이 있다면 숨기기 (HTML에서도 숨겼지만 추가 보장)
-
-    const startBtn = document.getElementById('startBtn');
-
-    if (startBtn) {
-
-        startBtn.style.display = 'none';
-
-    }
+    setTimeout(hideSplash, 1000);
 
     
 
@@ -5585,7 +5549,6 @@ document.addEventListener('visibilitychange', ()=>{
         }
 
     `;
-
     
 
     document.head.appendChild(style);
