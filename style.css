@@ -8,9 +8,9 @@
 
   /* 스플래시 이미지 */
 
-  --splash-bg-url: url('https://i.imgur.com/zjaoFlI.png');
+  --splash-bg-url: url('https://github.com/user-attachments/assets/b19a5cf0-1f68-421a-8bd6-b89a41ed9188');
 
-  --start-img-url: url('https://i.imgur.com/SmhPkiD.png');
+  --start-img-url: url('https://github.com/user-attachments/assets/b19a5cf0-1f68-421a-8bd6-b89a41ed9188');
 
   
 
@@ -93,7 +93,6 @@ body {
 }
 
 
-
 /* ===== 스플래시 화면 ===== */
 
 .splash-screen {
@@ -147,90 +146,6 @@ body {
   top: -9999px !important;
 
 }
-
-
-
-/* Start 버튼 애니메이션 */
-
-.start-image-btn {
-
-  position: relative;
-
-  z-index: 2;
-
-  display: block;
-
-  width: min(100%, 400px);
-
-  aspect-ratio: 3.2 / 1;
-
-  background: center/contain no-repeat var(--start-img-url);
-
-  border: none;
-
-  outline: none;
-
-  cursor: pointer;
-
-  -webkit-tap-highlight-color: transparent;
-
-  filter: drop-shadow(0 10px 22px rgba(0,0,0,.35));
-
-  transition: transform .08s ease, filter .12s ease;
-
-  animation: start-blink var(--start-blink-duration) ease-in-out infinite;
-
-  will-change: transform, opacity, filter;
-
-}
-
-
-
-.start-image-btn:hover {
-
-  animation-duration: 1400ms;
-
-}
-
-
-
-.start-image-btn:active {
-
-  transform: translateY(1px) scale(.99);
-
-  filter: drop-shadow(0 6px 16px rgba(0,0,0,.35));
-
-  animation-play-state: paused;
-
-}
-
-
-
-@keyframes start-blink {
-
-  0%, 100% {
-
-    opacity: var(--start-blink-opacity-min);
-
-    transform: scale(var(--start-blink-scale-min));
-
-    filter: drop-shadow(0 10px 22px rgba(0,0,0,.32));
-
-  }
-
-  50% {
-
-    opacity: 1;
-
-    transform: scale(var(--start-blink-scale-max));
-
-    filter: drop-shadow(0 16px 28px rgba(0,0,0,.4));
-
-  }
-
-}
-
-
 
 /* ===== 메인 콘텐츠 ===== */
 
