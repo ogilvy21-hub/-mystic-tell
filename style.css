@@ -59,14 +59,7 @@ body {
   background: linear-gradient(to bottom, rgba(0,0,0,.10), rgba(0,0,0,.18));
   pointer-events: none;
 }
-.splash-screen.hidden {
-  display: none !important;
-  height: 0 !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  position: absolute !important;
-  top: -9999px !important;
-}
+
 /* ===== 메인 콘텐츠 ===== */
 .main-content {
   display: none;
@@ -1320,6 +1313,7 @@ a, a:hover, a:focus, a:active, a:visited {
   text-decoration-line: none !important;
   border-bottom: none !important;
 }
+
 /* 손금 "준비중" 처리 - 일단 주석 처리 (필요시 활성화) */
 /*
 .service-item[data-route="fortune-palm"],
@@ -1346,3 +1340,22 @@ a, a:hover, a:focus, a:active, a:visited {
   z-index: 10;
 }
 */
+
+/* 스플래시가 사라질 때 */
+#splashScreen.hidden,
+.splash-screen.hidden{
+  display:none !important;
+  height:0 !important;
+  opacity:0 !important;
+  visibility:hidden !important;
+  position:absolute !important;
+  top:-9999px !important;
+}
+
+/* 메인/하단 네비가 보일 때 */
+#mainContent.show { display:block !important; }
+#bottomNav.show   { display:flex  !important; }
+
+/* 초기 상태(선택) – 스플래시만 보이게 */
+#mainContent, #bottomNav { display:none; }
+
