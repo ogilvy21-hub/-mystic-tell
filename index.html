@@ -46,43 +46,34 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <link rel="stylesheet" href="style.css">
 
-  <!-- 이미지 프리로드 -->
-
-<link rel="icon" type="https://github.com/ogilvy21-hub/-mystic-tell/issues/5#issue-3354047632">
-
-<link rel="apple-touch-icon" href="https://github.com/ogilvy21-hub/-mystic-tell/issues/5#issue-3354047632">
+ <!-- 파비콘 (favicon + iOS 터치 아이콘) -->
+<link rel="icon" type="image/png" sizes="512x512"
+      href="https://github.com/user-attachments/assets/8abc0bb0-5a00-4476-8ad4-6c4d5a8fb5d5" />
+<link rel="apple-touch-icon" sizes="512x512"
+      href="https://github.com/user-attachments/assets/8abc0bb0-5a00-4476-8ad4-6c4d5a8fb5d5" />
 
 <!-- 스플래시 이미지 프리로드 -->
-
-<link rel="preload" as="image" href="https://github.com/ogilvy21-hub/-mystic-tell/issues/3#issue-3354045436">
+<link rel="preload" as="image"
+      href="https://github.com/user-attachments/assets/dc813886-873c-4a6d-be52-43c0962bf26e" />
 
 <!-- 스플래시 배경 강제 적용 -->
-
 <style>
+  #splashScreen, .splash-screen {
+    background-image: url('https://github.com/user-attachments/assets/dc813886-873c-4a6d-be52-43c0962bf26e') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
 
-    #splashScreen, .splash-screen {
-
-        background-image: url('https://github.com/ogilvy21-hub/-mystic-tell/issues/3#issue-3354045436') !important;
-
-        background-size: cover !important;
-
-        background-position: center !important;
-
-        background-repeat: no-repeat !important;
-
-        min-height: 100vh !important;
-
-        display: flex !important;
-
-        align-items: center !important;
-
-        justify-content: center !important;
-
-    }
-
-
+    /* 레이아웃 */
+    min-height: 100vh !important;   /* 필요하면 100dvh로 교체 */
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    /* 선택: 배경색 fallback */
+    background-color: #000000 !important;
+  }
 </style>
-
 </head>
 
 <body>
