@@ -1387,7 +1387,7 @@ function initializePalmReading() {
     ensurePalmStyles();
     ensurePalmMenuLabels();
     setTimeout(() => {
-        const palmCards = $('.palm-type-card');
+        const palmCards = $$('.palm-type-card');
         palmCards.forEach(card => {
             if (card.__palmBound) return;
             card.addEventListener('click', () => {
