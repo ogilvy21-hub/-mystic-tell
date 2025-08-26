@@ -26,7 +26,7 @@ const DOM = {
     // 안전한 쿼리 함수
     get(selector) {
         if (!this.cache.has(selector)) {
-            this.cache.set(selector, document.querySelector(selector));
+            this.cache.set(selector, qS(selector)); // $ 대신 qS 사용
         }
         return this.cache.get(selector);
     },
