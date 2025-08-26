@@ -8,9 +8,12 @@ window.addEventListener('error', (e) => {
     e.preventDefault();
     return true;
 });
-// DOM 헬퍼 + 로컬스토리지 키 (맨 위에 추가)
-const qS = (sel) => document.querySelector(sel);
-const qSA = (sel) => Array.from(document.querySelectorAll(sel) || []);
+
+// DOM helpers — define once (전역에서도 쓰이게 안전하게 노출)
+window.qS  ??= (sel, root = document) => root.querySelector(sel);
+window.qSA ??= (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+// 로컬스토리지 키도 한 번만
 const LS_KEY = 'mystictell_recent_results';
 
 // DOM 캐시 시스템 추가
@@ -181,11 +184,6 @@ class TarotDailyLimit {
 
 // 전역 인스턴스 생성
 const tarotLimit = new TarotDailyLimit();
-// forEach를 지원하는 안전한 선택자
-const qSall = (sel) => {
-    const elements = document.querySelectorAll(sel);
-    return elements ? Array.from(elements) : [];
-};
 
 // lunar-javascript 글로벌 보정 (보강)
 (function fixLunarGlobals(){
