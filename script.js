@@ -1361,7 +1361,7 @@ $('#btnClear')?.addEventListener('click', ()=>{
 window.addEventListener('hashchange', handleRoute);
 
 window.addEventListener('load', () => {
-    setTimeout(hideSplash, 500);
+    setTimeout(hideSplash, 2000);
     bindCalToggle('today');
     bindCalToggle('saju');
     
