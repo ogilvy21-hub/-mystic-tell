@@ -9,13 +9,13 @@ window.addEventListener('error', (e) => {
     return true;
 });
 // DOM 헬퍼 + 로컬스토리지 키 (맨 위에 추가)
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => Array.from(document.querySelectorAll(sel) || []);  // 안전한 버전
+const qS = (sel) => document.querySelector(sel);
+const qSA = (sel) => Array.from(document.querySelectorAll(sel) || []);
 const LS_KEY = 'mystictell_recent_results';
 
 // DOM 헬퍼 + 로컬스토리지 키 (맨 위에 추가)
-const $ = (sel) => document.querySelector(sel);
-const $$ = (sel) => Array.from(document.querySelectorAll(sel) || []);
+const qS = (sel) => document.querySelector(sel);
+const qSqS = (sel) => Array.from(document.querySelectorAll(sel) || []);
 const LS_KEY = 'mystictell_recent_results';
 
 // DOM 캐시 시스템 추가
@@ -64,7 +64,7 @@ class EventManager {
     bindOnce(element, event, handler, options = {}) {
         if (!element) return false;
         
-        const key = `${element.tagName}-${event}`;
+        const key = `qS{element.tagName}-qS{event}`;
         if (this.boundElements.has(element)) {
             return false;
         }
@@ -93,14 +93,14 @@ function safeExecute(fn, context = 'Unknown', defaultReturn = null) {
     try {
         return fn();
     } catch (error) {
-        console.error(`Error in ${context}:`, error);
+        console.error(`Error in qS{context}:`, error);
         return defaultReturn;
     }
 }
 
 // 안전한 DOM 조작 함수들
 function safeQuerySelector(selector) {
-    return safeExecute(() => document.querySelector(selector), `Query: ${selector}`);
+    return safeExecute(() => document.querySelector(selector), `Query: qS{selector}`);
 }
 
 function safeAddEventListener(element, event, handler, options = {}) {
@@ -110,7 +110,7 @@ function safeAddEventListener(element, event, handler, options = {}) {
             return true;
         }
         return false;
-    }, `Event binding: ${event}`);
+    }, `Event binding: qS{event}`);
 }
 
 // 타로 카드 하루 2회 제한 클래스 ← 여기에 추가!
@@ -180,14 +180,14 @@ class TarotDailyLimit {
             minute: '2-digit'
         });
 
-        alert(`🔮 오늘의 타로 카드 사용 횟수를 모두 사용하셨습니다.\n\n하루 최대 ${this.maxDaily}번까지 이용 가능합니다.\n✨ 다음 이용: ${resetString}\n\n더 깊이 있는 통찰을 원하신다면 내일 다시 찾아주세요! 💫`);
+        alert(`🔮 오늘의 타로 카드 사용 횟수를 모두 사용하셨습니다.\n\n하루 최대 qS{this.maxDaily}번까지 이용 가능합니다.\n✨ 다음 이용: qS{resetString}\n\n더 깊이 있는 통찰을 원하신다면 내일 다시 찾아주세요! 💫`);
     }
 }
 
 // 전역 인스턴스 생성
 const tarotLimit = new TarotDailyLimit();
 // forEach를 지원하는 안전한 선택자
-const $all = (sel) => {
+const qSall = (sel) => {
     const elements = document.querySelectorAll(sel);
     return elements ? Array.from(elements) : [];
 };
@@ -284,7 +284,7 @@ const $all = (sel) => {
 
 // ----- 입력 정규화 -----
 function normalizeDateInput(s=''){
-    return s.trim().replace(/[.\s]+/g, '-').replace(/-+/g,'-').replace(/-$/,'');
+    return s.trim().replace(/[.\s]+/g, '-').replace(/-+/g,'-').replace(/-qS/,'');
 }
 
 function normalizeTimeInput(s=''){
@@ -297,7 +297,7 @@ function normalizeTimeInput(s=''){
     let h = parseInt(hh||'0',10);
     if (pm && h < 12) h += 12;
     if (am && h === 12) h = 0;
-    return `${String(h).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+    return `qS{String(h).padStart(2,'0')}:qS{String(mm).padStart(2,'0')}`;
 }
 
 // 천간 → 오행
@@ -355,17 +355,17 @@ function krShiShen(s=''){
 }
 
 function getCalMode(prefix){
-    return document.getElementById(`${prefix}-cal-lunar`)?.checked ? 'lunar' : 'solar';
+    return document.getElementById(`qS{prefix}-cal-lunar`)?.checked ? 'lunar' : 'solar';
 }
 
 function getLeap(prefix){
-    return !!document.getElementById(`${prefix}-leap`)?.checked;
+    return !!document.getElementById(`qS{prefix}-leap`)?.checked;
 }
 
 function bindCalToggle(prefix){
-    const solar = document.getElementById(`${prefix}-cal-solar`);
-    const lunar = document.getElementById(`${prefix}-cal-lunar`);
-    const leap = document.getElementById(`${prefix}-leap`);
+    const solar = document.getElementById(`qS{prefix}-cal-solar`);
+    const lunar = document.getElementById(`qS{prefix}-cal-lunar`);
+    const leap = document.getElementById(`qS{prefix}-leap`);
     if(!leap) return;
     
     const sync = ()=>{
@@ -380,7 +380,7 @@ function bindCalToggle(prefix){
 
 function fmtSolar(solar){
     const y = solar.getYear(), m=String(solar.getMonth()).padStart(2,'0'), d=String(solar.getDay()).padStart(2,'0');
-    return `${y}-${m}-${d}`;
+    return `qS{y}-qS{m}-qS{d}`;
 }
 
 function toSolarFromInput(dateStrRaw, timeStrRaw, mode='solar', isLeap=false){
@@ -400,7 +400,7 @@ function toSolarFromInput(dateStrRaw, timeStrRaw, mode='solar', isLeap=false){
             const ly = LunarYear.fromYear(y);
             const leapMonth = ly.getLeapMonth();
             if (isLeap && leapMonth !== Math.abs(m0)) {
-                alert(`${y}년에는 윤${String(m0).padStart(2,'0')}월이 없습니다.`);
+                alert(`qS{y}년에는 윤qS{String(m0).padStart(2,'0')}월이 없습니다.`);
             }
         }catch(_){}
         const lunar = Lunar.fromYmdHms(y, m, d, h||0, min||0, s);
@@ -480,9 +480,9 @@ class SplashManager {
             this.hideTimer = null;
         }
         
-        const splash = $('#splashScreen');
-        const main = $('#mainContent');
-        const nav = $('#bottomNav');
+        const splash = qS('#splashScreen');
+        const main = qS('#mainContent');
+        const nav = qS('#bottomNav');
         
         console.log('🚀 스플래시 숨김 시작...');
         
@@ -521,9 +521,9 @@ function startApp() {
 }
 // ===== 스플래시 화면 (통합된 버전) =====
 function hideSplash(){
-    const splash = $('#splashScreen');
-    const main = $('#mainContent');
-    const nav = $('#bottomNav');
+    const splash = qS('#splashScreen');
+    const main = qS('#mainContent');
+    const nav = qS('#bottomNav');
     
     console.log('🚀 스플래시 숨김 시작...');
     
@@ -804,13 +804,13 @@ function setActiveTab(tab){
     const mainContent = document.getElementById('mainContent');
     if (mainContent) mainContent.style.display = 'block';
     
-    $$('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.tab===tab));
+    qSqS('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.tab===tab));
     Object.entries(pages).forEach(([k,el])=>el?.classList.toggle('show',k===tab));
     closeAllOverlays();
 }
 
 // ===== 크리스탈 =====
-const mainCrystal=$('#mainCrystal');
+const mainCrystal=qS('#mainCrystal');
 function reactCrystal(text){
     if(!mainCrystal) return;
     mainCrystal.style.background='radial-gradient(circle at 30% 30%, rgba(255,215,0,.9), rgba(255,20,147,.7), rgba(138,43,226,.5))';
@@ -825,15 +825,15 @@ function reactCrystal(text){
 mainCrystal?.addEventListener('click',()=>reactCrystal('🔮 신비로운 힘을 느껴보세요'));
 
 // ===== 운세 뷰 =====
-const fortuneTitle = $('#fortuneTitle');
+const fortuneTitle = qS('#fortuneTitle');
 const views = {
-    'fortune-today': $('#view-today'),
-    'fortune-saju' : $('#view-saju'),
-    'fortune-tarot': $('#view-tarot'),
-    'fortune-palm' : $('#view-palm'),
-    'fortune-match': $('#view-match'),
-    'fortune-year' : $('#view-year'),
-    'fortune-lotto': $('#view-lotto')
+    'fortune-today': qS('#view-today'),
+    'fortune-saju' : qS('#view-saju'),
+    'fortune-tarot': qS('#view-tarot'),
+    'fortune-palm' : qS('#view-palm'),
+    'fortune-match': qS('#view-match'),
+    'fortune-year' : qS('#view-year'),
+    'fortune-lotto': qS('#view-lotto')
 };
 
 function showFortuneView(route){
@@ -890,7 +890,7 @@ function showFortuneView(route){
         
         // 안전하게 크리스탈 반응 실행
         const titleText = fortuneTitle ? fortuneTitle.textContent : route;
-        safeExecute(() => reactCrystal(`${titleText}을(를) 준비합니다…`), 'Crystal reaction');
+        safeExecute(() => reactCrystal(`qS{titleText}을(를) 준비합니다…`), 'Crystal reaction');
         
     }, 'showFortuneView');
 }
@@ -995,7 +995,7 @@ const LUCKY_ITEMS = {
 // 개선된 오늘의 운세 계산 함수
 function calcEnhancedDailyFortune(birthdate) {
     const today = new Date();
-    const dateStr = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+    const dateStr = `qS{today.getFullYear()}-qS{today.getMonth() + 1}-qS{today.getDate()}`;
     const results = {};
     
     Object.keys(FORTUNE_CATEGORIES).forEach((category, index) => {
@@ -1050,10 +1050,10 @@ function calcEnhancedDailyFortune(birthdate) {
 
 // 운세 결과를 HTML로 렌더링하는 함수 (수정된 버전)
 function renderEnhancedDailyFortune(fortuneData, name = '') {
-    const nameTitle = name ? `<b>${name}</b>님의 ` : '';
+    const nameTitle = name ? `<b>qS{name}</b>님의 ` : '';
     let html = `<div class="result-section">
-        <div class="section-title-result">🌟 ${nameTitle}오늘의 운세</div>
-        <div class="fortune-date">📅 ${fortuneData.date}</div>
+        <div class="section-title-result">🌟 qS{nameTitle}오늘의 운세</div>
+        <div class="fortune-date">📅 qS{fortuneData.date}</div>
     </div>`;
     
     // 각 카테고리별 운세 카드 (기존 createResultCard 함수 사용)
@@ -1063,7 +1063,7 @@ function renderEnhancedDailyFortune(fortuneData, name = '') {
         html += createResultCard(
             category.icon,
             category.name,
-            `${category.score}점`,
+            `qS{category.score}점`,
             category.message,
             isMainCard,
             'fortune-card'
@@ -1078,22 +1078,22 @@ function renderEnhancedDailyFortune(fortuneData, name = '') {
             <div class="lucky-item-card">
                 <div class="lucky-icon">🎁</div>
                 <div class="lucky-label">럭키 아이템</div>
-                <div class="lucky-value">${fortuneData.lucky.item}</div>
+                <div class="lucky-value">qS{fortuneData.lucky.item}</div>
             </div>
             <div class="lucky-item-card">
                 <div class="lucky-icon">🎨</div>
                 <div class="lucky-label">럭키 컬러</div>
-                <div class="lucky-value">${fortuneData.lucky.color}</div>
+                <div class="lucky-value">qS{fortuneData.lucky.color}</div>
             </div>
             <div class="lucky-item-card">
                 <div class="lucky-icon">🔢</div>
                 <div class="lucky-label">럭키 넘버</div>
-                <div class="lucky-value">${fortuneData.lucky.number}</div>
+                <div class="lucky-value">qS{fortuneData.lucky.number}</div>
             </div>
             <div class="lucky-item-card">
                 <div class="lucky-icon">🧭</div>
                 <div class="lucky-label">럭키 방향</div>
-                <div class="lucky-value">${fortuneData.lucky.direction}</div>
+                <div class="lucky-value">qS{fortuneData.lucky.direction}</div>
             </div>
         </div>
     </div>`;
@@ -1140,7 +1140,7 @@ function calcYear(b){
 }
 
 // ===== 결과 시트 =====
-const sheet=$('#sheetBackdrop'),sheetTitle=$('#sheetTitle'),sheetContent=$('#sheetContent');
+const sheet=qS('#sheetBackdrop'),sheetTitle=qS('#sheetTitle'),sheetContent=qS('#sheetContent');
 let lastResult=null;
 
 function openSheet(title,content,savePayload){
@@ -1155,7 +1155,7 @@ function openSheet(title,content,savePayload){
     lastResult=savePayload||null;
     
     setTimeout(() => {
-        $$('.element-fill').forEach(fill => {
+        qSqS('.element-fill').forEach(fill => {
             const width = fill.style.width;
             fill.style.width = '0%';
             setTimeout(() => fill.style.width = width, 100);
@@ -1173,19 +1173,19 @@ function createPillarsGrid(pillars) {
     return `<div class="pillars-grid">
         <div class="pillar-card">
             <div class="pillar-label">연주</div>
-            <div class="pillar-value">${pillars.year || '-'}</div>
+            <div class="pillar-value">qS{pillars.year || '-'}</div>
         </div>
         <div class="pillar-card">
             <div class="pillar-label">월주</div>
-            <div class="pillar-value">${pillars.month || '-'}</div>
+            <div class="pillar-value">qS{pillars.month || '-'}</div>
         </div>
         <div class="pillar-card">
             <div class="pillar-label">일주</div>
-            <div class="pillar-value">${pillars.day || '-'}</div>
+            <div class="pillar-value">qS{pillars.day || '-'}</div>
         </div>
         <div class="pillar-card">
             <div class="pillar-label">시주</div>
-            <div class="pillar-value">${pillars.time || '-'}</div>
+            <div class="pillar-value">qS{pillars.time || '-'}</div>
         </div>
     </div>`;
 }
@@ -1199,11 +1199,11 @@ function createElementChart(countsAll) {
         const value = countsAll[key] || 0;
         const percentage = total ? Math.round((value/total)*100) : 0;
         html += `<div class="element-item">
-            <div class="element-name">${info.ko}</div>
+            <div class="element-name">qS{info.ko}</div>
             <div class="element-bar">
-                <div class="element-fill" style="width: ${percentage}%; background: ${info.color}"></div>
+                <div class="element-fill" style="width: qS{percentage}%; background: qS{info.color}"></div>
             </div>
-            <div class="element-percentage">${percentage}%</div>
+            <div class="element-percentage">qS{percentage}%</div>
         </div>`;
     });
     html += '</div>';
@@ -1225,13 +1225,13 @@ function createResultCard(icon, title, value, description, isMain = false, cardT
         cardType.includes('caution') ? 'card-icon caution' :
         cardType.includes('advice') ? 'card-icon advice' : 'card-icon';
     
-    return `<div class="${cardClass}">
+    return `<div class="qS{cardClass}">
         <div class="card-header">
-            <div class="${iconClass}">${icon}</div>
-            <div class="card-title">${title}</div>
+            <div class="qS{iconClass}">qS{icon}</div>
+            <div class="card-title">qS{title}</div>
         </div>
-        <div class="card-value">${value}</div>
-        <div class="card-description">${description}</div>
+        <div class="card-value">qS{value}</div>
+        <div class="card-description">qS{description}</div>
     </div>`;
 }
 
@@ -1655,12 +1655,12 @@ function ensurePalmMenuLabels(){
         venus:{t:'금성대', e:'💫'}
     };
     
-   $$('.palm-type-card').forEach(card=>{
+   qSqS('.palm-type-card').forEach(card=>{
         const type = card.dataset.palmType;
         const meta = labels[type];
         if (!meta) return;
         const titleEl = card.querySelector('.title, .card-title, .item-title, h3, h4') || card;
-        titleEl.textContent = `${meta.t} ${meta.e}`;
+        titleEl.textContent = `qS{meta.t} qS{meta.e}`;
     });
 }
 
@@ -1670,12 +1670,12 @@ function renderPalmPhoto(palmType, selectedReadingType){
     const style = PALM_STYLES[palmType]?.[selectedReadingType];
     
     if (!pathString) {
-        console.warn(`No path found for ${palmType} - ${selectedReadingType}`);
-        return `<div class="palm-photo-wrap"><img src="${PALM_BASE_IMG}" alt="hand"/></div>`;
+        console.warn(`No path found for qS{palmType} - qS{selectedReadingType}`);
+        return `<div class="palm-photo-wrap"><img src="qS{PALM_BASE_IMG}" alt="hand"/></div>`;
     }
     
     if (!pathString.trim()) {
-        return `<div class="palm-photo-wrap"><img src="${PALM_BASE_IMG}" alt="hand"/></div>`;
+        return `<div class="palm-photo-wrap"><img src="qS{PALM_BASE_IMG}" alt="hand"/></div>`;
     }
     
     const paths = pathString.split(' M').filter(p => p.trim());
@@ -1691,9 +1691,9 @@ function renderPalmPhoto(palmType, selectedReadingType){
     const opacity = style?.opacity || 1;
     
     return `<div class="palm-photo-wrap">
-        <img src="${PALM_BASE_IMG}" alt="hand"/>
+        <img src="qS{PALM_BASE_IMG}" alt="hand"/>
         <svg class="palm-overlay" viewBox="0 0 800 1200" preserveAspectRatio="xMidYMid meet">
-            ${paths.map(d => `<path d="${d}" fill="none" stroke="${color}" stroke-width="${lineWidth}" stroke-linecap="round" stroke-linejoin="round" opacity="${opacity}"/>`).join('')}
+            qS{paths.map(d => `<path d="qS{d}" fill="none" stroke="qS{color}" stroke-width="qS{lineWidth}" stroke-linecap="round" stroke-linejoin="round" opacity="qS{opacity}"/>`).join('')}
         </svg>
     </div>`;
 }
@@ -1706,16 +1706,16 @@ function showPalmSubTypes(palmType) {
     
     let html = '';
     html += '<div class="result-section">';
-    html += `<div class="section-title-result">🖐️ ${palmData.name} - 타입 선택</div>`;
+    html += `<div class="section-title-result">🖐️ qS{palmData.name} - 타입 선택</div>`;
     html += '<div class="palm-subtitle">✨ 관심 있는 손금 유형을 선택하세요</div>';
     html += '<div class="palm-subtypes-grid">';
     
     palmData.types.forEach((typeData, index) => {
         const emoji = PALM_TYPE_EMOJIS[palmType] || '🖐️';
-        html += `<div class="palm-subtype-card" data-palm-type="${palmType}" data-subtype="${typeData.type}" data-index="${index}">
-            <div class="palm-subtype-emoji">${emoji}</div>
-            <div class="palm-subtype-title">${typeData.type}</div>
-            <div class="palm-subtype-preview">${typeData.meaning.substring(0, 60)}...</div>
+        html += `<div class="palm-subtype-card" data-palm-type="qS{palmType}" data-subtype="qS{typeData.type}" data-index="qS{index}">
+            <div class="palm-subtype-emoji">qS{emoji}</div>
+            <div class="palm-subtype-title">qS{typeData.type}</div>
+            <div class="palm-subtype-preview">qS{typeData.meaning.substring(0, 60)}...</div>
         </div>`;
     });
     
@@ -1728,7 +1728,7 @@ function showPalmSubTypes(palmType) {
     });
     
     setTimeout(() => {
-        $$('.palm-subtype-card').forEach(card => {
+        qSqS('.palm-subtype-card').forEach(card => {
             card.addEventListener('click', () => {
                 const palmType = card.dataset.palmType;
                 const subType = card.dataset.subtype;
@@ -1796,7 +1796,7 @@ function initializePalmReading() {
     ensurePalmMenuLabels();
     
     setTimeout(() => {
-        const palmCards = $('.palm-type-card');
+        const palmCards = qS('.palm-type-card');
         palmCards.forEach(card => {
             if (card.__palmBound) return;
             card.addEventListener('click', () => {
@@ -1806,7 +1806,7 @@ function initializePalmReading() {
             card.__palmBound = true;
         });
         
-        const randomBtn = $('#btnRandomPalm');
+        const randomBtn = qS('#btnRandomPalm');
         if (randomBtn && !randomBtn.__palmBound) {
             randomBtn.addEventListener('click', drawRandomPalm);
             randomBtn.__palmBound = true;
@@ -1815,7 +1815,7 @@ function initializePalmReading() {
 }
 
 function selectPalmType(cardElement, palmType) {
-   $$('.palm-type-card').forEach(card => card.classList.remove('selected'));
+   qSqS('.palm-type-card').forEach(card => card.classList.remove('selected'));
     cardElement.classList.add('selected');
     showPalmReading(palmType);
 }
@@ -1823,20 +1823,20 @@ function selectPalmType(cardElement, palmType) {
 function drawRandomPalm() {
     const palmTypes = ['life', 'head', 'heart', 'fate', 'sun', 'marriage', 'health', 'intuition', 'venus'];
     const randomType = palmTypes[Math.floor(Math.random() * palmTypes.length)];
-    const randomCard = $(`.palm-type-card[data-palm-type="${randomType}"]`);
+    const randomCard = qS(`.palm-type-card[data-palm-type="qS{randomType}"]`);
     if (randomCard) {
         setTimeout(() => selectPalmType(randomCard, randomType), 300);
     }
 }
 
 function showPalmInCrystal(palmName, palmType) {
-    const crystal = $('#mainCrystal');
+    const crystal = qS('#mainCrystal');
     if (!crystal) return;
     
     crystal.classList.add('crystal-reveal');
     crystal.innerHTML = `<div class="crystal-card">
-        <div class="title">${palmName}</div>
-        <div class="dir">${palmType}</div>
+        <div class="title">qS{palmName}</div>
+        <div class="dir">qS{palmType}</div>
     </div>`;
     
     setTimeout(() => {
@@ -1867,7 +1867,7 @@ function isoWeekKey(date = new Date()) {
     d.setUTCDate(d.getUTCDate() + 4 - day);
     const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
     const weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
-    return `${d.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+    return `qS{d.getUTCFullYear()}-WqS{String(weekNo).padStart(2, '0')}`;
 }
 
 // 1세트(6개) 생성 – 안전 버전
@@ -1878,7 +1878,7 @@ function generateLottoSet(seedStr) {
     let seed = Number.isFinite(Date.parse(s)) ? Date.parse(s) : NaN;
     
     if (!Number.isFinite(seed) && digits.length === 8) {
-        const norm = `${digits.slice(0,4)}-${digits.slice(4,6)}-${digits.slice(6,8)}`;
+        const norm = `qS{digits.slice(0,4)}-qS{digits.slice(4,6)}-qS{digits.slice(6,8)}`;
         seed = Date.parse(norm);
     }
     
@@ -1919,7 +1919,7 @@ function generateLottoNumbers(birth='') {
     const yearStart = new Date(Date.UTC(utc.getUTCFullYear(), 0, 1));
     const isoWeek = Math.ceil((((utc - yearStart) / 86400000) + 1) / 7);
     
-    const seed = `${utc.getUTCFullYear()}-W${String(isoWeek).padStart(2,'0')}:${birth}`;
+    const seed = `qS{utc.getUTCFullYear()}-WqS{String(isoWeek).padStart(2,'0')}:qS{birth}`;
     const main = generateLottoSet(seed);
     
     // 보너스 번호 생성
@@ -1932,7 +1932,7 @@ function generateLottoNumbers(birth='') {
     return {
         main,
         bonus,
-        seedInfo: `주 ${isoWeek}${birth ? ` · ${birth}` : ''}`
+        seedInfo: `주 qS{isoWeek}qS{birth ? ` · qS{birth}` : ''}`
     };
 }
 
@@ -1962,25 +1962,25 @@ function renderLottoResult(payload, birthStr = '') {
         
         const nameTitle = '';
         let html = `<div class="result-section">
-            <div class="section-title-result">🎲 ${nameTitle}이번 주 행운번호</div>`;
+            <div class="section-title-result">🎲 qS{nameTitle}이번 주 행운번호</div>`;
         
         const main = sets[0] || payload.main;
         const bonus = payload.bonus;
         
         const ballsHtml = main
-            .map(n => `<div class="ball">${String(n).padStart(2,'0')}</div>`)
+            .map(n => `<div class="ball">qS{String(n).padStart(2,'0')}</div>`)
             .join('');
         
         const bonusHtml = bonus == null ? '' : 
             `<div style="align-self:center;font-weight:800;margin:0 2px">+</div>
-             <div class="ball bonus">${String(bonus).padStart(2,'0')}</div>`;
+             <div class="ball bonus">qS{String(bonus).padStart(2,'0')}</div>`;
         
         html += `<div class="lotto-wrap">
             <div class="lotto-balls">
-                ${ballsHtml}
-                ${bonusHtml}
+                qS{ballsHtml}
+                qS{bonusHtml}
             </div>
-            <div class="lotto-meta">생성 기준: ${seedInfo} · 참고용</div>
+            <div class="lotto-meta">생성 기준: qS{seedInfo} · 참고용</div>
         </div>`;
         
         html += `</div>
@@ -1990,7 +1990,7 @@ function renderLottoResult(payload, birthStr = '') {
                 • 결과는 <strong>같은 주(ISO 주)</strong>에는 동일합니다.<br/>
                 • 입력한 생년월일이 같으면 같은 주에는 같은 추천이 나옵니다.<br/>
                 • 재미/참고용이며, 책임있는 구매를 권장해요. 🍀
-                ${seedInfo ? `<br/>• 생성 기준: ${seedInfo}` : ''}
+                qS{seedInfo ? `<br/>• 생성 기준: qS{seedInfo}` : ''}
             </div>
         </div>`;
         
@@ -2031,7 +2031,7 @@ function initializeTarot() {
                 tarotLimit.showLimitAlert();
                 return;
             }
-            console.log(`💫 타로 카드 사용 (남은 횟수: ${tarotLimit.getRemainingCount()}번)`);
+            console.log(`💫 타로 카드 사용 (남은 횟수: qS{tarotLimit.getRemainingCount()}번)`);
             selectTarotCard(card);
         });
         card.__bound = true; // ← 이 줄이 빠져있었음!
@@ -2040,7 +2040,7 @@ function initializeTarot() {
     // 안정성 보강: DOM에 카드가 없으면 더 진행하지 않음
     if (!tarotCards || tarotCards.length === 0) return;
     
-    const randomBtn = $('#btnRandomTarot');
+    const randomBtn = qS('#btnRandomTarot');
     if (randomBtn && !randomBtn.__bound) {
         randomBtn.addEventListener('click', () => {
             if (!tarotLimit.canUseTarot()) {
@@ -2051,25 +2051,25 @@ function initializeTarot() {
                 tarotLimit.showLimitAlert();
                 return;
             }
-            console.log(`💫 랜덤 타로 사용 (남은 횟수: ${tarotLimit.getRemainingCount()}번)`);
+            console.log(`💫 랜덤 타로 사용 (남은 횟수: qS{tarotLimit.getRemainingCount()}번)`);
             drawRandomTarotCard();
         }); // ← 이 닫는 괄호가 빠져있었음!
         randomBtn.__bound = true;
     }
     
-    const resetBtn = $('#btnResetTarot');
+    const resetBtn = qS('#btnResetTarot');
     if (resetBtn && !resetBtn.__bound) {
         resetBtn.addEventListener('click', resetTarotCards);
         resetBtn.__bound = true;
     }
     
-    const closeBtn = $('#tarotCloseBtn');
+    const closeBtn = qS('#tarotCloseBtn');
     if (closeBtn && !closeBtn.__bound) {
         closeBtn.addEventListener('click', closeTarotModal);
         closeBtn.__bound = true;
     }
     
-    const overlay = $('#tarotModalOverlay');
+    const overlay = qS('#tarotModalOverlay');
     if (overlay && !overlay.__bound) {
         overlay.addEventListener('click', e => {
             if (e.target === overlay) closeTarotModal();
@@ -2096,10 +2096,10 @@ function selectTarotCard(cardElement) {
     setTimeout(() => {
         const frontElement = document.createElement('div');
         frontElement.className = 'tarot-card-front';
-        frontElement.innerHTML = `<div class="card-number">${randomTarotIndex}</div>
-            <div class="card-icon">${CARD_ICONS[randomTarotIndex]}</div>
-            <div class="card-name">${selectedCard.name.split('(')[0].trim()}</div>
-            <div class="card-direction">${isUpright ? '정위' : '역위'}</div>`;
+        frontElement.innerHTML = `<div class="card-number">qS{randomTarotIndex}</div>
+            <div class="card-icon">qS{CARD_ICONS[randomTarotIndex]}</div>
+            <div class="card-name">qS{selectedCard.name.split('(')[0].trim()}</div>
+            <div class="card-direction">qS{isUpright ? '정위' : '역위'}</div>`;
         cardElement.appendChild(frontElement);
         cardElement.classList.add('revealed');
         
@@ -2118,11 +2118,11 @@ function selectTarotCard(cardElement) {
         meaning:isUpright?selectedCard.upright:selectedCard.reversed
     });
     
-    reactCrystal(`${selectedCard.name.split('(')[0].trim()}을 뽑았습니다! ✨`);
+    reactCrystal(`qS{selectedCard.name.split('(')[0].trim()}을 뽑았습니다! ✨`);
 }
 
 function drawRandomTarotCard(){
-    const available = $('.tarot-card-back:not(.revealed)');
+    const available = qS('.tarot-card-back:not(.revealed)');
     if(!available.length){
         reactCrystal('모든 카드를 이미 뽑았습니다! 🎯');
         return;
@@ -2132,7 +2132,7 @@ function drawRandomTarotCard(){
 }
 
 function resetTarotCards(){
-    $$('.tarot-card-back').forEach(card=>{
+    qSqS('.tarot-card-back').forEach(card=>{
         card.classList.remove('flipped','revealed');
         card.style.transform='';
         card.querySelector('.tarot-card-front')?.remove();
@@ -2148,18 +2148,18 @@ function showTarotModal(cardIndex, isUpright){
     const card = TAROT_DETAILS[idx];
     if(!card) return;
     
-    const modal = $('#tarotModalOverlay');
-    const content = $('#tarotModalContent');
+    const modal = qS('#tarotModalOverlay');
+    const content = qS('#tarotModalContent');
     if(!modal || !content) return;
     
-    content.innerHTML = `<h2>${card.name}</h2>
-        <p style="color:#6B7280; margin-bottom:20px; line-height:1.6; font-style:italic;">${card.meaning}</p>
-        <div class="meaning-section upright"><h3>🔮 정방향 의미</h3><p>${card.upright}</p></div>
+    content.innerHTML = `<h2>qS{card.name}</h2>
+        <p style="color:#6B7280; margin-bottom:20px; line-height:1.6; font-style:italic;">qS{card.meaning}</p>
+        <div class="meaning-section upright"><h3>🔮 정방향 의미</h3><p>qS{card.upright}</p></div>
         <br>
-        <div class="meaning-section reversed"><h3>🔄 역방향 의미</h3><p>${card.reversed}</p></div>
+        <div class="meaning-section reversed"><h3>🔄 역방향 의미</h3><p>qS{card.reversed}</p></div>
         <div style="margin-top:25px; padding:15px; background:rgba(255,215,0,0.1); border-radius:10px; border-left:4px solid #ffd700;">
-            <h3 style="color:#ffd700; margin-bottom:10px;">${isUpright ? '🌟 현재 뽑힌 방향: 정방향' : '🌀 현재 뽑힌 방향: 역방향'}</h3>
-            <p style="color:#ecf0f1; line-height:1.5;">${isUpright ? card.upright : card.reversed}</p>
+            <h3 style="color:#ffd700; margin-bottom:10px;">qS{isUpright ? '🌟 현재 뽑힌 방향: 정방향' : '🌀 현재 뽑힌 방향: 역방향'}</h3>
+            <p style="color:#ecf0f1; line-height:1.5;">qS{isUpright ? card.upright : card.reversed}</p>
         </div>`;
     
     modal.style.display='flex';
@@ -2167,20 +2167,20 @@ function showTarotModal(cardIndex, isUpright){
 }
 
 function closeTarotModal(){
-    const modal = $('#tarotModalOverlay');
+    const modal = qS('#tarotModalOverlay');
     if(!modal) return;
     modal.classList.remove('show');
     modal.style.display='none';
 }
 
 function showCardInCrystal(cardName, isUpright){
-    const crystal = $('#mainCrystal');
+    const crystal = qS('#mainCrystal');
     if(!crystal) return;
     
     crystal.classList.add('crystal-reveal');
     crystal.innerHTML = `<div class="crystal-card">
-        <div class="title">${cardName.split('(')[0].trim()}</div>
-        <div class="dir">${isUpright ? '정위' : '역위'}</div>
+        <div class="title">qS{cardName.split('(')[0].trim()}</div>
+        <div class="dir">qS{isUpright ? '정위' : '역위'}</div>
     </div>`;
     
     setTimeout(()=>{
@@ -2201,18 +2201,18 @@ function generateLifetimeFortune(r, name = '') {
     const ssMonth = krShiShen(r.tenGods.m || '');
     
     const lifetimeTexts = {
-        '木': `${name ? name+'님은' : '이 분은'} 성장과 발전을 추구하는 인생을 걷게 됩니다. 어려서부터 학습능력이 뛰어나며, 새로운 것을 배우고 흡수하는 속도가 빠릅니다. 인생 전반에 걸쳐 끊임없는 자기계발과 성장의 기회가 주어지며, 특히 교육, 기획, 창의적인 분야에서 두각을 나타낼 수 있습니다. 사람들과의 네트워킹을 통해 기회를 확장해나가는 성향이 강하며, 중년 이후에는 후배나 제자를 양성하는 역할을 맡게 될 가능성이 높습니다. 다만 너무 많은 일을 벌여놓아 마무리가 부족할 수 있으니, 우선순위를 정하고 집중하는 것이 중요합니다. 전체적으로 상승하는 인생 곡선을 그리며, 노후에도 활발한 활동을 이어갈 것입니다.`,
+        '木': `qS{name ? name+'님은' : '이 분은'} 성장과 발전을 추구하는 인생을 걷게 됩니다. 어려서부터 학습능력이 뛰어나며, 새로운 것을 배우고 흡수하는 속도가 빠릅니다. 인생 전반에 걸쳐 끊임없는 자기계발과 성장의 기회가 주어지며, 특히 교육, 기획, 창의적인 분야에서 두각을 나타낼 수 있습니다. 사람들과의 네트워킹을 통해 기회를 확장해나가는 성향이 강하며, 중년 이후에는 후배나 제자를 양성하는 역할을 맡게 될 가능성이 높습니다. 다만 너무 많은 일을 벌여놓아 마무리가 부족할 수 있으니, 우선순위를 정하고 집중하는 것이 중요합니다. 전체적으로 상승하는 인생 곡선을 그리며, 노후에도 활발한 활동을 이어갈 것입니다.`,
         
-        '火': `${name ? name+'님의' : '이 분의'} 인생은 열정과 에너지로 가득한 역동적인 여정이 될 것입니다. 타고난 리더십과 표현력으로 많은 사람들에게 영향을 미치며, 특히 젊은 시절부터 주목받는 경우가 많습니다. 예술, 엔터테인먼트, 세일즈, 홍보 분야에서 특별한 재능을 발휘할 수 있으며, 사람들 앞에 서는 것을 두려워하지 않습니다. 중년기에는 자신만의 독특한 스타일로 성공을 거둘 가능성이 높습니다. 하지만 감정의 기복이 클 수 있고, 성급한 판단으로 인한 실수를 조심해야 합니다. 꾸준한 인내와 절제력을 기르면 더욱 안정된 성공을 이룰 수 있습니다. 인생 전반적으로 화려하고 역동적인 모습을 보일 것입니다.`,
+        '火': `qS{name ? name+'님의' : '이 분의'} 인생은 열정과 에너지로 가득한 역동적인 여정이 될 것입니다. 타고난 리더십과 표현력으로 많은 사람들에게 영향을 미치며, 특히 젊은 시절부터 주목받는 경우가 많습니다. 예술, 엔터테인먼트, 세일즈, 홍보 분야에서 특별한 재능을 발휘할 수 있으며, 사람들 앞에 서는 것을 두려워하지 않습니다. 중년기에는 자신만의 독특한 스타일로 성공을 거둘 가능성이 높습니다. 하지만 감정의 기복이 클 수 있고, 성급한 판단으로 인한 실수를 조심해야 합니다. 꾸준한 인내와 절제력을 기르면 더욱 안정된 성공을 이룰 수 있습니다. 인생 전반적으로 화려하고 역동적인 모습을 보일 것입니다.`,
         
-        '土': `${name ? name+'님은' : '이 분은'} 안정과 신뢰를 바탕으로 한 견실한 인생을 살게 됩니다. 급하게 서두르기보다는 차근차근 기반을 다져나가는 성향으로, 시간이 갈수록 주변의 신뢰를 얻게 됩니다. 부동산, 금융, 운영관리, 서비스업 등에서 장기적인 성공을 거둘 수 있으며, 특히 40대 이후에는 안정된 기반 위에서 더큰 성과를 이룰 수 있습니다. 가족과 조직에서 중심적인 역할을 맡게 되며, 많은 사람들이 의지하는 존재가 됩니다. 다만 변화에 대한 적응이 다소 느릴 수 있으니, 때로는 과감한 도전도 필요합니다. 꾸준함과 성실함이 가장 큰 무기로, 말년에는 풍족하고 안정된 삶을 누릴 것입니다.`,
+        '土': `qS{name ? name+'님은' : '이 분은'} 안정과 신뢰를 바탕으로 한 견실한 인생을 살게 됩니다. 급하게 서두르기보다는 차근차근 기반을 다져나가는 성향으로, 시간이 갈수록 주변의 신뢰를 얻게 됩니다. 부동산, 금융, 운영관리, 서비스업 등에서 장기적인 성공을 거둘 수 있으며, 특히 40대 이후에는 안정된 기반 위에서 더큰 성과를 이룰 수 있습니다. 가족과 조직에서 중심적인 역할을 맡게 되며, 많은 사람들이 의지하는 존재가 됩니다. 다만 변화에 대한 적응이 다소 느릴 수 있으니, 때로는 과감한 도전도 필요합니다. 꾸준함과 성실함이 가장 큰 무기로, 말년에는 풍족하고 안정된 삶을 누릴 것입니다.`,
         
-        '金': `${name ? name+'님의' : '이 분의'} 인생은 정확성과 원칙을 중시하는 체계적인 여정이 될 것입니다. 분석적 사고와 논리적 판단력이 뛰어나 전문직, 금융, 법무, 기술 분야에서 인정받을 가능성이 높습니다. 젊은 시절에는 다소 경직되어 보일 수 있지만, 경험이 쌓이면서 자신만의 확고한 전문성을 구축하게 됩니다. 재정관리 능력이 우수하여 중년 이후에는 경제적으로 안정된 생활을 할 수 있습니다. 완벽주의 성향이 강해 때로는 스트레스를 받을 수 있으니, 유연성과 포용력을 기르는 것이 중요합니다. 한번 맺은 인연은 오래가는 진정한 관계를 유지하며, 품격 있는 노후를 보낼 것입니다.`,
+        '金': `qS{name ? name+'님의' : '이 분의'} 인생은 정확성과 원칙을 중시하는 체계적인 여정이 될 것입니다. 분석적 사고와 논리적 판단력이 뛰어나 전문직, 금융, 법무, 기술 분야에서 인정받을 가능성이 높습니다. 젊은 시절에는 다소 경직되어 보일 수 있지만, 경험이 쌓이면서 자신만의 확고한 전문성을 구축하게 됩니다. 재정관리 능력이 우수하여 중년 이후에는 경제적으로 안정된 생활을 할 수 있습니다. 완벽주의 성향이 강해 때로는 스트레스를 받을 수 있으니, 유연성과 포용력을 기르는 것이 중요합니다. 한번 맺은 인연은 오래가는 진정한 관계를 유지하며, 품격 있는 노후를 보낼 것입니다.`,
         
-        '水': `${name ? name+'님은' : '이 분은'} 유연함과 적응력으로 다양한 경험을 하는 풍성한 인생을 살게 됩니다. 뛰어난 소통능력과 학습력으로 여러 분야를 넘나들며 활동할 수 있으며, 특히 교육, 연구, 미디어, 상담 분야에서 두각을 나타낼 수 있습니다. 직관력이 뛰어나 트렌드를 빠르게 파악하고, 변화하는 환경에 잘 적응합니다. 국제적인 활동이나 원거리 이주의 기회가 있을 수 있으며, 다양한 인맥을 통해 기회를 확장해나갑니다. 다만 한 곳에 오래 머무르지 못하는 성향이 있어, 중요한 결정에서는 신중함이 필요합니다. 깊이 있는 전문성을 기르면 더욱 큰 성취를 이룰 수 있으며, 지혜로운 만년을 보낼 것입니다.`
+        '水': `qS{name ? name+'님은' : '이 분은'} 유연함과 적응력으로 다양한 경험을 하는 풍성한 인생을 살게 됩니다. 뛰어난 소통능력과 학습력으로 여러 분야를 넘나들며 활동할 수 있으며, 특히 교육, 연구, 미디어, 상담 분야에서 두각을 나타낼 수 있습니다. 직관력이 뛰어나 트렌드를 빠르게 파악하고, 변화하는 환경에 잘 적응합니다. 국제적인 활동이나 원거리 이주의 기회가 있을 수 있으며, 다양한 인맥을 통해 기회를 확장해나갑니다. 다만 한 곳에 오래 머무르지 못하는 성향이 있어, 중요한 결정에서는 신중함이 필요합니다. 깊이 있는 전문성을 기르면 더욱 큰 성취를 이룰 수 있으며, 지혜로운 만년을 보낼 것입니다.`
     };
     
-    let result = lifetimeTexts[dayEl] || `${name ? name+'님의' : '이 분의'} 인생은 독특한 개성과 특별한 재능으로 특별한 여정을 걸어가게 될 것입니다.`;
+    let result = lifetimeTexts[dayEl] || `qS{name ? name+'님의' : '이 분의'} 인생은 독특한 개성과 특별한 재능으로 특별한 여정을 걸어가게 될 것입니다.`;
     
     if (ssMonth.includes('정관') || ssMonth.includes('편관')) {
         result += ' 특히 리더십과 관리능력이 뛰어나 조직에서 중요한 역할을 맡게 될 것입니다.';
@@ -2237,7 +2237,7 @@ function generateDaeunAnalysis(r, name = '') {
     const list = KEYS.map(k=>({k, v: r.countsAll[k]||0, p: total ? Math.round((r.countsAll[k]/total)*100) : 0}))
         .sort((a,b)=>b.v-a.v);
     
-    let analysis = `${name ? name+'님의' : '이 분의'} 대운 흐름을 살펴보면, `;
+    let analysis = `qS{name ? name+'님의' : '이 분의'} 대운 흐름을 살펴보면, `;
     
     if (age < 10) {
         analysis += '현재 기초 형성기로 성격과 기본 성향이 자리잡는 중요한 시기입니다. ';
@@ -2259,7 +2259,7 @@ function generateDaeunAnalysis(r, name = '') {
     const weakest = list[list.length-1];
     
     if (strongest.p - weakest.p > 30) {
-        analysis += `타고난 ${WUXING_INFO[strongest.k].ko}의 기운이 강해 추진력이 뛰어나지만, ${WUXING_INFO[weakest.k].ko}를 보완하는 시기에는 신중함이 필요합니다. `;
+        analysis += `타고난 qS{WUXING_INFO[strongest.k].ko}의 기운이 강해 추진력이 뛰어나지만, qS{WUXING_INFO[weakest.k].ko}를 보완하는 시기에는 신중함이 필요합니다. `;
     } else {
         analysis += `오행의 균형이 비교적 잘 맞아 전 생애에 걸쳐 안정된 운세를 보입니다. `;
     }
@@ -2328,7 +2328,7 @@ function generateAdvice(r, name = '') {
     const weakInfo = WUXING_INFO[weakest.k] || {};
     const ssMonth = krShiShen(r.tenGods.m || '');
     
-    let advice = `${name ? name+'님께' : '이 분께'} 드리는 인생 조언입니다. `;
+    let advice = `qS{name ? name+'님께' : '이 분께'} 드리는 인생 조언입니다. `;
     
     const basicAdvice = {
         '木': '성장 지향적인 성격을 살려 지속적인 학습과 네트워킹에 투자하세요. 다만 너무 많은 일을 벌이지 말고 우선순위를 정해 차근차근 진행하는 것이 중요합니다.',
@@ -2339,7 +2339,7 @@ function generateAdvice(r, name = '') {
     };
     
     advice += basicAdvice[dayEl] || '자신의 장점을 살리되 단점을 보완하는 노력이 필요합니다.';
-    advice += ` 특히 ${weakInfo.ko} 기운을 ${weakInfo.boost.split(',')[0]}로 보완하면 더욱 균형잡힌 삶을 살 수 있습니다.`;
+    advice += ` 특히 qS{weakInfo.ko} 기운을 qS{weakInfo.boost.split(',')[0]}로 보완하면 더욱 균형잡힌 삶을 살 수 있습니다.`;
     
     return advice;
 }
@@ -2364,7 +2364,7 @@ function buildEnhancedSajuResult(r, name = '') {
     const ssKey = Object.keys(SHISHEN_DESC).find(k => ssMonthKR.includes(k));
     const ssDesc = ssKey ? SHISHEN_DESC[ssKey] : '월간은 사회적 역할·직업성의 뼈대를 보여줍니다.';
     
-    const nameTitle = name ? `<b>${name}</b>님의 ` : '';
+    const nameTitle = name ? `<b>qS{name}</b>님의 ` : '';
     
     const lifetimeFortune = generateLifetimeFortune(r, name);
     const daeunAnalysis = generateDaeunAnalysis(r, name);
@@ -2373,45 +2373,45 @@ function buildEnhancedSajuResult(r, name = '') {
     const advice = generateAdvice(r, name);
     
     let html = `<div class="result-section">
-        <div class="section-title-result">📊 ${nameTitle}사주 기본 구조</div>
-        ${createPillarsGrid(r.pillars)}
+        <div class="section-title-result">📊 qS{nameTitle}사주 기본 구조</div>
+        qS{createPillarsGrid(r.pillars)}
     </div>
     
     <div class="result-section">
-        <div class="section-title-result">🎯 ${nameTitle}핵심 해석</div>
-        ${createResultCard('🌱', '보완할 오행', `${weakInfo.ko}(${weakest.k}) ${weakest.p}%`, 
+        <div class="section-title-result">🎯 qS{nameTitle}핵심 해석</div>
+        qS{createResultCard('🌱', '보완할 오행', `qS{weakInfo.ko}(qS{weakest.k}) qS{weakest.p}%`, 
             `<strong>설명:</strong> 오행의 균형에서 가장 낮은 축입니다. 이 요소를 보완하면 전반적인 흐름이 안정됩니다.<br/>
-            <strong>부족 특성:</strong> ${weakInfo.trait}<br/>
-            <strong>보완 팁:</strong> ${weakInfo.boost}`, true, 'fortune-detail-card palm')}
+            <strong>부족 특성:</strong> qS{weakInfo.trait}<br/>
+            <strong>보완 팁:</strong> qS{weakInfo.boost}`, true, 'fortune-detail-card palm')}
         
-        ${createResultCard('🏷️', '월간 십신', ssMonthKR || '-', 
+        qS{createResultCard('🏷️', '월간 십신', ssMonthKR || '-', 
             `<strong>설명:</strong> 월간은 사회적 역할·직업성의 뼈대를 뜻합니다. 십신은 일간과의 관계로 재능/과제 유형을 보여줍니다.<br/>
-            <strong>해석:</strong> ${ssDesc}`)}
+            <strong>해석:</strong> qS{ssDesc}`)}
         
-        ${createResultCard('🔥', '강한 오행', `${strongInfo.ko}(${strongest.k}) ${strongest.p}%`, 
-            `<strong>장점:</strong> ${strongInfo.trait}<br/>
+        qS{createResultCard('🔥', '강한 오행', `qS{strongInfo.ko}(qS{strongest.k}) qS{strongest.p}%`, 
+            `<strong>장점:</strong> qS{strongInfo.trait}<br/>
             <strong>주의:</strong> 이 요소가 과할 때는 균형을 위해 다른 오행을 보완하세요.`)}
     </div>
     
     <div class="result-section">
-        <div class="section-title-result">📈 ${nameTitle}오행 분포</div>
-        ${createElementChart(r.countsAll)}
+        <div class="section-title-result">📈 qS{nameTitle}오행 분포</div>
+        qS{createElementChart(r.countsAll)}
     </div>
     
     <div class="result-section">
-        <div class="section-title-result">🌟 ${nameTitle}상세 운세풀이</div>
-        ${createResultCard('📜', '평생운', '인생 전체 흐름', lifetimeFortune, false, 'fortune-detail-card lifetime')}
-        ${createResultCard('📊', '대운분석', '10년 단위 흐름', daeunAnalysis, false, 'fortune-detail-card daeun')}
-        ${createResultCard('⏰', '대운시기', '현재와 향후 시기', daeunTiming, false, 'fortune-detail-card timing')}
-        ${createResultCard('⚠️', '조심할시기', '주의가 필요한 때', cautionPeriods, false, 'fortune-detail-card caution')}
-        ${createResultCard('💡', '인생조언', '실용적 가이드', advice, false, 'fortune-detail-card advice')}
+        <div class="section-title-result">🌟 qS{nameTitle}상세 운세풀이</div>
+        qS{createResultCard('📜', '평생운', '인생 전체 흐름', lifetimeFortune, false, 'fortune-detail-card lifetime')}
+        qS{createResultCard('📊', '대운분석', '10년 단위 흐름', daeunAnalysis, false, 'fortune-detail-card daeun')}
+        qS{createResultCard('⏰', '대운시기', '현재와 향후 시기', daeunTiming, false, 'fortune-detail-card timing')}
+        qS{createResultCard('⚠️', '조심할시기', '주의가 필요한 때', cautionPeriods, false, 'fortune-detail-card caution')}
+        qS{createResultCard('💡', '인생조언', '실용적 가이드', advice, false, 'fortune-detail-card advice')}
     </div>
     
     <div class="info-box">
         <div class="info-title">📋 상세 정보</div>
         <div class="info-content">
-            <strong>달력:</strong> ${r.calMode==='lunar'?'음력':'양력'}${r.calMode==='lunar' ? ` / 윤달: ${r.isLeap?'예':'아니오'}`:''}<br/>
-            <strong>십신:</strong> 년:${krShiShen(r.tenGods.y)||'-'} / 월:${krShiShen(r.tenGods.m)||'-'} / 시:${krShiShen(r.tenGods.t)||'-'}<br/>
+            <strong>달력:</strong> qS{r.calMode==='lunar'?'음력':'양력'}qS{r.calMode==='lunar' ? ` / 윤달: qS{r.isLeap?'예':'아니오'}`:''}<br/>
+            <strong>십신:</strong> 년:qS{krShiShen(r.tenGods.y)||'-'} / 월:qS{krShiShen(r.tenGods.m)||'-'} / 시:qS{krShiShen(r.tenGods.t)||'-'}<br/>
             ※ 수치는 간(1) + 지지 장간(가중) 합산 비율입니다. 시간 미입력 시 시주는 제외됩니다.<br/>
             ※ 운세풀이는 사주 구조를 바탕으로 한 일반적인 해석이며, 개인의 노력과 선택이 더욱 중요합니다.
         </div>
@@ -2423,15 +2423,15 @@ function buildEnhancedSajuResult(r, name = '') {
 // ===== 버튼 이벤트 리스너들 =====
 
 // 네비게이션 클릭 이벤트
-$$('.nav-item[data-tab]').forEach(item=>{
+qSqS('.nav-item[data-tab]').forEach(item=>{
     item.addEventListener('click', ()=>{
         const tab = item.dataset.tab || 'home';
         location.hash = '#/' + tab;
-        reactCrystal(`${tab} 페이지로 이동합니다! ✨`);
+        reactCrystal(`qS{tab} 페이지로 이동합니다! ✨`);
     });
 });
 
-$$().forEach((card) => {
+qSqS().forEach((card) => {
     card.addEventListener('click', ()=>{
         const r = card.dataset.route || 'fortune-today';
         location.hash = '#/fortune/' + r.replace('fortune-','');
@@ -2439,9 +2439,9 @@ $$().forEach((card) => {
 });
 
 // 오늘의 운세 버튼
-$('#btnToday')?.addEventListener('click', ()=>{
-    const birthRaw = $('#today-birth').value;
-    const name = $('#today-name')?.value?.trim() || '';
+qS('#btnToday')?.addEventListener('click', ()=>{
+    const birthRaw = qS('#today-birth').value;
+    const name = qS('#today-name')?.value?.trim() || '';
     const calMode = getCalMode('today');
     const isLeap = getLeap('today');
     
@@ -2474,11 +2474,11 @@ $('#btnToday')?.addEventListener('click', ()=>{
 });
 
 // 사주 버튼
-$('#btnSaju')?.addEventListener('click', () => {
-    const rawDate = $('#saju-birth')?.value || '';
-    const rawTime = $('#saju-time')?.value || '';
-    const gender = $('#saju-gender')?.value || '';
-    const name = $('#saju-name')?.value?.trim() || '';
+qS('#btnSaju')?.addEventListener('click', () => {
+    const rawDate = qS('#saju-birth')?.value || '';
+    const rawTime = qS('#saju-time')?.value || '';
+    const gender = qS('#saju-gender')?.value || '';
+    const name = qS('#saju-name')?.value?.trim() || '';
     const calMode = getCalMode('saju');
     const isLeap = getLeap('saju');
     
@@ -2505,24 +2505,24 @@ $('#btnSaju')?.addEventListener('click', () => {
 });
 
 // 궁합 버튼
-$('#btnMatch')?.addEventListener('click', ()=>{
-    const a=$('#match-a').value,b=$('#match-b').value;
+qS('#btnMatch')?.addEventListener('click', ()=>{
+    const a=qS('#match-a').value,b=qS('#match-b').value;
     const {score,text}=calcMatch(a,b);
-    openSheet('궁합 결과',score==null?text:`궁합 지수: ${score}/100\n${text}`,{type:'match',a,b,score,text});
+    openSheet('궁합 결과',score==null?text:`궁합 지수: qS{score}/100\nqS{text}`,{type:'match',a,b,score,text});
     reactCrystal('궁합을 계산했습니다 ✨');
 });
 
 // 신년운세 버튼
-$('#btnYear')?.addEventListener('click', ()=>{
-    const b=$('#year-birth').value;
+qS('#btnYear')?.addEventListener('click', ()=>{
+    const b=qS('#year-birth').value;
     const {idx,text}=calcYear(b);
     openSheet('2025 신년 운세',text,{type:'year',birth:b,idx,text});
     reactCrystal('올해의 흐름을 확인했습니다 ✨');
 });
 
 // 로또 번호 버튼
-$('#btnLotto')?.addEventListener('click', () => {
-    const birth = $('#lotto-birth')?.value?.trim() || '';
+qS('#btnLotto')?.addEventListener('click', () => {
+    const birth = qS('#lotto-birth')?.value?.trim() || '';
     try {
         const result = generateLottoNumbers(birth);
         const html = renderLottoResult(result);
@@ -2541,13 +2541,13 @@ $('#btnLotto')?.addEventListener('click', () => {
 });
 
 // 시트 관련 이벤트
-$('#btnClose')?.addEventListener('click', closeSheet);
+qS('#btnClose')?.addEventListener('click', closeSheet);
 
 sheet?.addEventListener('click', e=>{
     if(e.target===sheet) closeSheet();
 });
 
-$('#btnSave')?.addEventListener('click', ()=>{
+qS('#btnSave')?.addEventListener('click', ()=>{
     if(!lastResult){
         closeSheet();
         return;
@@ -2565,7 +2565,7 @@ $('#btnSave')?.addEventListener('click', ()=>{
 });
 
 // ===== 마이페이지 - 최근 결과 삭제 =====
-$('#btnClear')?.addEventListener('click', ()=>{
+qS('#btnClear')?.addEventListener('click', ()=>{
     if(confirm('최근 결과를 모두 삭제하시겠습니까?')){
         localStorage.removeItem(LS_KEY);
         alert('최근 결과가 모두 삭제되었습니다.');
@@ -2743,34 +2743,34 @@ function showComingSoonNotification() {
 // ===== Policy modal controls (scoped) =====
 (function(){
     const open = (which)=>{
-        const el = $(`#${which}`);
+        const el = qS(`#qS{which}`);
         if(!el) return;
         el.classList.add('mt-show');
     };
     
     const closeAll = ()=>{
-        $$$$$$('.mt-sheet-backdrop').forEach(el=>{
+        qSqSqSqSqSqS('.mt-sheet-backdrop').forEach(el=>{
             el.classList.remove('mt-show');
         });
     };
     
     // open triggers
-    $('#mt-link-privacy')?.addEventListener('click', (e)=>{
+    qS('#mt-link-privacy')?.addEventListener('click', (e)=>{
         e.preventDefault();
         open('mt-privacy');
     });
     
-    $('#mt-link-terms')?.addEventListener('click', (e)=>{
+    qS('#mt-link-terms')?.addEventListener('click', (e)=>{
         e.preventDefault();
         open('mt-terms');
     });
     
     // close triggers (X 버튼, 배경 클릭)
-    $$('.mt-sheet-close').forEach(btn=>{
+    qSqS('.mt-sheet-close').forEach(btn=>{
         btn.addEventListener('click', closeAll);
     });
     
-    $$$$$$('.mt-sheet-backdrop').forEach(bg=>{
+    qSqSqSqSqSqS('.mt-sheet-backdrop').forEach(bg=>{
         bg.addEventListener('click', (e)=>{
             if(e.target === bg) closeAll();
         });
