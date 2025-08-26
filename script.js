@@ -620,14 +620,6 @@ function hideSplash(){
 
 
 
-function startApp(){
-
-    hideSplash();
-
-}
-
-
-
 // ===== 손금 이모지 매핑 =====
 
 const PALM_TYPE_EMOJIS = {
@@ -5040,19 +5032,6 @@ function showComingSoonNotification() {
 
     });
 
-    
-
-    // ② Start 버튼 클릭으로 닫기
-
-    startBtn?.addEventListener('click', (e) => {
-
-        e.preventDefault();
-
-        hideSplash();
-
-    });
-
-})();
 
 
 
