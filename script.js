@@ -13,11 +13,6 @@ const qS = (sel) => document.querySelector(sel);
 const qSA = (sel) => Array.from(document.querySelectorAll(sel) || []);
 const LS_KEY = 'mystictell_recent_results';
 
-// DOM 헬퍼 + 로컬스토리지 키 (맨 위에 추가)
-const qS = (sel) => document.querySelector(sel);
-const qSqS = (sel) => Array.from(document.querySelectorAll(sel) || []);
-const LS_KEY = 'mystictell_recent_results';
-
 // DOM 캐시 시스템 추가
 const DOM = {
     // 캐시된 요소들
