@@ -575,5 +575,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- ========= /MysticTell: Policy Modals ========= -->
 <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.6.12/lunar.min.js"></script>
 <script src="script.js"></script> 
+<!-- index.html 하단, script.js 로드 뒤에 있으면 생략 -->
+<script>
+  // 스플래시 감추고 메인 보이기
+  function hideSplash() {
+    const splash = document.getElementById('splashScreen');
+    const main   = document.getElementById('mainContent');
+    const nav    = document.getElementById('bottomNav');
+
+    if (splash) splash.classList.add('hidden');     // .splash-screen.hidden { display:none !important; } 적용
+    if (main)   main.classList.add('show');         // #mainContent.show { display:block !important; }
+    if (nav)    nav.classList.add('show');          // #bottomNav.show { display:flex !important; }
+
+    // 혹시 인라인 스타일이 남아있어도 안전하게
+    if (main) { main.style.display = 'block'; }
+    if (nav)  { nav.style.display  = 'flex';  }
+  }
+
+  // 자동 시작 (버튼 없으므로)
+  window.addEventListener('DOMContentLoaded', () => {
+    // 이미지 프리로드/페인트 시간을 살짝 기다렸다가
+    setTimeout(hideSplash, 300);
+  });
+</script>
+
 </body>
 </html>
