@@ -574,6 +574,177 @@ function calcEnhancedDailyFortune(birthdate) {
     };
 }
 
+// ===== 사주 운세풀이 생성 함수들 =====
+function generateLifetimeFortune(r, name = '') {
+    const dayGan = (r.pillars.day||'')[0] || '';
+    const dayEl = GAN_WUXING[dayGan] || '';
+    const KEYS = ['木','火','土','金','水'];
+    const total = KEYS.reduce((a,k)=>a+(r.countsAll[k]||0),0);
+    const list = KEYS.map(k=>({k, v: r.countsAll[k]||0, p: total ? Math.round((r.countsAll[k]/total)*100) : 0}))
+        .sort((a,b)=>b.v-a.v);
+    const strongest = list[0];
+    const ssMonth = krShiShen(r.tenGods.m || '');
+    
+    const lifetimeTexts = {
+        '木': `${name ? name+'님은' : '이 분은'} 성장과 발전을 추구하는 인생을 걷게 됩니다. 어려서부터 학습능력이 뛰어나며, 새로운 것을 배우고 흡수하는 속도가 빠릅니다. 인생 전반에 걸쳐 끊임없는 자기계발과 성장의 기회가 주어지며, 특히 교육, 기획, 창의적인 분야에서 두각을 나타낼 수 있습니다. 사람들과의 네트워킹을 통해 기회를 확장해나가는 성향이 강하며, 중년 이후에는 후배나 제자를 양성하는 역할을 맡게 될 가능성이 높습니다.`,
+        '火': `${name ? name+'님의' : '이 분의'} 인생은 열정과 에너지로 가득한 역동적인 여정이 될 것입니다. 타고난 리더십과 표현력으로 많은 사람들에게 영향을 미치며, 특히 젊은 시절부터 주목받는 경우가 많습니다. 예술, 엔터테인먼트, 세일즈, 홍보 분야에서 특별한 재능을 발휘할 수 있으며, 사람들 앞에 서는 것을 두려워하지 않습니다.`,
+        '土': `${name ? name+'님은' : '이 분은'} 안정과 신뢰를 바탕으로 한 견실한 인생을 살게 됩니다. 급하게 서두르기보다는 차근차근 기반을 다져나가는 성향으로, 시간이 갈수록 주변의 신뢰를 얻게 됩니다. 부동산, 금융, 운영관리, 서비스업 등에서 장기적인 성공을 거둘 수 있으며, 특히 40대 이후에는 안정된 기반 위에서 더큰 성과를 이룰 수 있습니다.`,
+        '金': `${name ? name+'님의' : '이 분의'} 인생은 정확성과 원칙을 중시하는 체계적인 여정이 될 것입니다. 분석적 사고와 논리적 판단력이 뛰어나 전문직, 금융, 법무, 기술 분야에서 인정받을 가능성이 높습니다. 젊은 시절에는 다소 경직되어 보일 수 있지만, 경험이 쌓이면서 자신만의 확고한 전문성을 구축하게 됩니다.`,
+        '水': `${name ? name+'님은' : '이 분은'} 유연함과 적응력으로 다양한 경험을 하는 풍성한 인생을 살게 됩니다. 뛰어난 소통능력과 학습력으로 여러 분야를 넘나들며 활동할 수 있으며, 특히 교육, 연구, 미디어, 상담 분야에서 두각을 나타낼 수 있습니다. 직관력이 뛰어나 트렌드를 빠르게 파악하고, 변화하는 환경에 잘 적응합니다.`
+    };
+    
+    return lifetimeTexts[dayEl] || `${name ? name+'님의' : '이 분의'} 인생은 독특한 개성과 특별한 재능으로 특별한 여정을 걸어가게 될 것입니다.`;
+}
+
+function generateDaeunAnalysis(r, name = '') {
+    const birthYear = r.solar ? r.solar.getYear() : 2000;
+    const currentYear = new Date().getFullYear();
+    const age = currentYear - birthYear;
+    
+    let analysis = `${name ? name+'님의' : '이 분의'} 대운 흐름을 살펴보면, `;
+    
+    if (age < 10) {
+        analysis += '현재 기초 형성기로 성격과 기본 성향이 자리잡는 중요한 시기입니다. ';
+    } else if (age < 20) {
+        analysis += '현재 성장기로 학습과 인격 형성의 결정적 시기에 있습니다. ';
+    } else if (age < 30) {
+        analysis += '현재 도약기로 사회 진출과 자아 실현이 시작되는 시기입니다. ';
+    } else if (age < 40) {
+        analysis += '현재 발전기로 경력 발전과 기반 구축의 핵심 시기입니다. ';
+    } else if (age < 50) {
+        analysis += '현재 성숙기로 안정과 성취를 이루는 절정의 시기입니다. ';
+    } else if (age < 60) {
+        analysis += '현재 완성기로 경험과 지혜가 절정에 달하는 시기입니다. ';
+    } else {
+        analysis += '현재 여유기로 후배 양성과 새로운 시작을 준비하는 시기입니다. ';
+    }
+    
+    analysis += '앞으로의 10년 단위 대운은 점차 안정되면서도 새로운 기회가 찾아올 것으로 보입니다.';
+    return analysis;
+}
+
+function generateDaeunTiming(r, name = '') {
+    const birthYear = r.solar ? r.solar.getYear() : 2000;
+    const currentYear = new Date().getFullYear();
+    const age = currentYear - birthYear;
+    
+    if (age < 25) {
+        return `현재는 기초를 다지는 중요한 시기입니다. 25-35세 사이에 큰 전환점이 올 것이며, 이때의 선택이 향후 10년을 좌우합니다.`;
+    } else if (age < 35) {
+        return `지금이 인생의 중요한 전환기입니다. 35-45세 사이에 최고의 성취기가 올 것이니 현재의 노력을 멈추지 마세요.`;
+    } else if (age < 45) {
+        return `현재 인생의 절정기에 있습니다. 45-55세 사이에는 안정과 성숙의 시기가 올 것이며, 후배 양성에도 힘써보세요.`;
+    } else if (age < 55) {
+        return `성숙한 지혜가 빛나는 시기입니다. 55-65세 사이에는 새로운 도전이나 제2의 인생을 설계할 좋은 시기입니다.`;
+    } else {
+        return `인생의 여유와 깊이를 만끽할 시기입니다. 경험과 지혜를 나누며 의미 있는 시간을 보내세요.`;
+    }
+}
+
+function generateCautionPeriods(r, name = '') {
+    const dayGan = (r.pillars.day||'')[0] || '';
+    const dayEl = GAN_WUXING[dayGan] || '';
+    
+    const cautionByElement = {
+        '木': '금(金)의 해(원숭이띠, 닭띠 해)에는 과도한 스트레스와 건강 문제를 주의하세요.',
+        '火': '물(水)의 해(쥐띠, 돼지띠 해)에는 감정 기복과 대인관계 갈등을 조심하세요.',
+        '土': '목(木)의 해(호랑이띠, 토끼띠 해)에는 우유부단한 결정과 재정 관리를 주의하세요.',
+        '金': '화(火)의 해(말띠, 뱀띠 해)에는 성급한 판단과 투자 손실을 경계하세요.',
+        '水': '토(土)의 해(용띠, 개띠, 양띠, 소띠 해)에는 답답함과 정체를 인내로 극복하세요.'
+    };
+    
+    return cautionByElement[dayEl] || '변화의 해에는 신중한 판단이 필요합니다. 또한 본명년과 충(沖)이 되는 해에는 큰 변화나 이동이 있을 수 있으니 미리 준비하세요.';
+}
+
+function generateAdvice(r, name = '') {
+    const dayGan = (r.pillars.day||'')[0] || '';
+    const dayEl = GAN_WUXING[dayGan] || '';
+    const KEYS = ['木','火','土','金','水'];
+    const total = KEYS.reduce((a,k)=>a+(r.countsAll[k]||0),0);
+    const list = KEYS.map(k=>({k, v: r.countsAll[k]||0, p: total ? Math.round((r.countsAll[k]/total)*100) : 0}))
+        .sort((a,b)=>b.v-a.v);
+    const weakest = list[list.length-1];
+    const weakInfo = WUXING_INFO[weakest.k] || {};
+    
+    const basicAdvice = {
+        '木': '성장 지향적인 성격을 살려 지속적인 학습과 네트워킹에 투자하세요. 다만 너무 많은 일을 벌이지 말고 우선순위를 정해 차근차근 진행하는 것이 중요합니다.',
+        '火': '뛰어난 표현력과 열정을 활용하되, 감정 조절과 인내심을 기르는 것이 필요합니다. 급한 성격을 다스리고 장기적인 관점에서 계획을 세우세요.',
+        '土': '안정감과 신뢰성이 가장 큰 무기입니다. 꾸준함을 유지하되, 때로는 변화에 대한 유연성도 필요합니다. 새로운 시도를 두려워하지 마세요.',
+        '金': '정확성과 원칙을 중시하는 성향을 살려 전문성을 기르세요. 완벽주의 성향이 강할 수 있으니 적당한 타협점을 찾는 지혜도 필요합니다.',
+        '水': '뛰어난 적응력과 소통능력을 활용하되, 한 분야에서의 깊이도 추구하세요. 변화를 두려워하지 말고 새로운 기회에 열린 마음을 가지세요.'
+    };
+    
+    let advice = `${name ? name+'님께' : '이 분께'} 드리는 인생 조언입니다. `;
+    advice += basicAdvice[dayEl] || '자신의 장점을 살리되 단점을 보완하는 노력이 필요합니다.';
+    advice += ` 특히 ${weakInfo.ko} 기운이 부족하니 ${weakInfo.boost}로 보완하면 더욱 균형잡힌 삶을 살 수 있습니다.`;
+    
+    return advice;
+}
+
+function buildEnhancedSajuResult(r, name = '') {
+    const KEYS = ['木','火','土','金','水'];
+    const total = KEYS.reduce((a,k)=>a+(r.countsAll[k]||0),0);
+    const list = KEYS.map(k=>({
+        k, v: r.countsAll[k]||0, p: total ? Math.round((r.countsAll[k]/total)*100) : 0
+    })).sort((a,b)=>b.v-a.v);
+    
+    const strongest = list[0];
+    const weakest = list[list.length-1];
+    const strongInfo = WUXING_INFO[strongest.k];
+    const weakInfo = WUXING_INFO[weakest.k];
+    const dayGan = (r.pillars.day||'')[0] || '';
+    const dayEl = GAN_WUXING[dayGan] || '';
+    const dayInfo = WUXING_INFO[dayEl] || {};
+    const ssMonthKR = krShiShen(r.tenGods.m || '');
+    const ssKey = Object.keys(SHISHEN_DESC).find(k => ssMonthKR.includes(k));
+    const ssDesc = ssKey ? SHISHEN_DESC[ssKey] : '월간은 사회적 역할·직업성의 뼈대를 보여줍니다.';
+    const nameTitle = name ? `<b>${name}</b>님의 ` : '';
+    
+    const lifetimeFortune = generateLifetimeFortune(r, name);
+    const daeunAnalysis = generateDaeunAnalysis(r, name);
+    const daeunTiming = generateDaeunTiming(r, name);
+    const cautionPeriods = generateCautionPeriods(r, name);
+    const advice = generateAdvice(r, name);
+    
+    let html = `<div class="result-section">
+        <div class="section-title-result">📊 ${nameTitle}사주 기본 구조</div>
+        ${createPillarsGrid(r.pillars)}
+    </div>
+    <div class="result-section">
+        <div class="section-title-result">🎯 ${nameTitle}핵심 해석</div>
+        ${createResultCard('🌱', '보완할 오행', `${weakInfo.ko}(${weakest.k}) ${weakest.p}%`, 
+            `<strong>설명:</strong> 오행의 균형에서 가장 낮은 축입니다.<br/>
+            <strong>보완 팁:</strong> ${weakInfo.boost}`, true)}
+        ${createResultCard('🏷️', '월간 십신', ssMonthKR || '-', 
+            `<strong>설명:</strong> ${ssDesc}`)}
+        ${createResultCard('🔥', '강한 오행', `${strongInfo.ko}(${strongest.k}) ${strongest.p}%`, 
+            `<strong>장점:</strong> ${strongInfo.trait}<br/>
+            <strong>주의:</strong> 이 요소가 과할 때는 균형을 위해 다른 오행을 보완하세요.`)}
+    </div>
+    <div class="result-section">
+        <div class="section-title-result">📈 ${nameTitle}오행 분포</div>
+        ${createElementChart(r.countsAll)}
+    </div>
+    <div class="result-section">
+        <div class="section-title-result">🌟 ${nameTitle}상세 운세풀이</div>
+        ${createResultCard('📜', '평생운', '인생 전체 흐름', lifetimeFortune, false)}
+        ${createResultCard('📊', '대운분석', '10년 단위 흐름', daeunAnalysis, false)}
+        ${createResultCard('⏰', '대운시기', '현재와 향후 시기', daeunTiming, false)}
+        ${createResultCard('⚠️', '조심할시기', '주의가 필요한 때', cautionPeriods, false)}
+        ${createResultCard('💡', '인생조언', '실용적 가이드', advice, false)}
+    </div>
+    <div class="info-box">
+        <div class="info-title">📋 상세 정보</div>
+        <div class="info-content">
+            <strong>달력:</strong> ${r.calMode==='lunar'?'음력':'양력'}${r.calMode==='lunar' ? ` / 윤달: ${r.isLeap?'예':'아니오'}`:''}<br/>
+            <strong>십신:</strong> 년:${krShiShen(r.tenGods.y)||'-'} / 월:${krShiShen(r.tenGods.m)||'-'} / 시:${krShiShen(r.tenGods.t)||'-'}<br/>
+            ※ 운세풀이는 사주 구조를 바탕으로 한 일반적인 해석이며, 개인의 노력과 선택이 더욱 중요합니다.
+        </div>
+    </div>`;
+    
+    return html;
+}
+
 // ===== HTML 생성 함수들 =====
 function createResultCard(icon, title, value, description, isMain = false, cardType = '') {
     let cardClass = 'result-card';
@@ -928,18 +1099,9 @@ $('#btnSaju')?.addEventListener('click', () => {
         }
         
         const r = computeBaZi(rawDate, rawTime, calMode, isLeap);
+        const enhancedResult = buildEnhancedSajuResult(r, name);
         
-        // 간단한 사주 결과 HTML 생성
-        let html = `<div class="result-section">
-            <div class="section-title-result">📊 ${name ? name+'님의 ' : ''}사주 기본 구조</div>
-            ${createPillarsGrid(r.pillars)}
-        </div>
-        <div class="result-section">
-            <div class="section-title-result">📈 오행 분포</div>
-            ${createElementChart(r.countsAll)}
-        </div>`;
-        
-        openSheet('정통 사주 해석', html, {
+        openSheet('정통 사주 해석', enhancedResult, {
             type:'saju',
             name, date: rawDate, time: rawTime, calMode, isLeap,
             data: r
