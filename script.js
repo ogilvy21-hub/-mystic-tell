@@ -703,6 +703,37 @@ function calcEnhancedDailyFortune(birthdate) {
             message: messages[messageIndex]
         };
     });
+
+    // 궁합 계산 함수
+function calcMatch(a, b) {
+    if(!a || !b) return {score:null, text:'두 생년월일을 모두 입력하세요.'};
+    const seed = (a + b).replaceAll('-','');
+    let h = 0;
+    for(let i = 0; i < seed.length; i++) {
+        h = (h * 33 + seed.charCodeAt(i)) % 100000;
+    }
+    const s = h % 101;
+    const text = s >= 80 ? '운명선 강하게 연결! 서로의 성장을 밀어줍니다.'
+        : s >= 60 ? '잘 맞는 편. 대화의 리듬이 좋습니다.'
+        : s >= 40 ? '노력형 궁합. 규칙적인 소통이 해법.'
+        : s >= 20 ? '차이 큼. 공동의 목표를 작게 쪼개보세요.'
+        : '생활 리듬·가치관 점검 필요. 천천히 관계 설계하기.';
+    return {score:s, text};
+}
+
+// 신년 운세 계산 함수
+function calcYear(b) {
+    if(!b) return {idx:null, text:'생년월일을 입력하세요.'};
+    const [y,m,d] = b.split('-').map(Number);
+    const k = (y + m + d + 2025) % 6;
+    const t = ['도약의 해: 새로운 직무나 프로젝트로의 이동이 유리.',
+        '성장의 해: 배움에 투자할수록 보상이 큼.',
+        '관계의 해: 협업/파트너십에서 기회.',
+        '안정의 해: 재무·건강 관리가 성과로.',
+        '전환의 해: 낡은 것을 비우고 새로 설계.',
+        '휴식의 해: 과부하를 줄이고 페이스 조절.'][k];
+    return {idx:k, text:t};
+}
     
     // 럭키 아이템 계산
     const luckyHash = birthdate.replaceAll('-', '') + dateStr + 'lucky';
@@ -1292,6 +1323,64 @@ $('#btnSaju')?.addEventListener('click', () => {
         console.error(e);
         alert(e.message || '사주 계산 중 오류');
     }
+});
+
+// 궁합 버튼
+$('#btnMatch')?.addEventListener('click', ()=>{
+    const a = $('#match-a').value;
+    const b = $('#match-b').value;
+    
+    if(!a || !b) {
+        alert('두 사람의 생년월일을 모두 입력하세요.');
+        return;
+    }
+    
+    const {score, text} = calcMatch(a, b);
+    
+    const html = `
+        <div class="result-section">
+            <div class="section-title-result">💕 궁합 결과</div>
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-icon">💘</div>
+                    <div class="card-title">궁합 점수</div>
+                </div>
+                <div class="card-value">${score}점 / 100점</div>
+                <div class="card-description">${text}</div>
+            </div>
+        </div>
+    `;
+    
+    openSheet('궁합 결과', html, {type:'match', a, b, score, text});
+    reactCrystal('궁합을 계산했습니다 ✨');
+});
+
+// 신년운세 버튼
+$('#btnYear')?.addEventListener('click', ()=>{
+    const b = $('#year-birth').value;
+    
+    if(!b) {
+        alert('생년월일을 입력하세요.');
+        return;
+    }
+    
+    const {idx, text} = calcYear(b);
+    
+    const html = `
+        <div class="result-section">
+            <div class="section-title-result">🎊 2025 신년 운세</div>
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-icon">🐍</div>
+                    <div class="card-title">올해의 운세</div>
+                </div>
+                <div class="card-description">${text}</div>
+            </div>
+        </div>
+    `;
+    
+    openSheet('2025 신년 운세', html, {type:'year', birth:b, idx, text});
+    reactCrystal('올해의 흐름을 확인했습니다 ✨');
 });
 
 // 로또 버튼
