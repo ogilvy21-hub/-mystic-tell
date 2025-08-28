@@ -893,44 +893,56 @@ function resetTarotCards(){
     closeTarotModal();
     reactCrystal('새로운 카드들이 준비되었습니다 ✨');
 }
-function showTarotModal(cardIndex, isUpright){
+function showTarotModal(cardIndex, isUpright) {
     const idx = Math.max(0, Math.min(TAROT_DETAILS.length-1, Number(cardIndex)||0));
     const card = TAROT_DETAILS[idx];
     if(!card) return;
+    
     const modal = $('#tarotModalOverlay');
     const content = $('#tarotModalContent');
     if(!modal || !content) return;
-    content.innerHTML = `<h2>${card.name}</h2>
-        <p style="color:#6B7280; margin-bottom:20px;">${card.meaning}</p>
-        <div class="meaning-section upright"><h3>🔮 정방향 의미</h3><p>${card.upright}</p></div>
-        <br>
-        <div class="meaning-section reversed"><h3>🔄 역방향 의미</h3><p>${card.reversed}</p></div>
-        <div style="margin-top:25px; padding:15px; background:rgba(255,215,0,0.1); border-radius:10px;">
-            <h3 style="color:#ffd700;">${isUpright ? '🌟 현재: 정방향' : '🌀 현재: 역방향'}</h3>
-            <p style="color:#ecf0f1;">${isUpright ? card.upright : card.reversed}</p>
-        </div>`;
+    
+    // 새로운 데이터 구조에 맞게 수정
+    const currentMeaning = isUpright ? card.upright : card.reversed;
+    
+    let meaningText = '';
+    if (typeof currentMeaning === 'object') {
+        // 새로운 구조: 객체로 되어있는 경우
+        meaningText = `
+            <div style="margin-bottom:15px;"><strong>🔮 일반:</strong> ${currentMeaning.general || ''}</div>
+            <div style="margin-bottom:15px;"><strong>💕 연애:</strong> ${currentMeaning.love || ''}</div>
+            <div style="margin-bottom:15px;"><strong>💼 직업:</strong> ${currentMeaning.career || ''}</div>
+            <div style="margin-bottom:15px;"><strong>💡 조언:</strong> ${currentMeaning.advice || ''}</div>
+        `;
+    } else {
+        // 기존 구조: 문자열인 경우
+        meaningText = currentMeaning || '';
+    }
+    
+    content.innerHTML = `
+        <h2>${card.name}</h2>
+        <p style="color:#6B7280; margin-bottom:20px; line-height:1.6; font-style:italic;">
+            ${card.meaning}
+        </p>
+        
+        <div style="margin-top:25px; padding:15px; background:rgba(255,215,0,0.1); border-radius:10px; border-left:4px solid #ffd700;">
+            <h3 style="color:#ffd700; margin-bottom:10px;">
+                ${isUpright ? '🌟 현재: 정방향' : '🌀 현재: 역방향'}
+            </h3>
+            <div style="color:#ecf0f1; line-height:1.5;">
+                ${meaningText}
+            </div>
+        </div>
+        
+        ${card.keywords ? `<div style="margin-top:15px; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
+            <strong style="color:#ffd700;">🏷️ 키워드:</strong> ${card.keywords}
+        </div>` : ''}
+    `;
+    
     modal.style.display='flex';
     requestAnimationFrame(()=> modal.classList.add('show'));
 }
-function closeTarotModal(){
-    const modal = $('#tarotModalOverlay');
-    if(!modal) return;
-    modal.classList.remove('show');
-    modal.style.display='none';
-}
-// 타로 모달 닫기 버튼
-document.addEventListener('DOMContentLoaded', () => {
-    const closeBtn = $('#tarotCloseBtn');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeTarotModal);
-    }
-    const overlay = $('#tarotModalOverlay');
-    if (overlay) {
-        overlay.addEventListener('click', e => {
-            if (e.target === overlay) closeTarotModal();
-        });
-    }
-});
+
 // ===== 로또 번호 생성 =====
 function seededRandomFactory(seedStr='') {
     let h = 2166136261 >>> 0;
