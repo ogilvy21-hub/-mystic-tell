@@ -1238,21 +1238,154 @@ document.addEventListener('keydown', (e) => {
 });
 console.log('✅ MysticTell 초기화 완료');
 
-// 궁합 계산 함수
+// 기존 calcMatch 함수를 이 코드로 교체
 function calcMatch(a, b) {
     if(!a || !b) return {score:null, text:'두 생년월일을 모두 입력하세요.'};
     
-    const seed = (a + b).replaceAll('-','');
-    let h = 0;
-    for(let i = 0; i < seed.length; i++) {
-        h = (h * 33 + seed.charCodeAt(i)) % 100000;
+    try {
+        // 사주 기본 정보 계산
+        const baziA = computeBaZi(a, '', 'solar', false);
+        const baziB = computeBaZi(b, '', 'solar', false);
+        
+        // 일간, 연지 추출
+        const dayGanA = (baziA.pillars.day || '')[0] || '';
+        const dayGanB = (baziB.pillars.day || '')[0] || '';
+        const yearZhiA = (baziA.pillars.year || '')[1] || '';
+        const yearZhiB = (baziB.pillars.year || '')[1] || '';
+        
+        // 오행 추출
+        const elementA = GAN_WUXING[dayGanA] || '';
+        const elementB = GAN_WUXING[dayGanB] || '';
+        
+        // 1. 오행 궁합 계산
+        let elementScore = 50;
+        const compatible = {
+            '木': ['火', '水'], '火': ['木', '土'], '土': ['火', '金'], 
+            '金': ['土', '水'], '水': ['金', '木']
+        };
+        const conflicted = {
+            '木': ['金'], '火': ['水'], '土': ['木'], '金': ['火'], '水': ['土']
+        };
+        
+        if (compatible[elementA] && compatible[elementA].includes(elementB)) {
+            elementScore += 25; // 상생 관계
+        } else if (conflicted[elementA] && conflicted[elementA].includes(elementB)) {
+            elementScore -= 20; // 상극 관계
+        } else if (elementA === elementB) {
+            elementScore += 15; // 같은 오행
+        }
+        
+        // 2. 띠 궁합 계산 (12지지 기반)
+        let zodiacScore = 50;
+        const zodiacCompatibility = {
+            '子': { best: ['申', '辰'], good: ['丑', '亥'], bad: ['午'] }, // 쥐
+            '丑': { best: ['巳', '酉'], good: ['子', '卯'], bad: ['未'] }, // 소
+            '寅': { best: ['午', '戌'], good: ['亥', '卯'], bad: ['申'] }, // 호랑이
+            '卯': { best: ['未', '亥'], good: ['寅', '戌'], bad: ['酉'] }, // 토끼
+            '辰': { best: ['申', '子'], good: ['酉', '丑'], bad: ['戌'] }, // 용
+            '巳': { best: ['酉', '丑'], good: ['申', '辰'], bad: ['亥'] }, // 뱀
+            '午': { best: ['戌', '寅'], good: ['未', '卯'], bad: ['子'] }, // 말
+            '未': { best: ['亥', '卯'], good: ['午', '寅'], bad: ['丑'] }, // 양
+            '申': { best: ['子', '辰'], good: ['巳', '酉'], bad: ['寅'] }, // 원숭이
+            '酉': { best: ['丑', '巳'], good: ['辰', '申'], bad: ['卯'] }, // 닭
+            '戌': { best: ['寅', '午'], good: ['卯', '未'], bad: ['辰'] }, // 개
+            '亥': { best: ['卯', '未'], good: ['寅', '戌'], bad: ['巳'] }  // 돼지
+        };
+        
+        const zodiacA = zodiacCompatibility[yearZhiA];
+        if (zodiacA) {
+            if (zodiacA.best && zodiacA.best.includes(yearZhiB)) {
+                zodiacScore += 30;
+            } else if (zodiacA.good && zodiacA.good.includes(yearZhiB)) {
+                zodiacScore += 15;
+            } else if (zodiacA.bad && zodiacA.bad.includes(yearZhiB)) {
+                zodiacScore -= 20;
+            }
+        }
+        
+        // 3. 나이차 고려
+        let ageScore = 50;
+        const yearA = baziA.solar ? baziA.solar.getYear() : 2000;
+        const yearB = baziB.solar ? baziB.solar.getYear() : 2000;
+        const ageDiff = Math.abs(yearA - yearB);
+        if (ageDiff <= 2) ageScore += 20;
+        else if (ageDiff <= 5) ageScore += 15;
+        else if (ageDiff <= 8) ageScore += 5;
+        else if (ageDiff > 15) ageScore -= 15;
+        
+        // 4. 오행 균형도 고려
+        let balanceScore = 50;
+        const KEYS = ['木','火','土','金','水'];
+        const totalA = KEYS.reduce((a,k)=>a+(baziA.countsAll[k]||0),0);
+        const totalB = KEYS.reduce((a,k)=>a+(baziB.countsAll[k]||0),0);
+        
+        if (totalA > 0 && totalB > 0) {
+            const balanceA = Math.max(...KEYS.map(k => baziA.countsAll[k]||0)) - Math.min(...KEYS.map(k => baziA.countsAll[k]||0));
+            const balanceB = Math.max(...KEYS.map(k => baziB.countsAll[k]||0)) - Math.min(...KEYS.map(k => baziB.countsAll[k]||0));
+            const balanceDiff = Math.abs(balanceA - balanceB);
+            balanceScore = Math.max(20, 70 - balanceDiff * 8);
+        }
+        
+        // 최종 점수 (가중평균)
+        const finalScore = Math.round(
+            elementScore * 0.35 + 
+            zodiacScore * 0.25 + 
+            ageScore * 0.25 + 
+            balanceScore * 0.15
+        );
+        const clampedScore = Math.max(15, Math.min(95, finalScore));
+        
+        // 상세 분석 텍스트 생성
+        const elementNames = {'木':'목','火':'화','土':'토','金':'금','水':'수'};
+        const elemA = elementNames[elementA] || '?';
+        const elemB = elementNames[elementB] || '?';
+        
+        const zodiacNames = {
+            '子':'쥐','丑':'소','寅':'호랑이','卯':'토끼','辰':'용','巳':'뱀',
+            '午':'말','未':'양','申':'원숭이','酉':'닭','戌':'개','亥':'돼지'
+        };
+        const zodiacA_name = zodiacNames[yearZhiA] || '?';
+        const zodiacB_name = zodiacNames[yearZhiB] || '?';
+        
+        let text = '';
+        if (clampedScore >= 85) {
+            text = `천생연분의 궁합입니다! ${elemA}(${elementA})과 ${elemB}(${elementB}) 기질이 완벽하게 조화를 이루며, ${zodiacA_name}띠와 ${zodiacB_name}띠의 조합도 매우 좋습니다. 나이차(${ageDiff}세)도 적절하여 서로를 깊이 이해하고 성장시키는 관계가 될 것입니다.`;
+        } else if (clampedScore >= 70) {
+            text = `매우 좋은 궁합입니다. ${elemA}과 ${elemB} 오행이 서로 도움을 주며, ${zodiacA_name}띠와 ${zodiacB_name}띠의 조합이 안정적입니다. 소통과 배려를 통해 행복한 관계를 만들어갈 수 있습니다.`;
+        } else if (clampedScore >= 55) {
+            text = `무난한 궁합입니다. ${elemA}과 ${elemB} 기질이 평범한 조합이며, ${zodiacA_name}띠와 ${zodiacB_name}띠 관계도 보통입니다. 서로를 이해하려는 노력과 인내심이 필요하지만 좋은 관계로 발전할 수 있습니다.`;
+        } else if (clampedScore >= 40) {
+            text = `조금 어려운 궁합입니다. ${elemA}과 ${elemB} 오행에서 갈등 요소가 있고, ${zodiacA_name}띠와 ${zodiacB_name}띠의 차이도 존재합니다. 하지만 서로의 다름을 인정하고 꾸준한 소통으로 관계를 개선할 수 있습니다.`;
+        } else {
+            text = `힘든 궁합이지만 불가능하지 않습니다. ${elemA}과 ${elemB} 기질의 차이와 ${zodiacA_name}띠, ${zodiacB_name}띠의 성향 차이가 크지만, 진정한 사랑과 이해로 극복할 수 있습니다. 공통 관심사를 찾고 인내심을 가져주세요.`;
+        }
+        
+        return {
+            score: clampedScore, 
+            text: text,
+            details: {
+                elementA: elemA, elementB: elemB,
+                zodiacA: zodiacA_name, zodiacB: zodiacB_name,
+                elementScore: elementScore,
+                zodiacScore: zodiacScore,
+                ageScore: ageScore,
+                balanceScore: balanceScore,
+                ageDiff: ageDiff
+            }
+        };
+        
+    } catch (error) {
+        console.error('궁합 계산 오류:', error);
+        // 오류 시 기존 방식으로 폴백
+        const seed = (a + b).replaceAll('-','');
+        let h = 0;
+        for(let i = 0; i < seed.length; i++) {
+            h = (h * 33 + seed.charCodeAt(i)) % 100000;
+        }
+        const s = h % 101;
+        const text = '기본 궁합 분석입니다. 서로 이해하려 노력하면 좋은 관계를 만들 수 있습니다.';
+        return {score: s, text: text};
     }
-    const s = h % 101;
-    const text = s >= 80 ? '천생연분! 서로 잘 맞는 궁합입니다.'
-        : s >= 60 ? '좋은 궁합입니다. 노력하면 행복한 관계가 될 거예요.'
-        : s >= 40 ? '보통 궁합입니다. 서로 이해하려 노력하세요.'
-        : '차이가 많지만 사랑으로 극복할 수 있습니다.';
-    return {score:s, text};
 }
 
 // 궁합 버튼 이벤트 (하나로 통합)
@@ -1272,21 +1405,55 @@ setTimeout(() => {
                 return;
             }
             
-            const html = `
-                <div class="result-section">
-                    <div class="section-title-result">💕 ${nameA} & ${nameB} 궁합</div>
-                    <div class="result-card main-result">
-                        <div class="card-header">
-                            <div class="card-icon">💘</div>
-                            <div class="card-title">궁합 점수</div>
-                        </div>
-                        <div class="card-value">${result.score}점</div>
-                        <div class="card-description">${result.text}</div>
-                    </div>
-                </div>
-            `;
-            
-            openSheet('궁합 결과', html);
-        });
-    }
-}, 3000);
+            // 기존 setTimeout 내부의 HTML 생성 부분을 이렇게 교체
+const html = `
+    <div class="result-section">
+        <div class="section-title-result">💕 ${nameA} & ${nameB} 상세 궁합 분석</div>
+        <div class="result-card main-result">
+            <div class="card-header">
+                <div class="card-icon">💘</div>
+                <div class="card-title">종합 궁합 점수</div>
+            </div>
+            <div class="card-value">${result.score}점</div>
+            <div class="card-description">${result.text}</div>
+        </div>
+    </div>
+    
+    ${result.details ? `
+    <div class="result-section">
+        <div class="section-title-result">🔍 분야별 상세 분석</div>
+        <div class="result-card">
+            <div class="card-header">
+                <div class="card-icon">🌿</div>
+                <div class="card-title">오행 궁합</div>
+            </div>
+            <div class="card-value">${result.details.elementScore}점</div>
+            <div class="card-description">${result.details.elementA} × ${result.details.elementB} 조합</div>
+        </div>
+        <div class="result-card">
+            <div class="card-header">
+                <div class="card-icon">🐉</div>
+                <div class="card-title">띠 궁합</div>
+            </div>
+            <div class="card-value">${result.details.zodiacScore}점</div>
+            <div class="card-description">${result.details.zodiacA} × ${result.details.zodiacB} 조합</div>
+        </div>
+        <div class="result-card">
+            <div class="card-header">
+                <div class="card-icon">👫</div>
+                <div class="card-title">나이차 조화</div>
+            </div>
+            <div class="card-value">${result.details.ageScore}점</div>
+            <div class="card-description">${result.details.ageDiff}세 차이</div>
+        </div>
+        <div class="result-card">
+            <div class="card-header">
+                <div class="card-icon">⚖️</div>
+                <div class="card-title">오행 균형</div>
+            </div>
+            <div class="card-value">${result.details.balanceScore}점</div>
+            <div class="card-description">성향 균형도</div>
+        </div>
+    </div>
+    ` : ''}
+`;
