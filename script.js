@@ -1294,12 +1294,32 @@ setTimeout(() => {
     console.log('btnMatch 버튼:', btn);
     
     if (btn) {
-        btn.onclick = function() {
-            alert('궁합 버튼이 클릭되었습니다!');
-            console.log('버튼 클릭 확인');
-        };
-        console.log('이벤트 연결 완료');
-    } else {
-        console.log('btnMatch 버튼을 찾을 수 없음');
+        btn.onclick = () => {
+    const a = document.getElementById('match-a').value;
+    const b = document.getElementById('match-b').value;
+    const nameA = document.getElementById('match-name-a')?.value || '첫 번째 분';
+    const nameB = document.getElementById('match-name-b')?.value || '두 번째 분';
+    
+    const result = calcMatch(a, b);
+    
+    if(result.score === null) {
+        alert(result.text);
+        return;
     }
-}, 2000);
+    
+    const html = `
+        <div class="result-section">
+            <div class="section-title-result">💕 ${nameA} & ${nameB} 궁합</div>
+            <div class="result-card main-result">
+                <div class="card-header">
+                    <div class="card-icon">💘</div>
+                    <div class="card-title">궁합 점수</div>
+                </div>
+                <div class="card-value">${result.score}점</div>
+                <div class="card-description">${result.text}</div>
+            </div>
+        </div>
+    `;
+    
+    openSheet('궁합 결과', html);
+};
