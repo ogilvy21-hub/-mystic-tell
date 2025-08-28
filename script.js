@@ -1255,43 +1255,11 @@ function calcMatch(a, b) {
     return {score:s, text};
 }
 
-// 궁합 버튼 이벤트
-$('#btnMatch')?.addEventListener('click', () => {
-    const a = $('#match-a').value;
-    const b = $('#match-b').value;
-    const nameA = $('#match-name-a')?.value || '첫 번째 분';
-    const nameB = $('#match-name-b')?.value || '두 번째 분';
-    
-    const result = calcMatch(a, b);
-    
-    if(result.score === null) {
-        alert(result.text);
-        return;
-    }
-    
-    const html = `
-        <div class="result-section">
-            <div class="section-title-result">💕 ${nameA} & ${nameB} 궁합</div>
-            <div class="result-card main-result">
-                <div class="card-header">
-                    <div class="card-icon">💘</div>
-                    <div class="card-title">궁합 점수</div>
-                </div>
-                <div class="card-value">${result.score}점</div>
-                <div class="card-description">${result.text}</div>
-            </div>
-        </div>
-    `;
-    
-    openSheet('궁합 결과', html, {type:'match', a, b, nameA, nameB, score:result.score, text:result.text});
-    reactCrystal('궁합을 분석했습니다!');
-});
-
-// 테스트용 - 페이지 로드 후 바로 실행
+// 궁합 버튼 이벤트 (하나로 통합)
 setTimeout(() => {
     const btn = document.getElementById('btnMatch');
     if (btn) {
-        btn.onclick = () => {
+        btn.addEventListener('click', () => {
             const a = document.getElementById('match-a').value;
             const b = document.getElementById('match-b').value;
             const nameA = document.getElementById('match-name-a')?.value || '첫 번째 분';
@@ -1319,6 +1287,6 @@ setTimeout(() => {
             `;
             
             openSheet('궁합 결과', html);
-        };
+        });
     }
 }, 3000);
