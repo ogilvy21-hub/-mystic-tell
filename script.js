@@ -704,6 +704,7 @@ function calcEnhancedDailyFortune(birthdate) {
         };
     });
 
+   console.log('calcMatch 호출됨', a, b); 
     // 기존 calcMatch 함수를 찾아서 이 코드로 교체
 function calcMatch(a, b) {
     if(!a || !b) return {score:null, text:'두 생년월일을 모두 입력하세요.'};
