@@ -1457,3 +1457,7 @@ const html = `
     </div>
     ` : ''}
 `;
+ openSheet('궁합 결과', html);
+        });
+    }
+}, 3000);
