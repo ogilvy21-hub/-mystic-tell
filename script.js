@@ -982,8 +982,33 @@ function closeTarotModal(){
     const modal = document.getElementById('tarotModalOverlay');
     if(!modal) return;
     modal.classList.remove('show');
-    modal.style.display='none';
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
 }
+// 타로 모달 닫기 이벤트들 (기존 코드 끝부분에 추가)
+document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.getElementById('tarotCloseBtn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeTarotModal);
+    }
+    
+    const overlay = document.getElementById('tarotModalOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                closeTarotModal();
+            }
+        });
+    }
+});
+
+// ESC 키로도 닫기
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeTarotModal();
+    }
+});
 
 // ===== 로또 번호 생성 =====
 function seededRandomFactory(seedStr='') {
