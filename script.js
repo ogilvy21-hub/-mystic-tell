@@ -457,6 +457,184 @@ const YEAR_2025_FORTUNE = {
     ]
 };
 
+// ===== 향상된 신년운세 계산 함수 =====
+function calcEnhanced2025Fortune(birthDate, name = '') {
+    if (!birthDate) {
+        return { idx: null, text: '생년월일을 입력하세요.' };
+    }
+    
+    try {
+        // 사주 기본 정보 계산
+        const bazi = computeBaZi(birthDate, '', 'solar', false);
+        const birthYear = bazi.solar ? bazi.solar.getYear() : 2000;
+        
+        // 생년월일 숫자 합계로 기본 인덱스 계산
+        const [y, m, d] = birthDate.split('-').map(Number);
+        const baseIndex = (y + m + d + 2025) % YEAR_2025_FORTUNE.personalTypes.length;
+        
+        // 일간 오행으로 보정
+        const dayGan = (bazi.pillars.day || '')[0] || '';
+        const dayElement = GAN_WUXING[dayGan] || '';
+        const elementModifier = {
+            '木': 0, '火': 1, '土': 2, '金': 3, '水': 4
+        };
+        const finalIndex = (baseIndex + (elementModifier[dayElement] || 0)) % YEAR_2025_FORTUNE.personalTypes.length;
+        
+        const personalFortune = YEAR_2025_FORTUNE.personalTypes[finalIndex];
+        const currentAge = 2025 - birthYear;
+        
+        // 나이대별 특별 조언 추가
+        let ageAdvice = '';
+        if (currentAge < 30) {
+            ageAdvice = '젊은 에너지를 활용하여 다양한 경험을 쌓으세요. 실패를 두려워하지 말고 도전하세요.';
+        } else if (currentAge < 50) {
+            ageAdvice = '경험과 체력이 조화를 이루는 시기입니다. 장기적 계획을 세우고 실행하세요.';
+        } else {
+            ageAdvice = '풍부한 경험을 바탕으로 지혜로운 판단을 하세요. 후배들에게 멘토가 되어주세요.';
+        }
+        
+        return {
+            idx: finalIndex,
+            yearInfo: YEAR_2025_FORTUNE.yearCharacter,
+            personalFortune: personalFortune,
+            ageAdvice: ageAdvice,
+            birthYear: birthYear,
+            currentAge: currentAge,
+            name: name
+        };
+        
+    } catch (error) {
+        console.error('신년운세 계산 오류:', error);
+        return calcYear(birthDate); // 오류 시 기존 함수로 폴백
+    }
+}
+
+// ===== HTML 생성 함수들 =====
+function createEnhancedMatchResult(result, nameA, nameB) {
+    const { score, text, details } = result;
+    
+    let html = `<div class="result-section">
+        <div class="section-title-result">💕 ${nameA} & ${nameB} 궁합 분석</div>
+        
+        <div class="result-card main-result">
+            <div class="card-header">
+                <div class="card-icon">💘</div>
+                <div class="card-title">총 궁합 점수</div>
+            </div>
+            <div class="card-value">${score}점 / 100점</div>
+            <div class="card-description">${text}</div>
+        </div>
+    </div>`;
+    
+    if (details) {
+        html += `<div class="result-section">
+        <div class="section-title-result">💡 관계 발전 조언</div>
+        ${createResultCard('🤝', '조화의 비결', '실천 가이드', advice)}
+    </div>`;
+    
+    return html;
+}
+
+function createEnhanced2025FortuneResult(result, name) {
+    const { yearInfo, personalFortune, ageAdvice, currentAge } = result;
+    const nameTitle = name ? `${name}님의 ` : '';
+    
+    let html = `<div class="result-section">
+        <div class="section-title-result">🐍 ${nameTitle}2025년 을사년 운세</div>
+        
+        <div class="year-overview-card">
+            <div class="year-character">
+                <div class="year-element">${yearInfo.element}</div>
+                <div class="year-desc">${yearInfo.description}</div>
+                <div class="year-keywords">
+                    ${yearInfo.keywords.map(keyword => `<span class="keyword-tag">${keyword}</span>`).join('')}
+                </div>
+            </div>
+        </div>
+    </div>`;
+    
+    html += `<div class="result-section">
+        <div class="section-title-result">⭐ ${nameTitle}개인 운세 유형</div>
+        
+        <div class="result-card main-result">
+            <div class="card-header">
+                <div class="card-icon">🌟</div>
+                <div class="card-title">${personalFortune.name}</div>
+            </div>
+            <div class="card-description">${personalFortune.description}</div>
+        </div>
+    </div>`;
+    
+    html += `<div class="result-section">
+        <div class="section-title-result">📊 분야별 상세 운세</div>
+        
+        ${createResultCard('💼', '직장운', personalFortune.career, personalFortune.advice)}
+        ${createResultCard('💕', '연애운', personalFortune.love, '')}
+        ${createResultCard('💪', '건강운', personalFortune.health, '')}
+        ${createResultCard('💰', '재물운', personalFortune.money, '')}
+    </div>`;
+    
+    html += `<div class="result-section">
+        <div class="section-title-result">📅 2025년 타임라인</div>
+        
+        <div class="timeline-card">
+            <div class="timeline-item">
+                <div class="timeline-icon">🍀</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">행운의 달</div>
+                    <div class="timeline-desc">${personalFortune.lucky}</div>
+                </div>
+            </div>
+            <div class="timeline-item caution">
+                <div class="timeline-icon">⚠️</div>
+                <div class="timeline-content">
+                    <div class="timeline-title">주의사항</div>
+                    <div class="timeline-desc">${personalFortune.caution}</div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+    
+    html += `<div class="result-section">
+        <div class="section-title-result">🎯 ${currentAge}세 맞춤 조언</div>
+        ${createResultCard('🧭', '인생 가이드', '나이별 특화 조언', ageAdvice)}
+    </div>`;
+    
+    html += `<div class="info-box">
+        <div class="info-title">📝 2025년 실천 계획</div>
+        <div class="info-content">
+            <strong>핵심 키워드:</strong> ${yearInfo.keywords.join(', ')}<br/>
+            <strong>개인 테마:</strong> ${personalFortune.name}<br/>
+            <strong>실천 조언:</strong> ${personalFortune.advice}
+        </div>
+    </div>`;
+    
+    return html;
+}
+
+// ===== 기존 함수들을 새로운 함수로 교체하는 래퍼 함수들 =====
+
+// 궁합 계산 함수를 향상된 버전으로 교체
+function calcMatch(birthA, birthB, nameA = '첫 번째 분', nameB = '두 번째 분') {
+    return calcEnhancedMatch(birthA, birthB, nameA, nameB);
+}
+
+// 신년운세 계산 함수를 향상된 버전으로 교체  
+function calcYear(birthDate, name = '') {
+    const result = calcEnhanced2025Fortune(birthDate, name);
+    
+    // 기존 인터페이스 호환성을 위한 텍스트 반환
+    if (result.personalFortune) {
+        return {
+            idx: result.idx,
+            text: `${result.personalFortune.name}: ${result.personalFortune.description}`,
+            fullResult: result // 전체 결과도 포함
+        };
+    }
+    
+    return result;
+}
+
 // ===== 타로 데이터 (보강된 버전) =====
 const TAROT_DETAILS = [
     {
