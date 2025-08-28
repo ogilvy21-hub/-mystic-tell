@@ -18,6 +18,7 @@ const LS_KEY = 'mystictell_recent_results';
 function normalizeDateInput(s=''){
     return s.trim().replace(/[.\s]+/g, '-').replace(/-+/g,'-').replace(/-$/,'');
 }
+
 function normalizeTimeInput(s=''){
     s = s.trim();
     const am = /오전/.test(s);
@@ -305,12 +306,15 @@ const CARD_ICONS = ["🃏","🎩","🌙","👑","🏰","⛪","💕","🏎️","�
 function krShiShen(s=''){
     return Object.entries(SHISHEN_KR).reduce((t,[c,k])=>t.replaceAll(c,k), s||'');
 }
+
 function getCalMode(prefix){
     return document.getElementById(`${prefix}-cal-lunar`)?.checked ? 'lunar' : 'solar';
 }
+
 function getLeap(prefix){
     return !!document.getElementById(`${prefix}-leap`)?.checked;
 }
+
 function bindCalToggle(prefix){
     const solar = document.getElementById(`${prefix}-cal-solar`);
     const lunar = document.getElementById(`${prefix}-cal-lunar`);
@@ -324,10 +328,12 @@ function bindCalToggle(prefix){
     lunar?.addEventListener('change', sync);
     sync();
 }
+
 function fmtSolar(solar){
     const y = solar.getYear(), m=String(solar.getMonth()).padStart(2,'0'), d=String(solar.getDay()).padStart(2,'0');
     return `${y}-${m}-${d}`;
 }
+
 function toSolarFromInput(dateStrRaw, timeStrRaw, mode='solar', isLeap=false){
     const dateStr = normalizeDateInput(dateStrRaw||'');
     const timeStr = normalizeTimeInput(timeStrRaw||'');
@@ -396,6 +402,7 @@ const views = {
     'fortune-year' : $('#view-year'),
     'fortune-lotto': $('#view-lotto')
 };
+
 function showFortuneView(route){
     closeAllOverlays();
     Object.values(views).forEach(v => v && (v.style.display = 'none'));
@@ -469,6 +476,7 @@ function openSheet(title,content,savePayload){
         });
     }, 300);
 }
+
 function closeSheet(){
     if(!sheet) return;
     sheet.classList.remove('show');
@@ -519,6 +527,7 @@ $$('.service-item[data-route], .special-item[data-route]').forEach(card => {
         location.hash = '#/fortune/' + view;
     });
 });
+
 // 3. 글로벌 클릭 위임 (data-route 처리)
 document.addEventListener('click', (e) => {
     const el = e.target.closest('[data-route]');
@@ -533,6 +542,7 @@ document.addEventListener('click', (e) => {
         location.hash = '#/' + route;
     }
 });
+
 // ===== 사주/운세 계산 함수들 =====
 function computeBaZi(dateStrRaw, timeStrRaw, calMode='solar', isLeap=false) {
     const solar = toSolarFromInput(dateStrRaw, timeStrRaw, calMode, isLeap);
@@ -574,6 +584,7 @@ function computeBaZi(dateStrRaw, timeStrRaw, calMode='solar', isLeap=false) {
     };
     return { pillars, countsGan, countsZhi, countsAll, lunar, solar, tenGods, calMode, isLeap };
 }
+
 // 오늘의 운세 계산
 function calcEnhancedDailyFortune(birthdate) {
     const today = new Date();
@@ -602,6 +613,7 @@ function calcEnhancedDailyFortune(birthdate) {
             message: messages[messageIndex]
         };
     });
+    
     // 럭키 아이템 계산
     const luckyHash = birthdate.replaceAll('-', '') + dateStr + 'lucky';
     let lHash = 0;
@@ -623,6 +635,7 @@ function calcEnhancedDailyFortune(birthdate) {
         date: dateStr
     };
 }
+
 // ===== 사주 운세풀이 생성 함수들 =====
 function generateLifetimeFortune(r, name = '') {
     const dayGan = (r.pillars.day||'')[0] || '';
@@ -642,6 +655,7 @@ function generateLifetimeFortune(r, name = '') {
     };
     return lifetimeTexts[dayEl] || `${name ? name+'님의' : '이 분의'} 인생은 독특한 개성과 특별한 재능으로 특별한 여정을 걸어가게 될 것입니다.`;
 }
+
 function generateDaeunAnalysis(r, name = '') {
     const birthYear = r.solar ? r.solar.getYear() : 2000;
     const currentYear = new Date().getFullYear();
@@ -665,6 +679,7 @@ function generateDaeunAnalysis(r, name = '') {
     analysis += '앞으로의 10년 단위 대운은 점차 안정되면서도 새로운 기회가 찾아올 것으로 보입니다.';
     return analysis;
 }
+
 function generateDaeunTiming(r, name = '') {
     const birthYear = r.solar ? r.solar.getYear() : 2000;
     const currentYear = new Date().getFullYear();
@@ -681,6 +696,7 @@ function generateDaeunTiming(r, name = '') {
         return `인생의 여유와 깊이를 만끽할 시기입니다. 경험과 지혜를 나누며 의미 있는 시간을 보내세요.`;
     }
 }
+
 function generateCautionPeriods(r, name = '') {
     const dayGan = (r.pillars.day||'')[0] || '';
     const dayEl = GAN_WUXING[dayGan] || '';
@@ -693,6 +709,7 @@ function generateCautionPeriods(r, name = '') {
     };
     return cautionByElement[dayEl] || '변화의 해에는 신중한 판단이 필요합니다. 또한 본명년과 충(沖)이 되는 해에는 큰 변화나 이동이 있을 수 있으니 미리 준비하세요.';
 }
+
 function generateAdvice(r, name = '') {
     const dayGan = (r.pillars.day||'')[0] || '';
     const dayEl = GAN_WUXING[dayGan] || '';
@@ -714,6 +731,7 @@ function generateAdvice(r, name = '') {
     advice += ` 특히 ${weakInfo.ko} 기운이 부족하니 ${weakInfo.boost}로 보완하면 더욱 균형잡힌 삶을 살 수 있습니다.`;
     return advice;
 }
+
 function buildEnhancedSajuResult(r, name = '') {
     const KEYS = ['木','火','土','金','水'];
     const total = KEYS.reduce((a,k)=>a+(r.countsAll[k]||0),0);
@@ -773,6 +791,7 @@ function buildEnhancedSajuResult(r, name = '') {
     </div>`;
     return html;
 }
+
 // ===== HTML 생성 함수들 =====
 function createResultCard(icon, title, value, description, isMain = false, cardType = '') {
     let cardClass = 'result-card';
@@ -787,6 +806,7 @@ function createResultCard(icon, title, value, description, isMain = false, cardT
         <div class="card-description">${description}</div>
     </div>`;
 }
+
 function createPillarsGrid(pillars) {
     return `<div class="pillars-grid">
         <div class="pillar-card">
@@ -807,6 +827,7 @@ function createPillarsGrid(pillars) {
         </div>
     </div>`;
 }
+
 function createElementChart(countsAll) {
     const KEYS = ['木','火','土','金','水'];
     const total = KEYS.reduce((a,k)=>a+(countsAll[k]||0),0);
@@ -826,6 +847,7 @@ function createElementChart(countsAll) {
     html += '</div>';
     return html;
 }
+
 // ===== 타로 기능 =====
 let selectedCards = new Set();
 function initializeTarot() {
@@ -847,6 +869,7 @@ function initializeTarot() {
     }
     resetTarotCards();
 }
+
 function selectTarotCard(cardElement) {
     if (cardElement.classList.contains('revealed')) return;
     const randomTarotIndex = Math.floor(Math.random() * TAROT_DETAILS.length);
@@ -874,6 +897,7 @@ function selectTarotCard(cardElement) {
     });
     reactCrystal(`${selectedCard.name.split('(')[0].trim()}을 뽑았습니다! ✨`);
 }
+
 function drawRandomTarotCard(){
     const available = $$('.tarot-card-back:not(.revealed)');
     if(!available.length){
@@ -883,6 +907,7 @@ function drawRandomTarotCard(){
     const el = available[Math.floor(Math.random()*available.length)];
     setTimeout(()=> selectTarotCard(el), 300);
 }
+
 function resetTarotCards(){
     $$('.tarot-card-back').forEach(card=>{
         card.classList.remove('flipped','revealed');
@@ -893,6 +918,7 @@ function resetTarotCards(){
     closeTarotModal();
     reactCrystal('새로운 카드들이 준비되었습니다 ✨');
 }
+
 function showTarotModal(cardIndex, isUpright) {
     const idx = Math.max(0, Math.min(TAROT_DETAILS.length-1, Number(cardIndex)||0));
     const card = TAROT_DETAILS[idx];
@@ -902,45 +928,61 @@ function showTarotModal(cardIndex, isUpright) {
     const content = $('#tarotModalContent');
     if(!modal || !content) return;
     
-    // 새로운 데이터 구조에 맞게 수정
     const currentMeaning = isUpright ? card.upright : card.reversed;
     
     let meaningText = '';
     if (typeof currentMeaning === 'object') {
-        // 새로운 구조: 객체로 되어있는 경우
         meaningText = `
-            <div style="margin-bottom:15px;"><strong>🔮 일반:</strong> ${currentMeaning.general || ''}</div>
-            <div style="margin-bottom:15px;"><strong>💕 연애:</strong> ${currentMeaning.love || ''}</div>
-            <div style="margin-bottom:15px;"><strong>💼 직업:</strong> ${currentMeaning.career || ''}</div>
-            <div style="margin-bottom:15px;"><strong>💡 조언:</strong> ${currentMeaning.advice || ''}</div>
+            <div style="margin-bottom:12px; padding:8px; background:rgba(255,255,255,0.05); border-radius:6px;">
+                <strong style="color:#4ade80;">🔮 일반해석:</strong><br/>
+                <span style="margin-left:20px;">${currentMeaning.general || ''}</span>
+            </div>
+            <div style="margin-bottom:12px; padding:8px; background:rgba(255,255,255,0.05); border-radius:6px;">
+                <strong style="color:#f87171;">💕 연애운:</strong><br/>
+                <span style="margin-left:20px;">${currentMeaning.love || ''}</span>
+            </div>
+            <div style="margin-bottom:12px; padding:8px; background:rgba(255,255,255,0.05); border-radius:6px;">
+                <strong style="color:#60a5fa;">💼 직업운:</strong><br/>
+                <span style="margin-left:20px;">${currentMeaning.career || ''}</span>
+            </div>
+            <div style="margin-bottom:12px; padding:8px; background:rgba(255,255,255,0.05); border-radius:6px;">
+                <strong style="color:#fbbf24;">💡 조언:</strong><br/>
+                <span style="margin-left:20px;">${currentMeaning.advice || ''}</span>
+            </div>
         `;
     } else {
-        // 기존 구조: 문자열인 경우
         meaningText = currentMeaning || '';
     }
     
     content.innerHTML = `
-        <h2>${card.name}</h2>
-        <p style="color:#6B7280; margin-bottom:20px; line-height:1.6; font-style:italic;">
+        <h2 style="text-align:center; margin-bottom:15px;">${card.name}</h2>
+        <p style="color:#9ca3af; margin-bottom:20px; line-height:1.6; text-align:center; font-style:italic;">
             ${card.meaning}
         </p>
         
-        <div style="margin-top:25px; padding:15px; background:rgba(255,215,0,0.1); border-radius:10px; border-left:4px solid #ffd700;">
-            <h3 style="color:#ffd700; margin-bottom:10px;">
-                ${isUpright ? '🌟 현재: 정방향' : '🌀 현재: 역방향'}
+        <div style="margin-top:20px; padding:15px; background:rgba(255,215,0,0.1); border-radius:10px; border-left:4px solid #ffd700;">
+            <h3 style="color:#ffd700; margin-bottom:15px; text-align:center;">
+                ${isUpright ? '🌟 정방향 해석' : '🌀 역방향 해석'}
             </h3>
-            <div style="color:#ecf0f1; line-height:1.5;">
+            <div style="color:#e5e7eb; line-height:1.6;">
                 ${meaningText}
             </div>
         </div>
         
-        ${card.keywords ? `<div style="margin-top:15px; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;">
-            <strong style="color:#ffd700;">🏷️ 키워드:</strong> ${card.keywords}
+        ${card.keywords ? `<div style="margin-top:15px; padding:12px; background:rgba(255,255,255,0.05); border-radius:8px; text-align:center;">
+            <strong style="color:#ffd700;">🏷️ 핵심 키워드:</strong> ${card.keywords}
         </div>` : ''}
     `;
     
     modal.style.display='flex';
     requestAnimationFrame(()=> modal.classList.add('show'));
+}
+
+function closeTarotModal(){
+    const modal = document.getElementById('tarotModalOverlay');
+    if(!modal) return;
+    modal.classList.remove('show');
+    modal.style.display='none';
 }
 
 // ===== 로또 번호 생성 =====
@@ -956,6 +998,7 @@ function seededRandomFactory(seedStr='') {
         return (state >>> 0) / 0xFFFFFFFF;
     };
 }
+
 function generateLottoSet(seedStr) {
     const s = String(seedStr ?? '');
     const digits = s.replace(/\D/g, '');
@@ -985,6 +1028,7 @@ function generateLottoSet(seedStr) {
     }
     return Array.from(picked).sort((a, b) => a - b);
 }
+
 function generateLottoNumbers(birth='') {
     const today = new Date();
     const utc = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
