@@ -1286,3 +1286,20 @@ $('#btnMatch')?.addEventListener('click', () => {
     openSheet('궁합 결과', html, {type:'match', a, b, nameA, nameB, score:result.score, text:result.text});
     reactCrystal('궁합을 분석했습니다!');
 });
+
+// 테스트용 - 페이지 로드 후 바로 실행
+setTimeout(() => {
+    console.log('페이지 로드 완료, 버튼 찾는 중...');
+    const btn = document.getElementById('btnMatch');
+    console.log('btnMatch 버튼:', btn);
+    
+    if (btn) {
+        btn.onclick = function() {
+            alert('궁합 버튼이 클릭되었습니다!');
+            console.log('버튼 클릭 확인');
+        };
+        console.log('이벤트 연결 완료');
+    } else {
+        console.log('btnMatch 버튼을 찾을 수 없음');
+    }
+}, 2000);
