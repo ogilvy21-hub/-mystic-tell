@@ -270,25 +270,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
       <!-- 궁합 보기 -->
-      <div id="view-match" class="card" style="display:none;">
-        <div class="field">
-          <div class="label">당신의 생년월일</div>
-          <input class="input" type="date" id="match-a" />
-        </div>
-        <div class="field">
-          <div class="label">상대의 생년월일</div>
-          <input class="input" type="date" id="match-b" />
-        </div>
-        <button class="btn" id="btnMatch">궁합 확인</button>
-      </div>
-      <!-- 신년 운세 -->
+     <div id="view-match" class="card" style="display:none;">
+    <div class="field">
+        <div class="label">첫 번째 분 이름 (선택)</div>
+        <input class="input" type="text" id="match-name-a" placeholder="이름을 입력하세요" />
+    </div>
+    <div class="field">
+        <div class="label">당신의 생년월일</div>
+        <input class="input" type="date" id="match-a" />
+    </div>
+    <div class="field">
+        <div class="label">두 번째 분 이름 (선택)</div>
+        <input class="input" type="text" id="match-name-b" placeholder="이름을 입력하세요" />
+    </div>
+    <div class="field">
+        <div class="label">상대의 생년월일</div>
+        <input class="input" type="date" id="match-b" />
+    </div>
+    <button class="btn" id="btnMatch">상세 궁합 분석</button>
+    </div>
+     
+     <!-- 신년 운세 -->
       <div id="view-year" class="card" style="display:none;">
-        <div class="field">
-          <div class="label">생년월일</div>
-          <input class="input" type="date" id="year-birth" />
-        </div>
-        <button class="btn" id="btnYear">2025 신년 운세</button>
+      <div class="field">
+        <div class="label">이름 (선택)</div>
+        <input class="input" type="text" id="year-name" placeholder="이름을 입력하세요" />
       </div>
+      <div class="field">
+        <div class="label">생년월일</div>
+        <input class="input" type="date" id="year-birth" />
+      </div>
+     <button class="btn" id="btnYear">2025 상세 신년운세</button>
+    </div>
+   
     </section>
     <section id="page-chat" class="page">
       <div class="card">
@@ -305,6 +319,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </section>
     <div class="spacer"></div>
   </div>
+  
   <!-- 하단 네비 -->
   <div class="bottom-nav" id="bottomNav">
     <div class="nav-item active" data-tab="home">
@@ -324,7 +339,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="nav-text">마이</div>
     </div>
   </div>
-  <!-- 결과 시트(모달) - 개선된 디자인 -->
+  
+ <!-- 결과 시트(모달) - 개선된 디자인 -->
   <div class="sheet-backdrop" id="sheetBackdrop" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
     <div class="sheet" role="document">
       <div class="sheet-header">
@@ -337,12 +353,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </div>
   </div>
-  <!-- 타로 모달 -->
+  
+ <!-- 타로 모달 -->
   <div class="tarot-modal-overlay" id="tarotModalOverlay">
     <div class="tarot-modal" id="tarotModal">
       <button class="tarot-close-btn" id="tarotCloseBtn">✕</button>
       <div class="tarot-modal-content" id="tarotModalContent">
-        <!-- 모달 내용이 JavaScript로 채워짐 -->
+       
+       <!-- 모달 내용이 JavaScript로 채워짐 -->
       </div>
     </div>
   </div>
@@ -370,7 +388,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <p>개선 제안이나 문의는 <a href="mailto:tmrw@tmrw.co.kr">tmrw@tmrw.co.kr</a> 으로 보내주세요.</p>
   </div>
 </section>
-<!-- ========= MysticTell: Footer ========= -->
+
+ <!-- ========= MysticTell: Footer ========= -->
 <footer class="mt-footer">
   <div class="mt-footer-links">
     <a id="mt-link-privacy" href="#privacy">개인정보처리방침</a>
@@ -382,7 +401,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <p>연락처: tmrw@tmrw.co.kr</p>
   </div>
 </footer>
-<!-- ========= MysticTell: Policy Modals ========= -->
+
+ <!-- ========= MysticTell: Policy Modals ========= -->
 <div id="mt-privacy" class="mt-sheet-backdrop" aria-hidden="true">
   <div class="mt-sheet" role="dialog" aria-modal="true" aria-labelledby="mt-privacy-title">
     <div class="mt-sheet-header">
