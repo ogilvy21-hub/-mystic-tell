@@ -1340,3 +1340,149 @@ a, a:hover, a:focus, a:active, a:visited {
     box-shadow: none !important;
     border-radius: 0 !important;
 }
+
+// CSS 스타일 추가 (기존 스타일에 추가할 내용)
+const additionalCSS = `
+
+/* 2025년 운세 특별 스타일 */
+.year-overview-card {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 20px;
+    border-radius: 12px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.year-character {
+    text-align: center;
+}
+
+.year-element {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.year-desc {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    opacity: 0.9;
+}
+
+.year-keywords {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.keyword-tag {
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.timeline-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    background: #fafafa;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #4ade80;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 16px;
+}
+
+.timeline-item.caution .timeline-icon {
+    background: #f87171;
+}
+
+.timeline-content {
+    flex: 1;
+}
+
+.timeline-title {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 4px;
+}
+
+.timeline-desc {
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* 궁합 결과 특별 스타일 */
+.compatibility-score {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #ff6b6b, #ffa8a8);
+    color: white;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.score-display {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.score-label {
+    font-size: 14px;
+    opacity: 0.9;
+}
+`;
+
+console.log('Enhanced Fortune Functions Loaded:', {
+    compatibilityAnalysis: '궁합 분석 기능 향상 완료',
+    year2025Fortune: '2025년 신년운세 12가지 유형 추가',
+    detailedResults: '상세한 HTML 결과 생성 함수 추가',
+    backwardCompatible: '기존 코드와 호환성 유지'
+});result-section">
+            <div class="section-title-result">🔍 상세 분석</div>
+            
+            ${createResultCard('🌿', '오행 궁합', `${details.elementA} × ${details.elementB}`, 
+                `오행 기반 궁합도: ${details.elementScore}점<br/>성향과 기질의 조화를 나타냅니다.`)}
+            
+            ${createResultCard('🐉', '띠 궁합', `${details.zodiacScore}점`, 
+                '태어난 해의 띠를 기반으로 한 전통 궁합입니다.')}
+                
+            ${createResultCard('⚖️', '균형도', `${details.balanceScore}점`, 
+                '두 분의 오행 균형이 얼마나 잘 맞는지를 나타냅니다.')}
+        </div>`;
+    }
+    
+    // 조언 섹션
+    let advice = '';
+    if (score >= 70) {
+        advice = '서로의 장점을 인정하고 격려해주세요. 공통의 목표를 세워 함께 발전해 나가시길 바랍니다.';
+    } else if (score >= 50) {
+        advice = '차이점을 단점이 아닌 다양성으로 받아들이세요. 소통을 늘리고 서로를 이해하려 노력하세요.';
+    } else {
+        advice = '급하게 결론내리지 마세요. 시간을 두고 서로를 알아가며 공통분모를 찾아보세요.';
+    }
+    
+    html += `<div class="
