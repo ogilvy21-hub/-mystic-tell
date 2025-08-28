@@ -1289,37 +1289,36 @@ $('#btnMatch')?.addEventListener('click', () => {
 
 // 테스트용 - 페이지 로드 후 바로 실행
 setTimeout(() => {
-    console.log('페이지 로드 완료, 버튼 찾는 중...');
     const btn = document.getElementById('btnMatch');
-    console.log('btnMatch 버튼:', btn);
-    
     if (btn) {
         btn.onclick = () => {
-    const a = document.getElementById('match-a').value;
-    const b = document.getElementById('match-b').value;
-    const nameA = document.getElementById('match-name-a')?.value || '첫 번째 분';
-    const nameB = document.getElementById('match-name-b')?.value || '두 번째 분';
-    
-    const result = calcMatch(a, b);
-    
-    if(result.score === null) {
-        alert(result.text);
-        return;
-    }
-    
-    const html = `
-        <div class="result-section">
-            <div class="section-title-result">💕 ${nameA} & ${nameB} 궁합</div>
-            <div class="result-card main-result">
-                <div class="card-header">
-                    <div class="card-icon">💘</div>
-                    <div class="card-title">궁합 점수</div>
+            const a = document.getElementById('match-a').value;
+            const b = document.getElementById('match-b').value;
+            const nameA = document.getElementById('match-name-a')?.value || '첫 번째 분';
+            const nameB = document.getElementById('match-name-b')?.value || '두 번째 분';
+            
+            const result = calcMatch(a, b);
+            
+            if(result.score === null) {
+                alert(result.text);
+                return;
+            }
+            
+            const html = `
+                <div class="result-section">
+                    <div class="section-title-result">💕 ${nameA} & ${nameB} 궁합</div>
+                    <div class="result-card main-result">
+                        <div class="card-header">
+                            <div class="card-icon">💘</div>
+                            <div class="card-title">궁합 점수</div>
+                        </div>
+                        <div class="card-value">${result.score}점</div>
+                        <div class="card-description">${result.text}</div>
+                    </div>
                 </div>
-                <div class="card-value">${result.score}점</div>
-                <div class="card-description">${result.text}</div>
-            </div>
-        </div>
-    `;
-    
-    openSheet('궁합 결과', html);
-};
+            `;
+            
+            openSheet('궁합 결과', html);
+        };
+    }
+}, 3000);
