@@ -1237,3 +1237,52 @@ document.addEventListener('keydown', (e) => {
     }
 });
 console.log('✅ MysticTell 초기화 완료');
+
+// 궁합 계산 함수
+function calcMatch(a, b) {
+    if(!a || !b) return {score:null, text:'두 생년월일을 모두 입력하세요.'};
+    
+    const seed = (a + b).replaceAll('-','');
+    let h = 0;
+    for(let i = 0; i < seed.length; i++) {
+        h = (h * 33 + seed.charCodeAt(i)) % 100000;
+    }
+    const s = h % 101;
+    const text = s >= 80 ? '천생연분! 서로 잘 맞는 궁합입니다.'
+        : s >= 60 ? '좋은 궁합입니다. 노력하면 행복한 관계가 될 거예요.'
+        : s >= 40 ? '보통 궁합입니다. 서로 이해하려 노력하세요.'
+        : '차이가 많지만 사랑으로 극복할 수 있습니다.';
+    return {score:s, text};
+}
+
+// 궁합 버튼 이벤트
+$('#btnMatch')?.addEventListener('click', () => {
+    const a = $('#match-a').value;
+    const b = $('#match-b').value;
+    const nameA = $('#match-name-a')?.value || '첫 번째 분';
+    const nameB = $('#match-name-b')?.value || '두 번째 분';
+    
+    const result = calcMatch(a, b);
+    
+    if(result.score === null) {
+        alert(result.text);
+        return;
+    }
+    
+    const html = `
+        <div class="result-section">
+            <div class="section-title-result">💕 ${nameA} & ${nameB} 궁합</div>
+            <div class="result-card main-result">
+                <div class="card-header">
+                    <div class="card-icon">💘</div>
+                    <div class="card-title">궁합 점수</div>
+                </div>
+                <div class="card-value">${result.score}점</div>
+                <div class="card-description">${result.text}</div>
+            </div>
+        </div>
+    `;
+    
+    openSheet('궁합 결과', html, {type:'match', a, b, nameA, nameB, score:result.score, text:result.text});
+    reactCrystal('궁합을 분석했습니다!');
+});
