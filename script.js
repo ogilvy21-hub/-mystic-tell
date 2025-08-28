@@ -704,84 +704,20 @@ function calcEnhancedDailyFortune(birthdate) {
         };
     });
 
-   console.log('calcMatch 호출됨', a, b); 
-    // 기존 calcMatch 함수를 찾아서 이 코드로 교체
-function calcMatch(a, b) {
+   function calcMatch(a, b) {
     if(!a || !b) return {score:null, text:'두 생년월일을 모두 입력하세요.'};
-    
-    try {
-        // 기본 사주 정보 계산 (기존 함수 활용)
-        const baziA = computeBaZi(a, '', 'solar', false);
-        const baziB = computeBaZi(b, '', 'solar', false);
-        
-        // 일간 오행 추출
-        const dayGanA = (baziA.pillars.day || '')[0] || '';
-        const dayGanB = (baziB.pillars.day || '')[0] || '';
-        const elementA = GAN_WUXING[dayGanA] || '';
-        const elementB = GAN_WUXING[dayGanB] || '';
-        
-        // 오행 궁합 계산
-        let score = 50; // 기본 점수
-        
-        // 오행 상생 관계 확인
-        const compatible = {
-            '木': ['火', '水'], '火': ['木', '土'], '土': ['火', '金'], 
-            '金': ['土', '水'], '水': ['金', '木']
-        };
-        const conflicted = {
-            '木': ['金'], '火': ['水'], '土': ['木'], '金': ['火'], '水': ['土']
-        };
-        
-        if (compatible[elementA] && compatible[elementA].includes(elementB)) {
-            score += 25; // 상생 관계
-        } else if (conflicted[elementA] && conflicted[elementA].includes(elementB)) {
-            score -= 20; // 상극 관계
-        } else if (elementA === elementB) {
-            score += 10; // 같은 오행
-        }
-        
-        // 생년 차이 보정 (나이차가 적을수록 좋음)
-        const yearA = baziA.solar ? baziA.solar.getYear() : 2000;
-        const yearB = baziB.solar ? baziB.solar.getYear() : 2000;
-        const ageDiff = Math.abs(yearA - yearB);
-        if (ageDiff <= 3) score += 10;
-        else if (ageDiff <= 7) score += 5;
-        else if (ageDiff > 15) score -= 10;
-        
-        // 점수 범위 조정
-        score = Math.max(10, Math.min(95, score));
-        
-        // 결과 텍스트 생성
-        let text = '';
-        if (score >= 80) {
-            text = `천생연분의 궁합입니다! 오행(${elementA}×${elementB})이 조화롭게 어우러져 서로를 성장시키는 관계입니다. 나이차(${ageDiff}세)도 적절하여 이해와 소통이 잘 될 것입니다.`;
-        } else if (score >= 65) {
-            text = `좋은 궁합입니다. 오행(${elementA}×${elementB}) 조합이 서로에게 도움이 되며, 노력하면 행복한 관계를 만들어갈 수 있습니다.`;
-        } else if (score >= 50) {
-            text = `무난한 궁합입니다. 오행(${elementA}×${elementB})이 평범한 조합이지만, 서로를 이해하려 노력하면 좋은 관계가 될 수 있습니다.`;
-        } else if (score >= 35) {
-            text = `조금 어려운 궁합입니다. 오행(${elementA}×${elementB}) 조합에서 갈등이 있을 수 있지만, 차이점을 인정하고 소통을 늘리면 극복할 수 있습니다.`;
-        } else {
-            text = `힘든 궁합입니다. 오행(${elementA}×${elementB})이 상극 관계에 있어 서로 다른 점이 많습니다. 공통 관심사를 찾고 인내심을 갖고 관계를 발전시켜야 합니다.`;
-        }
-        
-        return {score, text};
-        
-    } catch (error) {
-        console.error('궁합 계산 오류:', error);
-        // 오류 시 기존 간단한 계산으로 폴백
-        const seed = (a + b).replaceAll('-','');
-        let h = 0;
-        for(let i = 0; i < seed.length; i++) {
-            h = (h * 33 + seed.charCodeAt(i)) % 100000;
-        }
-        const s = h % 101;
-        const text = s >= 80 ? '운명적인 만남! 서로 잘 맞는 궁합입니다.'
-            : s >= 60 ? '좋은 궁합입니다. 서로 이해하며 발전할 수 있어요.'
-            : s >= 40 ? '보통 궁합입니다. 노력하면 좋은 관계를 만들 수 있어요.'
-            : '차이가 많은 궁합이지만 서로를 인정하면 극복할 수 있어요.';
-        return {score:s, text};
+    const seed = (a + b).replaceAll('-','');
+    let h = 0;
+    for(let i = 0; i < seed.length; i++) {
+        h = (h * 33 + seed.charCodeAt(i)) % 100000;
     }
+    const s = h % 101;
+    const text = s >= 80 ? '운명선 강하게 연결! 서로의 성장을 밀어줍니다.'
+        : s >= 60 ? '잘 맞는 편. 대화의 리듬이 좋습니다.'
+        : s >= 40 ? '노력형 궁합. 규칙적인 소통이 해법.'
+        : s >= 20 ? '차이 큼. 공동의 목표를 작게 쪼개보세요.'
+        : '생활 리듬·가치관 점검 필요. 천천히 관계 설계하기.';
+    return {score:s, text};
 }
     
     // 럭키 아이템 계산
