@@ -1696,26 +1696,56 @@ function calculateYearFortune() {
     showFortuneResult(resultHTML);
 }
 
-function showFortuneResult(html) {
-    // 간단하고 확실한 방법으로 기존 결과 제거
-    const allDivs = document.querySelectorAll('div');
-    allDivs.forEach(div => {
-        // 운세 결과로 보이는 div 찾아서 제거
-        if (div.innerHTML && 
-            div.innerHTML.includes('2025년') && 
-            div.innerHTML.includes('운세') && 
-            (div.innerHTML.includes('직장운') || div.innerHTML.includes('연애운'))) {
+// 신년운세 함수 (완전히 새로 작성)
+function newYearFortune2025() {
+    const birthInput = document.getElementById('year-birth');
+    if (!birthInput || !birthInput.value) {
+        alert('생년월일을 입력하세요.');
+        return;
+    }
+    
+    const birthDate = birthInput.value;
+    const [year, month, day] = birthDate.split('-').map(Number);
+    
+    // 간단한 운세 계산
+    const fortuneTypes = [
+        '큰 도약의 해: 새로운 기회와 성장이 기다립니다',
+        '성장의 해: 배움과 발전에 집중하세요',
+        '관계의 해: 좋은 인연이 찾아옵니다',
+        '안정의 해: 기반을 다지는 시기입니다',
+        '변화의 해: 새로운 시작을 준비하세요',
+        '휴식의 해: 재충전이 필요한 시기입니다'
+    ];
+    
+    const fortuneIndex = (year + month + day) % fortuneTypes.length;
+    const result = fortuneTypes[fortuneIndex];
+    
+    // 기존 결과 모두 제거
+    const container = document.querySelector('.container') || document.body;
+    const existingResults = container.querySelectorAll('div');
+    existingResults.forEach(div => {
+        if (div.innerHTML.includes('2025년') && div.innerHTML.includes('운세')) {
             div.remove();
         }
     });
     
     // 새 결과 생성
-    const resultDiv = document.createElement('div');
-    resultDiv.id = 'fortune-result';
-    resultDiv.innerHTML = html;
+    const resultHTML = `
+        <div style="background: #f8f9fa; padding: 20px; margin: 20px 0; border-radius: 8px; text-align: center;">
+            <h3>2025년 을사년 운세</h3>
+            <p style="font-size: 18px; color: #e74c3c; font-weight: bold;">${result}</p>
+            <p style="color: #7f8c8d;">나이: ${2025 - year}세</p>
+        </div>
+    `;
     
-    const yearSection = document.querySelector('.container') || document.body;
-    yearSection.appendChild(resultDiv);
-    
-    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    container.insertAdjacentHTML('beforeend', resultHTML);
 }
+
+// 버튼 연결
+setTimeout(function() {
+    const btn = document.getElementById('btnYear');
+    if (btn) {
+        btn.onclick = newYearFortune2025;
+        console.log('신년운세 버튼 재연결 완료');
+    }
+}, 1000);
