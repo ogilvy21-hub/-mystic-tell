@@ -1696,35 +1696,46 @@ function calculateYearFortune() {
     showFortuneResult(resultHTML);
 }
 
-// 결과 표시 함수
 function showFortuneResult(html) {
-    // 기존 결과 제거
-    const existingResult = document.getElementById('fortune-result');
-    if (existingResult) {
-        existingResult.remove();
-    }
+    // 실제 운세 결과를 포함하는 모든 요소 찾기 (더 광범위하게)
+    const possibleSelectors = [
+        '#fortune-result',
+        '.result-section', 
+        '[class*="result"]',
+        '[id*="result"]', 
+        'div[style*="max-width: 600px"]', // 운세 결과의 특정 스타일
+        'div:has(h2:contains("운세"))', // 운세라는 텍스트가 포함된 div
+    ];
     
-    // 새 결과 컨테이너 생성
+    // 각 선택자로 요소 찾아서 제거
+    possibleSelectors.forEach(selector => {
+        try {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => {
+                if (el.innerHTML.includes('운세') || el.innerHTML.includes('2025년')) {
+                    el.remove();
+                }
+            });
+        } catch(e) {
+            // 일부 선택자는 지원되지 않을 수 있음
+        }
+    });
+    
+    // 더 확실한 방법: 페이지의 모든 div를 검사
+    const allDivs = document.querySelectorAll('div');
+    allDivs.forEach(div => {
+        if (div.innerHTML.includes('2025년') && div.innerHTML.includes('운세') && div.innerHTML.includes('직장운')) {
+            div.remove();
+        }
+    });
+    
+    // 새 결과 생성 (기존과 동일)
     const resultDiv = document.createElement('div');
     resultDiv.id = 'fortune-result';
     resultDiv.innerHTML = html;
     
-    // 신년운세 섹션 다음에 결과 삽입
     const yearSection = document.querySelector('.container') || document.body;
     yearSection.appendChild(resultDiv);
     
-    // 결과로 스크롤
     resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
-
-// 버튼 연결
-setTimeout(function() {
-    const btn = document.getElementById('btnYear');
-    if (btn) {
-        // 기존 이벤트 제거
-        btn.onclick = null;
-        // 새 이벤트 연결
-        btn.addEventListener('click', calculateYearFortune);
-        console.log('신년운세 버튼 업그레이드 완료');
-    }
-}, 1000);
