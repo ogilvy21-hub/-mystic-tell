@@ -1697,15 +1697,21 @@ function calculateYearFortune() {
 }
 
 function showFortuneResult(html) {
-    // 기존 결과 제거 (원래 방식)
-    const existingResult = document.getElementById('fortune-result');
-    if (existingResult) {
-        existingResult.remove();
-    }
+    // 간단하고 확실한 방법으로 기존 결과 제거
+    const allDivs = document.querySelectorAll('div');
+    allDivs.forEach(div => {
+        // 운세 결과로 보이는 div 찾아서 제거
+        if (div.innerHTML && 
+            div.innerHTML.includes('2025년') && 
+            div.innerHTML.includes('운세') && 
+            (div.innerHTML.includes('직장운') || div.innerHTML.includes('연애운'))) {
+            div.remove();
+        }
+    });
     
-    // 새 결과 생성 (고유 ID 사용)
+    // 새 결과 생성
     const resultDiv = document.createElement('div');
-    resultDiv.id = 'fortune-result-' + Date.now(); // 시간 기반 고유 ID
+    resultDiv.id = 'fortune-result';
     resultDiv.innerHTML = html;
     
     const yearSection = document.querySelector('.container') || document.body;
