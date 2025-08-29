@@ -1239,6 +1239,7 @@ document.addEventListener('keydown', (e) => {
 console.log('✅ MysticTell 초기화 완료');
 
 // 기존 calcMatch 함수를 이 코드로 교체
+// 기존 calcMatch 함수를 이 코드로 교체
 function calcMatch(a, b) {
     if(!a || !b) return {score:null, text:'두 생년월일을 모두 입력하세요.'};
     
@@ -1335,6 +1336,95 @@ function calcMatch(a, b) {
         );
         const clampedScore = Math.max(15, Math.min(95, finalScore));
         
+        // 오행별 성격 특성 및 조언 데이터
+        const elementCharacteristics = {
+            '木': {
+                traits: '성장지향적, 계획적, 이상주의적, 감정적',
+                communication: '논리적 설명보다 비전과 가능성 중심으로 대화',
+                conflicts: '급한 성격을 이해하고 기다려주기, 변화 요구시 단계적 접근',
+                dateStyle: '자연스러운 야외 활동, 새로운 경험, 미래 계획 세우기'
+            },
+            '火': {
+                traits: '열정적, 표현력 풍부, 사교적, 즉흥적',
+                communication: '감정을 충분히 표현할 수 있는 분위기 조성',
+                conflicts: '감정이 격해질 때 잠시 시간을 두고 대화, 인정받고 싶어하는 욕구 이해',
+                dateStyle: '활기찬 장소, 파티나 이벤트, 창의적 활동'
+            },
+            '土': {
+                traits: '안정적, 신뢰할 수 있는, 현실적, 보수적',
+                communication: '구체적이고 실질적인 내용 중심으로 대화',
+                conflicts: '변화를 천천히 받아들이므로 인내심 필요, 안정감 제공',
+                dateStyle: '편안한 집에서의 시간, 전통적인 데이트, 맛집 탐방'
+            },
+            '金': {
+                traits: '원칙적, 분석적, 완벽주의, 독립적',
+                communication: '논리적이고 체계적인 설명, 개인 시간 존중',
+                conflicts: '비판보다 건설적 제안으로 접근, 완벽함에 대한 압박 줄이기',
+                dateStyle: '문화적 활동, 박물관이나 전시회, 고급스러운 장소'
+            },
+            '水': {
+                traits: '유연한, 적응력 좋은, 직감적, 학습지향적',
+                communication: '다양한 주제로 깊이 있는 대화, 호기심 충족',
+                conflicts: '우유부단할 때 선택 도움, 변화무쌍함을 이해하고 수용',
+                dateStyle: '지적 호기심 자극하는 활동, 책방이나 강의, 여행'
+            }
+        };
+        
+        // 관계 발전 단계별 조언 생성
+        function generateStageAdvice(elemA, elemB, score) {
+            const charA = elementCharacteristics[elementA];
+            const charB = elementCharacteristics[elementB];
+            
+            let advice = {
+                initial: '', // 연애 초기
+                development: '', // 관계 발전기
+                commitment: '' // 결혼/동거 준비
+            };
+            
+            if (score >= 70) {
+                advice.initial = `연애 초기에는 ${charA?.dateStyle || '취향에 맞는 활동'}과 ${charB?.dateStyle || '상대방이 좋아하는 활동'}을 번갈아가며 즐겨보세요. 서로의 다른 매력을 발견할 수 있습니다.`;
+                advice.development = `관계가 깊어지면서 ${charA?.communication || '솔직한 소통'}과 ${charB?.communication || '진심 어린 대화'}를 통해 더욱 끈끈한 유대감을 형성할 수 있습니다.`;
+                advice.commitment = `결혼이나 동거를 고려할 때는 두 분의 생활 패턴과 가치관이 잘 맞으므로 자연스럽게 진행될 것입니다. 구체적인 미래 계획을 함께 세워보세요.`;
+            } else if (score >= 50) {
+                advice.initial = `처음에는 서로의 차이점이 새롭게 느껴질 수 있습니다. ${charA?.dateStyle || '편안한 활동'}부터 시작해서 점차 취향의 폭을 넓혀가세요.`;
+                advice.development = `관계 발전 과정에서 ${charA?.conflicts || '서로를 이해하려는 노력'}이 중요합니다. 갈등이 생기면 ${charB?.communication || '열린 마음으로 대화'}하세요.`;
+                advice.commitment = `진지한 관계로 발전하려면 생활 방식과 가치관의 차이를 충분히 논의하고 타협점을 찾는 시간이 필요합니다.`;
+            } else {
+                advice.initial = `초기에는 서로의 다름을 받아들이는 연습이 필요합니다. 무리하지 말고 천천히 서로를 알아가세요.`;
+                advice.development = `관계 발전에는 더 많은 인내와 노력이 필요합니다. ${charA?.conflicts || '상대방의 관점을 이해하려 노력'}하고 ${charB?.conflicts || '배려하는 마음'}을 가져주세요.`;
+                advice.commitment = `장기적인 관계를 위해서는 전문적인 상담이나 관계 개선 프로그램을 함께 참여하는 것도 도움이 될 수 있습니다.`;
+            }
+            
+            return advice;
+        }
+        
+        // 갈등 해결 방안 생성
+        function generateConflictSolutions(elemA, elemB) {
+            const charA = elementCharacteristics[elementA];
+            const charB = elementCharacteristics[elementB];
+            
+            let solutions = [];
+            
+            // 오행 상극 관계별 특화된 조언
+            if (conflicted[elementA] && conflicted[elementA].includes(elementB)) {
+                if (elementA === '木' && elementB === '金') {
+                    solutions.push('목(성장지향)과 금(원칙중심)의 갈등: 계획 세울 때는 목의 비전을 존중하되, 실행할 때는 금의 체계성을 활용하세요.');
+                } else if (elementA === '火' && elementB === '水') {
+                    solutions.push('화(열정)와 수(신중함)의 갈등: 중요한 결정은 화의 직감과 수의 분석을 모두 거쳐서 내리세요.');
+                } else if (elementA === '土' && elementB === '木') {
+                    solutions.push('토(안정)와 목(변화)의 갈등: 변화가 필요할 때는 작은 단계부터 시작해서 점진적으로 진행하세요.');
+                }
+            }
+            
+            // 공통 갈등 해결 방안
+            solutions.push(`의사소통: ${charA?.communication || '서로의 소통 방식을 이해'}하고 ${charB?.communication || '상대방에게 맞는 방식으로 대화'}하세요.`);
+            solutions.push(`갈등 예방: ${charA?.conflicts || '상대방의 성향을 미리 파악'}하고 ${charB?.conflicts || '배려하는 마음'}을 가져주세요.`);
+            solutions.push('타이밍: 민감한 대화는 두 분 모두 컨디션이 좋고 시간 여유가 있을 때 하세요.');
+            solutions.push('공통 관심사: 서로 다른 취향 사이에서 공통분모를 찾아 함께 즐길 수 있는 활동을 개발하세요.');
+            
+            return solutions;
+        }
+        
         // 상세 분석 텍스트 생성
         const elementNames = {'木':'목','火':'화','土':'토','金':'금','水':'수'};
         const elemA = elementNames[elementA] || '?';
@@ -1347,18 +1437,54 @@ function calcMatch(a, b) {
         const zodiacA_name = zodiacNames[yearZhiA] || '?';
         const zodiacB_name = zodiacNames[yearZhiB] || '?';
         
-        let text = '';
-        if (clampedScore >= 85) {
-            text = `천생연분의 궁합입니다! ${elemA}(${elementA})과 ${elemB}(${elementB}) 기질이 완벽하게 조화를 이루며, ${zodiacA_name}띠와 ${zodiacB_name}띠의 조합도 매우 좋습니다. 나이차(${ageDiff}세)도 적절하여 서로를 깊이 이해하고 성장시키는 관계가 될 것입니다.`;
-        } else if (clampedScore >= 70) {
-            text = `매우 좋은 궁합입니다. ${elemA}과 ${elemB} 오행이 서로 도움을 주며, ${zodiacA_name}띠와 ${zodiacB_name}띠의 조합이 안정적입니다. 소통과 배려를 통해 행복한 관계를 만들어갈 수 있습니다.`;
-        } else if (clampedScore >= 55) {
-            text = `무난한 궁합입니다. ${elemA}과 ${elemB} 기질이 평범한 조합이며, ${zodiacA_name}띠와 ${zodiacB_name}띠 관계도 보통입니다. 서로를 이해하려는 노력과 인내심이 필요하지만 좋은 관계로 발전할 수 있습니다.`;
-        } else if (clampedScore >= 40) {
-            text = `조금 어려운 궁합입니다. ${elemA}과 ${elemB} 오행에서 갈등 요소가 있고, ${zodiacA_name}띠와 ${zodiacB_name}띠의 차이도 존재합니다. 하지만 서로의 다름을 인정하고 꾸준한 소통으로 관계를 개선할 수 있습니다.`;
-        } else {
-            text = `힘든 궁합이지만 불가능하지 않습니다. ${elemA}과 ${elemB} 기질의 차이와 ${zodiacA_name}띠, ${zodiacB_name}띠의 성향 차이가 크지만, 진정한 사랑과 이해로 극복할 수 있습니다. 공통 관심사를 찾고 인내심을 가져주세요.`;
-        }
+        // 기존 text 생성 부분을 이렇게 교체
+let text = '';
+if (clampedScore >= 85) {
+    text = `천생연분의 궁합입니다! ${elemA}(${elementA})과 ${elemB}(${elementB}) 기질이 완벽하게 조화를 이루어 서로의 장점을 극대화시키고 단점을 자연스럽게 보완합니다. ${zodiacA_name}띠의 ${getZodiacTraits(yearZhiA)}과 ${zodiacB_name}띠의 ${getZodiacTraits(yearZhiB)}이 매우 잘 어울리며, ${ageDiff}세의 나이차는 서로에게 신선함과 안정감을 동시에 제공합니다. 이 관계에서는 깊은 정신적 교감이 가능하고, 서로를 성장시키는 동반자 관계로 발전할 가능성이 매우 높습니다. 연애부터 결혼까지 자연스럽게 흘러갈 것이며, 주변에서도 부러워하는 이상적인 커플이 될 것입니다.`;
+} else if (clampedScore >= 70) {
+    text = `매우 좋은 궁합입니다. ${elemA} 성향의 ${getElementPersonality(elementA)}과 ${elemB} 성향의 ${getElementPersonality(elementB)}이 서로 도움을 주는 관계입니다. ${zodiacA_name}띠와 ${zodiacB_name}띠의 조합은 전통적으로 좋은 궁합으로 여겨지며, 실제로도 많은 부분에서 잘 맞을 것입니다. 가끔 의견 차이가 있을 수 있지만, 이는 관계를 더욱 풍요롭게 만드는 요소가 됩니다. ${ageDiff}세의 나이차는 서로 다른 관점을 제공하여 시야를 넓혀주는 역할을 합니다. 소통과 배려를 바탕으로 서로의 차이를 존중한다면 매우 행복하고 안정적인 관계를 만들어갈 수 있습니다.`;
+} else if (clampedScore >= 55) {
+    text = `무난한 궁합으로 노력에 따라 좋은 관계로 발전할 수 있습니다. ${elemA} 기질과 ${elemB} 기질은 상반된 면이 있지만, 이는 서로에게 부족한 부분을 채워줄 수 있는 기회이기도 합니다. ${zodiacA_name}띠의 특성과 ${zodiacB_name}띠의 성향이 다소 다르지만, 이해하려는 노력을 통해 극복 가능합니다. ${ageDiff}세의 나이 차이로 인해 생활 패턴이나 가치관에서 차이가 날 수 있으나, 이는 서로를 배우고 성숙해지는 계기가 될 것입니다. 초기에는 서로를 이해하는 시간이 필요하지만, 인내심을 갖고 꾸준히 소통한다면 안정적이고 균형잡힌 관계를 구축할 수 있습니다.`;
+} else if (clampedScore >= 40) {
+    text = `조금 어려운 궁합이지만 극복 불가능하지는 않습니다. ${elemA}과 ${elemB} 오행 관계에서 상극 요소가 있어 기본적인 성향과 접근 방식이 많이 다를 수 있습니다. ${zodiacA_name}띠와 ${zodiacB_name}띠는 서로 다른 가치관과 생활 방식을 선호하는 경향이 있어 초기 적응에 시간이 걸릴 것입니다. ${ageDiff}세의 나이차로 인한 세대 차이나 경험의 차이도 갈등 요소가 될 수 있습니다. 하지만 서로의 다름을 인정하고 존중하며, 꾸준한 대화와 양보를 통해 관계를 개선해나간다면 오히려 더 깊고 성숙한 사랑을 만들어갈 수 있습니다. 급하게 서두르지 말고 충분한 시간을 갖고 서로를 이해해나가는 것이 중요합니다.`;
+} else {
+    text = `힘든 궁합이지만 진정한 사랑으로 극복할 수 있습니다. ${elemA} 기질과 ${elemB} 기질의 차이가 커서 기본적인 사고방식과 행동 패턴이 많이 다를 것입니다. ${zodiacA_name}띠와 ${zodiacB_name}띠는 전통적으로 갈등이 있을 수 있는 조합이며, 일상생활에서도 마찰이 생길 가능성이 높습니다. ${ageDiff}세의 나이차는 소통에 어려움을 줄 수 있고, 서로의 관심사나 생활 리듬이 맞지 않을 수 있습니다. 이런 어려움에도 불구하고 서로에 대한 깊은 사랑과 이해가 있다면, 차이점들을 보완하고 새로운 조화를 만들어낼 수 있습니다. 전문적인 관계 상담을 받는 것도 도움이 될 것이며, 무엇보다 서로에 대한 인내심과 포용력이 관계 성공의 열쇠가 됩니다.`;
+}
+
+// 띠별 특성을 반환하는 함수 추가
+function getZodiacTraits(zhi) {
+    const traits = {
+        '子': '기민함과 적응력',
+        '丑': '성실함과 끈기',
+        '寅': '용기와 리더십',
+        '卯': '온화함과 세심함',
+        '辰': '포용력과 카리스마',
+        '巳': '지혜와 직감',
+        '午': '열정과 활력',
+        '未': '배려심과 협조성',
+        '申': '재치와 창의성',
+        '酉': '완벽주의와 책임감',
+        '戌': '충실함과 정직함',
+        '亥': '순수함과 관대함'
+    };
+    return traits[zhi] || '독특한 개성';
+}
+
+// 오행별 성격을 반환하는 함수 추가
+function getElementPersonality(element) {
+    const personalities = {
+        '木': '성장과 발전을 추구하는 진취적 성격',
+        '火': '열정과 표현력이 뛰어난 외향적 성격',
+        '土': '안정과 신뢰를 중시하는 든든한 성격',
+        '金': '원칙과 완벽을 추구하는 체계적 성격',
+        '水': '유연함과 적응력을 가진 지적인 성격'
+    };
+    return personalities[element] || '독특한 개성';
+}
+        
+        // 단계별 조언 및 갈등 해결 방안 생성
+        const stageAdvice = generateStageAdvice(elementA, elementB, clampedScore);
+        const conflictSolutions = generateConflictSolutions(elementA, elementB);
         
         return {
             score: clampedScore, 
@@ -1371,6 +1497,14 @@ function calcMatch(a, b) {
                 ageScore: ageScore,
                 balanceScore: balanceScore,
                 ageDiff: ageDiff
+            },
+            advice: {
+                stages: stageAdvice,
+                conflicts: conflictSolutions,
+                characteristics: {
+                    A: elementCharacteristics[elementA],
+                    B: elementCharacteristics[elementB]
+                }
             }
         };
         
@@ -1454,6 +1588,46 @@ const html = `
             <div class="card-value">${result.details.balanceScore}점</div>
             <div class="card-description">성향 균형도</div>
         </div>
+    </div>
+    ` : ''}
+    
+    ${result.advice ? `
+    <div class="result-section">
+        <div class="section-title-result">💡 관계 발전 단계별 조언</div>
+        <div class="result-card">
+            <div class="card-header">
+                <div class="card-icon">🌱</div>
+                <div class="card-title">연애 초기</div>
+            </div>
+            <div class="card-description">${result.advice.stages.initial}</div>
+        </div>
+        <div class="result-card">
+            <div class="card-header">
+                <div class="card-icon">💞</div>
+                <div class="card-title">관계 발전기</div>
+            </div>
+            <div class="card-description">${result.advice.stages.development}</div>
+        </div>
+        <div class="result-card">
+            <div class="card-header">
+                <div class="card-icon">💒</div>
+                <div class="card-title">결혼/동거 준비</div>
+            </div>
+            <div class="card-description">${result.advice.stages.commitment}</div>
+        </div>
+    </div>
+    
+    <div class="result-section">
+        <div class="section-title-result">🤝 갈등 해결 가이드</div>
+        ${result.advice.conflicts.map((solution, index) => `
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-icon">${index === 0 ? '🎯' : index === 1 ? '💬' : index === 2 ? '⏰' : '🎪'}</div>
+                    <div class="card-title">해결 방안 ${index + 1}</div>
+                </div>
+                <div class="card-description">${solution}</div>
+            </div>
+        `).join('')}
     </div>
     ` : ''}
 `;
