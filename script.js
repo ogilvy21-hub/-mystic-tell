@@ -1696,31 +1696,34 @@ function calculateYearFortune() {
     showFortuneResult(resultHTML);
 }
 
-// 결과 표시 함수 (수정된 버전)
+// 결과 표시 함수
 function showFortuneResult(html) {
-    // 모든 기존 결과 제거 (더 확실한 방법)
-    const existingResults = document.querySelectorAll('#fortune-result, [id*="fortune"]');
-    existingResults.forEach(result => result.remove());
+    // 기존 결과 제거
+    const existingResults = document.querySelectorAll('#fortune-result');
+existingResults.forEach(result => result.remove());
+    }
     
     // 새 결과 컨테이너 생성
     const resultDiv = document.createElement('div');
     resultDiv.id = 'fortune-result';
-    resultDiv.style.marginTop = '30px';
     resultDiv.innerHTML = html;
     
-    // 현재 신년운세 입력 폼 찾기
-    const yearSection = document.querySelector('.container') || 
-                       document.querySelector('main') || 
-                       document.body;
-    
+    // 신년운세 섹션 다음에 결과 삽입
+    const yearSection = document.querySelector('.container') || document.body;
     yearSection.appendChild(resultDiv);
     
-    // 결과로 부드럽게 스크롤
-    setTimeout(() => {
-        resultDiv.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start',
-            inline: 'nearest'
-        });
-    }, 100);
+    // 결과로 스크롤
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+// 버튼 연결
+setTimeout(function() {
+    const btn = document.getElementById('btnYear');
+    if (btn) {
+        // 기존 이벤트 제거
+        btn.onclick = null;
+        // 새 이벤트 연결
+        btn.addEventListener('click', calculateYearFortune);
+        console.log('신년운세 버튼 업그레이드 완료');
+    }
+}, 1000);
