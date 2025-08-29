@@ -1697,41 +1697,15 @@ function calculateYearFortune() {
 }
 
 function showFortuneResult(html) {
-    // 실제 운세 결과를 포함하는 모든 요소 찾기 (더 광범위하게)
-    const possibleSelectors = [
-        '#fortune-result',
-        '.result-section', 
-        '[class*="result"]',
-        '[id*="result"]', 
-        'div[style*="max-width: 600px"]', // 운세 결과의 특정 스타일
-        'div:has(h2:contains("운세"))', // 운세라는 텍스트가 포함된 div
-    ];
+    // 기존 결과 제거 (원래 방식)
+    const existingResult = document.getElementById('fortune-result');
+    if (existingResult) {
+        existingResult.remove();
+    }
     
-    // 각 선택자로 요소 찾아서 제거
-    possibleSelectors.forEach(selector => {
-        try {
-            const elements = document.querySelectorAll(selector);
-            elements.forEach(el => {
-                if (el.innerHTML.includes('운세') || el.innerHTML.includes('2025년')) {
-                    el.remove();
-                }
-            });
-        } catch(e) {
-            // 일부 선택자는 지원되지 않을 수 있음
-        }
-    });
-    
-    // 더 확실한 방법: 페이지의 모든 div를 검사
-    const allDivs = document.querySelectorAll('div');
-    allDivs.forEach(div => {
-        if (div.innerHTML.includes('2025년') && div.innerHTML.includes('운세') && div.innerHTML.includes('직장운')) {
-            div.remove();
-        }
-    });
-    
-    // 새 결과 생성 (기존과 동일)
+    // 새 결과 생성 (고유 ID 사용)
     const resultDiv = document.createElement('div');
-    resultDiv.id = 'fortune-result';
+    resultDiv.id = 'fortune-result-' + Date.now(); // 시간 기반 고유 ID
     resultDiv.innerHTML = html;
     
     const yearSection = document.querySelector('.container') || document.body;
