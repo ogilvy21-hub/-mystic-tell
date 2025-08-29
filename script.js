@@ -18,7 +18,6 @@ const LS_KEY = 'mystictell_recent_results';
 function normalizeDateInput(s=''){
     return s.trim().replace(/[.\s]+/g, '-').replace(/-+/g,'-').replace(/-$/,'');
 }
-
 function normalizeTimeInput(s=''){
     s = s.trim();
     const am = /오전/.test(s);
@@ -160,7 +159,6 @@ const LUCKY_ITEMS = {
     numbers: ['3', '7', '9', '12', '21', '27', '33', '42', '51', '63'],
     directions: ['동쪽', '서쪽', '남쪽', '북쪽', '동남쪽', '동북쪽', '서남쪽', '서북쪽']
 };
-
 // ===== 타로 데이터 =====
 const TAROT_DETAILS = [
     {
@@ -300,23 +298,17 @@ const TAROT_DETAILS = [
         keywords: "승리, 전진, 의지, 통제"
     }
 ];
-
 const CARD_ICONS = ["🃏","🎩","🌙","👑","🏰","⛪","💕","🏎️","🦁","🕯️","🎡","⚖️","🙃","💀","👼","😈","🗼","⭐","🌙","☀️","📯","🌍"];
-
-
 // ===== 유틸리티 함수들 =====
 function krShiShen(s=''){
     return Object.entries(SHISHEN_KR).reduce((t,[c,k])=>t.replaceAll(c,k), s||'');
 }
-
 function getCalMode(prefix){
     return document.getElementById(`${prefix}-cal-lunar`)?.checked ? 'lunar' : 'solar';
 }
-
 function getLeap(prefix){
     return !!document.getElementById(`${prefix}-leap`)?.checked;
 }
-
 function bindCalToggle(prefix){
     const solar = document.getElementById(`${prefix}-cal-solar`);
     const lunar = document.getElementById(`${prefix}-cal-lunar`);
@@ -330,12 +322,10 @@ function bindCalToggle(prefix){
     lunar?.addEventListener('change', sync);
     sync();
 }
-
 function fmtSolar(solar){
     const y = solar.getYear(), m=String(solar.getMonth()).padStart(2,'0'), d=String(solar.getDay()).padStart(2,'0');
     return `${y}-${m}-${d}`;
 }
-
 function toSolarFromInput(dateStrRaw, timeStrRaw, mode='solar', isLeap=false){
     const dateStr = normalizeDateInput(dateStrRaw||'');
     const timeStr = normalizeTimeInput(timeStrRaw||'');
@@ -404,7 +394,6 @@ const views = {
     'fortune-year' : $('#view-year'),
     'fortune-lotto': $('#view-lotto')
 };
-
 function showFortuneView(route){
     closeAllOverlays();
     Object.values(views).forEach(v => v && (v.style.display = 'none'));
@@ -478,7 +467,6 @@ function openSheet(title,content,savePayload){
         });
     }, 300);
 }
-
 function closeSheet(){
     if(!sheet) return;
     sheet.classList.remove('show');
@@ -529,7 +517,6 @@ $$('.service-item[data-route], .special-item[data-route]').forEach(card => {
         location.hash = '#/fortune/' + view;
     });
 });
-
 // 3. 글로벌 클릭 위임 (data-route 처리)
 document.addEventListener('click', (e) => {
     const el = e.target.closest('[data-route]');
@@ -544,7 +531,6 @@ document.addEventListener('click', (e) => {
         location.hash = '#/' + route;
     }
 });
-
 // ===== 사주/운세 계산 함수들 =====
 function computeBaZi(dateStrRaw, timeStrRaw, calMode='solar', isLeap=false) {
     const solar = toSolarFromInput(dateStrRaw, timeStrRaw, calMode, isLeap);
@@ -586,7 +572,6 @@ function computeBaZi(dateStrRaw, timeStrRaw, calMode='solar', isLeap=false) {
     };
     return { pillars, countsGan, countsZhi, countsAll, lunar, solar, tenGods, calMode, isLeap };
 }
-
 // 오늘의 운세 계산
 function calcEnhancedDailyFortune(birthdate) {
     const today = new Date();
@@ -615,7 +600,6 @@ function calcEnhancedDailyFortune(birthdate) {
             message: messages[messageIndex]
         };
     });
-    
     // 럭키 아이템 계산
     const luckyHash = birthdate.replaceAll('-', '') + dateStr + 'lucky';
     let lHash = 0;
@@ -637,7 +621,6 @@ function calcEnhancedDailyFortune(birthdate) {
         date: dateStr
     };
 }
-
 // ===== 사주 운세풀이 생성 함수들 =====
 function generateLifetimeFortune(r, name = '') {
     const dayGan = (r.pillars.day||'')[0] || '';
@@ -657,7 +640,6 @@ function generateLifetimeFortune(r, name = '') {
     };
     return lifetimeTexts[dayEl] || `${name ? name+'님의' : '이 분의'} 인생은 독특한 개성과 특별한 재능으로 특별한 여정을 걸어가게 될 것입니다.`;
 }
-
 function generateDaeunAnalysis(r, name = '') {
     const birthYear = r.solar ? r.solar.getYear() : 2000;
     const currentYear = new Date().getFullYear();
@@ -681,7 +663,6 @@ function generateDaeunAnalysis(r, name = '') {
     analysis += '앞으로의 10년 단위 대운은 점차 안정되면서도 새로운 기회가 찾아올 것으로 보입니다.';
     return analysis;
 }
-
 function generateDaeunTiming(r, name = '') {
     const birthYear = r.solar ? r.solar.getYear() : 2000;
     const currentYear = new Date().getFullYear();
@@ -698,7 +679,6 @@ function generateDaeunTiming(r, name = '') {
         return `인생의 여유와 깊이를 만끽할 시기입니다. 경험과 지혜를 나누며 의미 있는 시간을 보내세요.`;
     }
 }
-
 function generateCautionPeriods(r, name = '') {
     const dayGan = (r.pillars.day||'')[0] || '';
     const dayEl = GAN_WUXING[dayGan] || '';
@@ -711,7 +691,6 @@ function generateCautionPeriods(r, name = '') {
     };
     return cautionByElement[dayEl] || '변화의 해에는 신중한 판단이 필요합니다. 또한 본명년과 충(沖)이 되는 해에는 큰 변화나 이동이 있을 수 있으니 미리 준비하세요.';
 }
-
 function generateAdvice(r, name = '') {
     const dayGan = (r.pillars.day||'')[0] || '';
     const dayEl = GAN_WUXING[dayGan] || '';
@@ -733,7 +712,6 @@ function generateAdvice(r, name = '') {
     advice += ` 특히 ${weakInfo.ko} 기운이 부족하니 ${weakInfo.boost}로 보완하면 더욱 균형잡힌 삶을 살 수 있습니다.`;
     return advice;
 }
-
 function buildEnhancedSajuResult(r, name = '') {
     const KEYS = ['木','火','土','金','水'];
     const total = KEYS.reduce((a,k)=>a+(r.countsAll[k]||0),0);
@@ -793,7 +771,6 @@ function buildEnhancedSajuResult(r, name = '') {
     </div>`;
     return html;
 }
-
 // ===== HTML 생성 함수들 =====
 function createResultCard(icon, title, value, description, isMain = false, cardType = '') {
     let cardClass = 'result-card';
@@ -808,7 +785,6 @@ function createResultCard(icon, title, value, description, isMain = false, cardT
         <div class="card-description">${description}</div>
     </div>`;
 }
-
 function createPillarsGrid(pillars) {
     return `<div class="pillars-grid">
         <div class="pillar-card">
@@ -829,7 +805,6 @@ function createPillarsGrid(pillars) {
         </div>
     </div>`;
 }
-
 function createElementChart(countsAll) {
     const KEYS = ['木','火','土','金','水'];
     const total = KEYS.reduce((a,k)=>a+(countsAll[k]||0),0);
@@ -849,7 +824,6 @@ function createElementChart(countsAll) {
     html += '</div>';
     return html;
 }
-
 // ===== 타로 기능 =====
 let selectedCards = new Set();
 function initializeTarot() {
@@ -871,7 +845,6 @@ function initializeTarot() {
     }
     resetTarotCards();
 }
-
 function selectTarotCard(cardElement) {
     if (cardElement.classList.contains('revealed')) return;
     const randomTarotIndex = Math.floor(Math.random() * TAROT_DETAILS.length);
@@ -899,7 +872,6 @@ function selectTarotCard(cardElement) {
     });
     reactCrystal(`${selectedCard.name.split('(')[0].trim()}을 뽑았습니다! ✨`);
 }
-
 function drawRandomTarotCard(){
     const available = $$('.tarot-card-back:not(.revealed)');
     if(!available.length){
@@ -909,7 +881,6 @@ function drawRandomTarotCard(){
     const el = available[Math.floor(Math.random()*available.length)];
     setTimeout(()=> selectTarotCard(el), 300);
 }
-
 function resetTarotCards(){
     $$('.tarot-card-back').forEach(card=>{
         card.classList.remove('flipped','revealed');
@@ -920,18 +891,14 @@ function resetTarotCards(){
     closeTarotModal();
     reactCrystal('새로운 카드들이 준비되었습니다 ✨');
 }
-
 function showTarotModal(cardIndex, isUpright) {
     const idx = Math.max(0, Math.min(TAROT_DETAILS.length-1, Number(cardIndex)||0));
     const card = TAROT_DETAILS[idx];
     if(!card) return;
-    
     const modal = $('#tarotModalOverlay');
     const content = $('#tarotModalContent');
     if(!modal || !content) return;
-    
     const currentMeaning = isUpright ? card.upright : card.reversed;
-    
     let meaningText = '';
     if (typeof currentMeaning === 'object') {
         meaningText = `
@@ -955,13 +922,11 @@ function showTarotModal(cardIndex, isUpright) {
     } else {
         meaningText = currentMeaning || '';
     }
-    
     content.innerHTML = `
         <h2 style="text-align:center; margin-bottom:15px;">${card.name}</h2>
         <p style="color:#9ca3af; margin-bottom:20px; line-height:1.6; text-align:center; font-style:italic;">
             ${card.meaning}
         </p>
-        
         <div style="margin-top:20px; padding:15px; background:rgba(255,215,0,0.1); border-radius:10px; border-left:4px solid #ffd700;">
             <h3 style="color:#ffd700; margin-bottom:15px; text-align:center;">
                 ${isUpright ? '🌟 정방향 해석' : '🌀 역방향 해석'}
@@ -970,16 +935,13 @@ function showTarotModal(cardIndex, isUpright) {
                 ${meaningText}
             </div>
         </div>
-        
         ${card.keywords ? `<div style="margin-top:15px; padding:12px; background:rgba(255,255,255,0.05); border-radius:8px; text-align:center;">
             <strong style="color:#ffd700;">🏷️ 핵심 키워드:</strong> ${card.keywords}
         </div>` : ''}
     `;
-    
     modal.style.display='flex';
     requestAnimationFrame(()=> modal.classList.add('show'));
 }
-
 function closeTarotModal(){
     const modal = document.getElementById('tarotModalOverlay');
     if(!modal) return;
@@ -994,7 +956,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeBtn) {
         closeBtn.addEventListener('click', closeTarotModal);
     }
-    
     const overlay = document.getElementById('tarotModalOverlay');
     if (overlay) {
         overlay.addEventListener('click', (e) => {
@@ -1004,14 +965,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
 // ESC 키로도 닫기
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeTarotModal();
     }
 });
-
 // ===== 로또 번호 생성 =====
 function seededRandomFactory(seedStr='') {
     let h = 2166136261 >>> 0;
@@ -1025,7 +984,6 @@ function seededRandomFactory(seedStr='') {
         return (state >>> 0) / 0xFFFFFFFF;
     };
 }
-
 function generateLottoSet(seedStr) {
     const s = String(seedStr ?? '');
     const digits = s.replace(/\D/g, '');
@@ -1055,7 +1013,6 @@ function generateLottoSet(seedStr) {
     }
     return Array.from(picked).sort((a, b) => a - b);
 }
-
 function generateLottoNumbers(birth='') {
     const today = new Date();
     const utc = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
@@ -1239,26 +1196,22 @@ document.addEventListener('keydown', (e) => {
     }
 });
 console.log('✅ MysticTell 초기화 완료');
-
+// 기존 calcMatch 함수를 이 코드로 교체
 // 기존 calcMatch 함수를 이 코드로 교체
 function calcMatch(a, b) {
     if(!a || !b) return {score:null, text:'두 생년월일을 모두 입력하세요.'};
-    
     try {
         // 사주 기본 정보 계산
         const baziA = computeBaZi(a, '', 'solar', false);
         const baziB = computeBaZi(b, '', 'solar', false);
-        
         // 일간, 연지 추출
         const dayGanA = (baziA.pillars.day || '')[0] || '';
         const dayGanB = (baziB.pillars.day || '')[0] || '';
         const yearZhiA = (baziA.pillars.year || '')[1] || '';
         const yearZhiB = (baziB.pillars.year || '')[1] || '';
-        
         // 오행 추출
         const elementA = GAN_WUXING[dayGanA] || '';
         const elementB = GAN_WUXING[dayGanB] || '';
-        
         // 1. 오행 궁합 계산
         let elementScore = 50;
         const compatible = {
@@ -1268,7 +1221,6 @@ function calcMatch(a, b) {
         const conflicted = {
             '木': ['金'], '火': ['水'], '土': ['木'], '金': ['火'], '水': ['土']
         };
-        
         if (compatible[elementA] && compatible[elementA].includes(elementB)) {
             elementScore += 25; // 상생 관계
         } else if (conflicted[elementA] && conflicted[elementA].includes(elementB)) {
@@ -1276,7 +1228,6 @@ function calcMatch(a, b) {
         } else if (elementA === elementB) {
             elementScore += 15; // 같은 오행
         }
-        
         // 2. 띠 궁합 계산 (12지지 기반)
         let zodiacScore = 50;
         const zodiacCompatibility = {
@@ -1293,7 +1244,6 @@ function calcMatch(a, b) {
             '戌': { best: ['寅', '午'], good: ['卯', '未'], bad: ['辰'] }, // 개
             '亥': { best: ['卯', '未'], good: ['寅', '戌'], bad: ['巳'] }  // 돼지
         };
-        
         const zodiacA = zodiacCompatibility[yearZhiA];
         if (zodiacA) {
             if (zodiacA.best && zodiacA.best.includes(yearZhiB)) {
@@ -1304,7 +1254,6 @@ function calcMatch(a, b) {
                 zodiacScore -= 20;
             }
         }
-        
         // 3. 나이차 고려
         let ageScore = 50;
         const yearA = baziA.solar ? baziA.solar.getYear() : 2000;
@@ -1314,20 +1263,17 @@ function calcMatch(a, b) {
         else if (ageDiff <= 5) ageScore += 15;
         else if (ageDiff <= 8) ageScore += 5;
         else if (ageDiff > 15) ageScore -= 15;
-        
         // 4. 오행 균형도 고려
         let balanceScore = 50;
         const KEYS = ['木','火','土','金','水'];
         const totalA = KEYS.reduce((a,k)=>a+(baziA.countsAll[k]||0),0);
         const totalB = KEYS.reduce((a,k)=>a+(baziB.countsAll[k]||0),0);
-        
         if (totalA > 0 && totalB > 0) {
             const balanceA = Math.max(...KEYS.map(k => baziA.countsAll[k]||0)) - Math.min(...KEYS.map(k => baziA.countsAll[k]||0));
             const balanceB = Math.max(...KEYS.map(k => baziB.countsAll[k]||0)) - Math.min(...KEYS.map(k => baziB.countsAll[k]||0));
             const balanceDiff = Math.abs(balanceA - balanceB);
             balanceScore = Math.max(20, 70 - balanceDiff * 8);
         }
-        
         // 최종 점수 (가중평균)
         const finalScore = Math.round(
             elementScore * 0.35 + 
@@ -1336,7 +1282,6 @@ function calcMatch(a, b) {
             balanceScore * 0.15
         );
         const clampedScore = Math.max(15, Math.min(95, finalScore));
-        
         // 오행별 성격 특성 및 조언 데이터
         const elementCharacteristics = {
             '木': {
@@ -1370,18 +1315,15 @@ function calcMatch(a, b) {
                 dateStyle: '지적 호기심 자극하는 활동, 책방이나 강의, 여행'
             }
         };
-        
         // 관계 발전 단계별 조언 생성
         function generateStageAdvice(elemA, elemB, score) {
             const charA = elementCharacteristics[elementA];
             const charB = elementCharacteristics[elementB];
-            
             let advice = {
                 initial: '', // 연애 초기
                 development: '', // 관계 발전기
                 commitment: '' // 결혼/동거 준비
             };
-            
             if (score >= 70) {
                 advice.initial = `연애 초기에는 ${charA?.dateStyle || '취향에 맞는 활동'}과 ${charB?.dateStyle || '상대방이 좋아하는 활동'}을 번갈아가며 즐겨보세요. 서로의 다른 매력을 발견할 수 있습니다.`;
                 advice.development = `관계가 깊어지면서 ${charA?.communication || '솔직한 소통'}과 ${charB?.communication || '진심 어린 대화'}를 통해 더욱 끈끈한 유대감을 형성할 수 있습니다.`;
@@ -1395,100 +1337,13 @@ function calcMatch(a, b) {
                 advice.development = `관계 발전에는 더 많은 인내와 노력이 필요합니다. ${charA?.conflicts || '상대방의 관점을 이해하려 노력'}하고 ${charB?.conflicts || '배려하는 마음'}을 가져주세요.`;
                 advice.commitment = `장기적인 관계를 위해서는 전문적인 상담이나 관계 개선 프로그램을 함께 참여하는 것도 도움이 될 수 있습니다.`;
             }
-            
             return advice;
         }
-        
-        // 2025년 신년운세 계산 함수
-function calc2025Fortune(birthDate, name = '') {
-    if (!birthDate) {
-        return { idx: null, text: '생년월일을 입력하세요.' };
-    }
-    
-    try {
-        // 사주 기본 정보 계산
-        const bazi = computeBaZi(birthDate, '', 'solar', false);
-        const birthYear = bazi.solar ? bazi.solar.getYear() : 2000;
-        const currentAge = 2025 - birthYear;
-        
-        // 생년월일 숫자 합계로 기본 인덱스 계산
-        const [y, m, d] = birthDate.split('-').map(Number);
-        let baseIndex = (y + m + d + 2025) % YEAR_2025_DATA.personalTypes.length;
-        
-        // 일간 오행으로 보정
-        const dayGan = (bazi.pillars.day || '')[0] || '';
-        const dayElement = GAN_WUXING[dayGan] || '';
-        const elementModifier = {
-            '木': 0, '火': 1, '土': 2, '金': 3, '水': 4
-        };
-        const finalIndex = (baseIndex + (elementModifier[dayElement] || 0)) % YEAR_2025_DATA.personalTypes.length;
-        
-        const personalFortune = YEAR_2025_DATA.personalTypes[finalIndex];
-        
-        // 나이대별 특별 조언 생성
-        function getAgeSpecificAdvice(age) {
-            if (age < 25) {
-                return '젊은 에너지를 활용하여 다양한 경험을 쌓으세요. 실패를 두려워하지 말고 적극적으로 도전하는 것이 중요합니다. 2025년은 인생의 기반을 다지는 소중한 시기입니다.';
-            } else if (age < 35) {
-                return '경력 발전과 인생 설계가 중요한 시기입니다. 을사년의 지혜로운 에너지를 활용해 장기적인 계획을 세우고 실행해보세요. 이 시기의 선택이 향후 10년을 좌우합니다.';
-            } else if (age < 50) {
-                return '경험과 체력이 조화를 이루는 황금기입니다. 리더십을 발휘하고 후배들을 이끌어가며 자신만의 전문 영역을 구축하세요. 안정과 도전의 균형이 중요합니다.';
-            } else if (age < 65) {
-                return '풍부한 경험을 바탕으로 지혜로운 판단을 하는 시기입니다. 축적된 지식과 인맥을 활용해 새로운 가치를 창출하고, 사회에 기여할 수 있는 방법을 찾아보세요.';
-            } else {
-                return '인생의 여유와 깊이를 만끽할 시기입니다. 그동안의 경험을 후세에 전하고, 진정한 행복과 만족을 추구하는데 집중하세요. 건강관리가 가장 중요합니다.';
-            }
-        }
-        
-        // 월별 운세 포인트 생성 (간단히)
-        function getMonthlyHighlights() {
-            const luckyMonths = personalFortune.luckyPeriods.split(', ');
-            return {
-                best: luckyMonths[0] || '상반기',
-                good: luckyMonths[1] || '중반기',
-                careful: personalFortune.cautions.includes('3월') ? '3월' : '하반기'
-            };
-        }
-        
-        return {
-            idx: finalIndex,
-            yearInfo: YEAR_2025_DATA.yearInfo,
-            personalFortune: personalFortune,
-            ageAdvice: getAgeSpecificAdvice(currentAge),
-            monthlyHighlights: getMonthlyHighlights(),
-            birthYear: birthYear,
-            currentAge: currentAge,
-            name: name,
-            element: dayElement
-        };
-        
-    } catch (error) {
-        console.error('신년운세 계산 오류:', error);
-        // 오류 시 기존 방식으로 폴백
-        const [y, m, d] = birthDate.split('-').map(Number);
-        const k = (y + m + d + 2025) % 6;
-        const basicTypes = [
-            '도약의 해: 새로운 기회와 성장이 기다립니다.',
-            '성장의 해: 배움에 투자할수록 큰 보상이 따릅니다.',
-            '관계의 해: 인간관계에서 새로운 기회를 발견하세요.',
-            '안정의 해: 기반을 다지고 재정관리에 집중하세요.',
-            '전환의 해: 변화를 받아들이고 새로운 시작을 준비하세요.',
-            '휴식의 해: 건강관리와 에너지 충전에 집중하세요.'
-        ];
-        return {
-            idx: k,
-            text: basicTypes[k]
-        };
-    }
-}
-        
         // 갈등 해결 방안 생성
         function generateConflictSolutions(elemA, elemB) {
             const charA = elementCharacteristics[elementA];
             const charB = elementCharacteristics[elementB];
-            
             let solutions = [];
-            
             // 오행 상극 관계별 특화된 조언
             if (conflicted[elementA] && conflicted[elementA].includes(elementB)) {
                 if (elementA === '木' && elementB === '金') {
@@ -1499,28 +1354,23 @@ function calc2025Fortune(birthDate, name = '') {
                     solutions.push('토(안정)와 목(변화)의 갈등: 변화가 필요할 때는 작은 단계부터 시작해서 점진적으로 진행하세요.');
                 }
             }
-            
             // 공통 갈등 해결 방안
             solutions.push(`의사소통: ${charA?.communication || '서로의 소통 방식을 이해'}하고 ${charB?.communication || '상대방에게 맞는 방식으로 대화'}하세요.`);
             solutions.push(`갈등 예방: ${charA?.conflicts || '상대방의 성향을 미리 파악'}하고 ${charB?.conflicts || '배려하는 마음'}을 가져주세요.`);
             solutions.push('타이밍: 민감한 대화는 두 분 모두 컨디션이 좋고 시간 여유가 있을 때 하세요.');
             solutions.push('공통 관심사: 서로 다른 취향 사이에서 공통분모를 찾아 함께 즐길 수 있는 활동을 개발하세요.');
-            
             return solutions;
         }
-        
         // 상세 분석 텍스트 생성
         const elementNames = {'木':'목','火':'화','土':'토','金':'금','水':'수'};
         const elemA = elementNames[elementA] || '?';
         const elemB = elementNames[elementB] || '?';
-        
         const zodiacNames = {
             '子':'쥐','丑':'소','寅':'호랑이','卯':'토끼','辰':'용','巳':'뱀',
             '午':'말','未':'양','申':'원숭이','酉':'닭','戌':'개','亥':'돼지'
         };
         const zodiacA_name = zodiacNames[yearZhiA] || '?';
         const zodiacB_name = zodiacNames[yearZhiB] || '?';
-        
         // 기존 text 생성 부분을 이렇게 교체
 let text = '';
 if (clampedScore >= 85) {
@@ -1534,7 +1384,6 @@ if (clampedScore >= 85) {
 } else {
     text = `힘든 궁합이지만 진정한 사랑으로 극복할 수 있습니다. ${elemA} 기질과 ${elemB} 기질의 차이가 커서 기본적인 사고방식과 행동 패턴이 많이 다를 것입니다. ${zodiacA_name}띠와 ${zodiacB_name}띠는 전통적으로 갈등이 있을 수 있는 조합이며, 일상생활에서도 마찰이 생길 가능성이 높습니다. ${ageDiff}세의 나이차는 소통에 어려움을 줄 수 있고, 서로의 관심사나 생활 리듬이 맞지 않을 수 있습니다. 이런 어려움에도 불구하고 서로에 대한 깊은 사랑과 이해가 있다면, 차이점들을 보완하고 새로운 조화를 만들어낼 수 있습니다. 전문적인 관계 상담을 받는 것도 도움이 될 것이며, 무엇보다 서로에 대한 인내심과 포용력이 관계 성공의 열쇠가 됩니다.`;
 }
-
 // 띠별 특성을 반환하는 함수 추가
 function getZodiacTraits(zhi) {
     const traits = {
@@ -1553,7 +1402,6 @@ function getZodiacTraits(zhi) {
     };
     return traits[zhi] || '독특한 개성';
 }
-
 // 오행별 성격을 반환하는 함수 추가
 function getElementPersonality(element) {
     const personalities = {
@@ -1565,11 +1413,9 @@ function getElementPersonality(element) {
     };
     return personalities[element] || '독특한 개성';
 }
-        
         // 단계별 조언 및 갈등 해결 방안 생성
         const stageAdvice = generateStageAdvice(elementA, elementB, clampedScore);
         const conflictSolutions = generateConflictSolutions(elementA, elementB);
-        
         return {
             score: clampedScore, 
             text: text,
@@ -1591,7 +1437,6 @@ function getElementPersonality(element) {
                 }
             }
         };
-        
     } catch (error) {
         console.error('궁합 계산 오류:', error);
         // 오류 시 기존 방식으로 폴백
@@ -1605,7 +1450,6 @@ function getElementPersonality(element) {
         return {score: s, text: text};
     }
 }
-
 // 궁합 버튼 이벤트 (하나로 통합)
 setTimeout(() => {
     const btn = document.getElementById('btnMatch');
@@ -1615,14 +1459,11 @@ setTimeout(() => {
             const b = document.getElementById('match-b').value;
             const nameA = document.getElementById('match-name-a')?.value || '첫 번째 분';
             const nameB = document.getElementById('match-name-b')?.value || '두 번째 분';
-            
             const result = calcMatch(a, b);
-            
             if(result.score === null) {
                 alert(result.text);
                 return;
             }
-            
             // 기존 setTimeout 내부의 HTML 생성 부분을 이렇게 교체
 const html = `
     <div class="result-section">
@@ -1636,7 +1477,6 @@ const html = `
             <div class="card-description">${result.text}</div>
         </div>
     </div>
-    
     ${result.details ? `
     <div class="result-section">
         <div class="section-title-result">🔍 분야별 상세 분석</div>
@@ -1674,7 +1514,6 @@ const html = `
         </div>
     </div>
     ` : ''}
-    
     ${result.advice ? `
     <div class="result-section">
         <div class="section-title-result">💡 관계 발전 단계별 조언</div>
@@ -1700,7 +1539,6 @@ const html = `
             <div class="card-description">${result.advice.stages.commitment}</div>
         </div>
     </div>
-    
     <div class="result-section">
         <div class="section-title-result">🤝 갈등 해결 가이드</div>
         ${result.advice.conflicts.map((solution, index) => `
@@ -1719,468 +1557,3 @@ const html = `
         });
     }
 }, 3000);
-
-// ======= 2025년 신년운세 시스템 (수정된 버전) =======
-
-// 기존 YEAR_2025_DATA가 있다면 삭제하고 새로 정의
-if (typeof YEAR_2025_DATA !== 'undefined') {
-    delete window.YEAR_2025_DATA;
-}
-
-// 2025년 신년운세 데이터
-const YEAR_2025_DATA_NEW = {
-    yearInfo: {
-        element: '乙巳', // 을사년 (목뱀)
-        animal: '뱀',
-        description: '2025년은 을사년(乙巳年)으로 "푸른 뱀의 해"입니다. 지혜롭고 신중한 변화, 내면의 성찰과 전환의 시기입니다.',
-        keywords: ['지혜', '변화', '직감', '성찰', '전환', '성장'],
-        theme: '내적 성장과 지혜로운 변화의 해'
-    },
-    
-    // 개인별 운세 유형 (생년월일 기반 12가지)
-    personalTypes: [
-        {
-            name: '큰 도약의 해',
-            icon: '🚀',
-            summary: '오랫동안 준비해온 일들이 결실을 맺는 해입니다.',
-            description: '2025년은 그동안 꾸준히 준비하고 노력해온 것들이 드디어 빛을 발하는 한 해가 될 것입니다. 새로운 직책으로의 승진, 사업의 성공, 또는 인생의 중요한 전환점을 맞이할 가능성이 높습니다. 을사년의 뱀 기운이 당신의 잠재력을 깨우고, 기회의 문을 활짝 열어줄 것입니다.',
-            sectors: {
-                career: '승진이나 이직의 기회가 많습니다. 새로운 프로젝트를 맡게 되거나 리더십을 발휘할 기회가 생깁니다. 전문성을 인정받아 더 큰 무대로 나아갈 수 있습니다.',
-                love: '새로운 만남이나 기존 관계의 발전이 기대됩니다. 결혼을 앞둔 커플은 좋은 소식이 있을 수 있으며, 싱글인 경우 운명적인 만남이 기다리고 있습니다.',
-                health: '전반적으로 활력이 넘치는 한 해입니다. 새로운 운동이나 건강관리법을 시작하기 좋은 시기입니다. 다만 과로는 금물입니다.',
-                money: '투자나 부동산에서 좋은 결과를 얻을 수 있습니다. 부업이나 새로운 수익원을 개발할 기회도 있습니다. 재정 상황이 크게 개선될 것입니다.'
-            },
-            luckyPeriods: '3월, 7월, 11월',
-            cautions: '성급한 결정보다는 신중한 계획을 세우세요. 기회가 와도 충분히 검토한 후 행동하세요.',
-            advice: '기회가 왔을 때 주저하지 말고 도전하세요. 하지만 최소한의 준비는 반드시 필요합니다. 당신의 능력을 믿고 자신감을 가지세요.',
-            keywords: ['성취', '도약', '성공', '리더십']
-        },
-        {
-            name: '성장과 학습의 해',
-            icon: '📚',
-            summary: '새로운 지식과 기술을 습득하며 자신을 발전시키는 해입니다.',
-            description: '2025년은 배움과 성장에 집중해야 할 한 해입니다. 을사년의 뱀은 지혜의 상징으로, 당신에게 새로운 지식과 기술을 습득할 기회를 가져다 줄 것입니다. 교육 투자나 자기계발이 미래에 큰 자산이 될 것입니다.',
-            sectors: {
-                career: '전문성 향상을 위한 교육이나 자격증 취득이 도움됩니다. 새로운 기술을 배우거나 해외 연수 기회가 생길 수 있습니다.',
-                love: '지적인 대화를 나눌 수 있는 상대방과 좋은 인연이 됩니다. 함께 배우고 성장할 수 있는 관계가 발전할 것입니다.',
-                health: '정신적 스트레스 관리가 중요합니다. 명상이나 요가 등 마음의 평정을 찾는 활동이 도움이 됩니다.',
-                money: '교육비나 자기계발 투자를 아끼지 마세요. 당장은 지출이지만 장기적으로 큰 수익으로 돌아올 것입니다.'
-            },
-            luckyPeriods: '2월, 6월, 9월',
-            cautions: '너무 많은 것을 한꺼번에 배우려 하지 마세요. 우선순위를 정하고 단계적으로 접근하세요.',
-            advice: '배움에 인색하지 마세요. 지금 투자한 시간과 노력이 미래의 가장 큰 자산이 됩니다. 호기심을 잃지 말고 계속 도전하세요.',
-            keywords: ['학습', '성장', '지식', '발전']
-        },
-        {
-            name: '인간관계 확장의 해',
-            icon: '🤝',
-            summary: '새로운 사람들과의 만남이 많아지고 기존 관계가 더욱 돈독해지는 해입니다.',
-            description: '2025년은 인간관계의 폭이 크게 넓어지는 한 해가 될 것입니다. 뱀의 사교적 면모가 당신의 매력을 돋보이게 하고, 다양한 분야의 사람들과 의미 있는 관계를 맺을 수 있습니다. 네트워킹이 새로운 기회로 이어질 것입니다.',
-            sectors: {
-                career: '팀워크와 협업에서 큰 성과를 얻을 수 있습니다. 동료들과의 관계가 업무 성공의 열쇠가 됩니다.',
-                love: '친구의 소개로 좋은 인연을 만날 가능성이 높습니다. 사교 모임에서 특별한 만남이 있을 수 있습니다.',
-                health: '사교 활동이 많아져 피로가 누적될 수 있습니다. 적절한 휴식과 건강관리가 필요합니다.',
-                money: '공동 투자나 파트너십에서 수익이 기대됩니다. 신뢰할 수 있는 파트너와의 협력이 성공을 가져올 것입니다.'
-            },
-            luckyPeriods: '1월, 5월, 10월',
-            cautions: '모든 사람을 다 만족시키려 하지 마세요. 진정성 있는 관계에 집중하세요.',
-            advice: '사람을 소중히 여기고 진정성 있게 대하세요. 당신이 먼저 도움을 베풀면 더 큰 도움이 돌아올 것입니다.',
-            keywords: ['인맥', '소통', '협력', '신뢰']
-        },
-        {
-            name: '안정과 정착의 해',
-            icon: '🏠',
-            summary: '그동안의 노력이 안정적인 기반으로 자리잡는 해입니다.',
-            description: '2025년은 안정과 정착에 집중해야 할 한 해입니다. 을사년의 토 기운이 당신에게 견고한 기반을 마련해주고, 재정과 건강 모든 면에서 안정감을 가져다 줄 것입니다. 급한 변화보다는 현재를 더욱 견고히 하는 시기입니다.',
-            sectors: {
-                career: '현재 맡은 일에 충실하며 전문성을 깊게 파는 것이 유리합니다. 안정적인 성과로 신뢰를 쌓아가세요.',
-                love: '진지한 관계로 발전하거나 결혼을 생각해볼 좋은 시기입니다. 안정적이고 성숙한 사랑이 기다리고 있습니다.',
-                health: '규칙적인 생활 패턴을 유지하면 건강이 크게 좋아집니다. 꾸준한 운동과 균형잡힌 식단이 중요합니다.',
-                money: '저축과 안정적인 투자로 자산을 꾸준히 늘려가세요. 부동산 투자를 고려해볼 만한 시기입니다.'
-            },
-            luckyPeriods: '4월, 8월, 12월',
-            cautions: '안주하지 말고 꾸준한 발전을 추구하세요. 현상유지만으로는 뒤처질 수 있습니다.',
-            advice: '급하게 변화를 추구하기보다는 현재를 견고히 하는데 집중하세요. 기초가 탄탄해야 더 높이 올라갈 수 있습니다.',
-            keywords: ['안정', '기반', '정착', '성숙']
-        },
-        {
-            name: '전환과 변화의 해',
-            icon: '🔄',
-            summary: '인생의 중요한 전환점이 되는 해입니다.',
-            description: '2025년은 당신 인생의 중요한 전환점이 되는 한 해입니다. 뱀이 허물을 벗듯이, 당신도 과거의 낡은 모습을 벗고 새로운 모습으로 거듭날 것입니다. 변화를 두려워하지 말고 적극적으로 받아들이세요.',
-            sectors: {
-                career: '업종 변경이나 새로운 분야 진출을 고려해볼 시기입니다. 과감한 도전이 성공으로 이어질 것입니다.',
-                love: '기존 관계의 변화나 새로운 시작이 예상됩니다. 운명적인 만남이나 중요한 결정의 시기가 될 것입니다.',
-                health: '생활 패턴의 변화가 필요할 수 있습니다. 스트레스 관리와 충분한 휴식으로 변화에 적응하세요.',
-                money: '투자 포트폴리오를 재검토하고 새로운 투자처를 모색해보세요. 변화하는 시장에 발맞춰 나가야 합니다.'
-            },
-            luckyPeriods: '3월, 7월, 10월',
-            cautions: '급격한 변화보다는 단계적인 전환을 추구하세요. 충분한 준비와 계획이 필요합니다.',
-            advice: '변화를 받아들이고 적응하는 유연성이 필요합니다. 끝은 새로운 시작임을 잊지 마세요.',
-            keywords: ['전환', '변화', '새출발', '혁신']
-        },
-        {
-            name: '휴식과 충전의 해',
-            icon: '🧘',
-            summary: '그동안 쌓인 피로를 풀고 에너지를 충전하는 해입니다.',
-            description: '2025년은 몸과 마음의 건강을 최우선으로 해야 할 한 해입니다. 을사년의 차분한 에너지가 당신에게 휴식과 회복의 시간을 선사할 것입니다. 무리하지 말고 자신을 돌보는 시간을 가지세요.',
-            sectors: {
-                career: '현상 유지하며 체력과 에너지를 비축하는 시기입니다. 큰 도전보다는 안정적인 성과에 집중하세요.',
-                love: '여유로운 마음으로 상대방을 배려하며 관계를 유지하세요. 함께 휴식을 취할 수 있는 시간을 늘리세요.',
-                health: '정기 건강검진과 생활 습관 개선에 신경쓰세요. 몸의 신호를 잘 들어보고 무리하지 마세요.',
-                money: '큰 지출은 피하고 안정적인 관리에 집중하세요. 건강 관련 투자는 아끼지 마세요.'
-            },
-            luckyPeriods: '2월, 6월, 11월',
-            cautions: '너무 게으르지 말고 적당한 활동량을 유지하세요. 완전한 정체는 오히려 독이 됩니다.',
-            advice: '몸과 마음의 건강을 최우선으로 하세요. 휴식도 생산적인 활동입니다. 에너지를 충전해야 더 멀리 갈 수 있습니다.',
-            keywords: ['휴식', '건강', '회복', '재충전']
-        },
-        {
-            name: '창조와 혁신의 해',
-            icon: '💡',
-            summary: '창의적 아이디어가 샘솟고 혁신적인 시도에서 성공하는 해입니다.',
-            description: '2025년은 창의력이 폭발하는 한 해가 될 것입니다. 뱀의 지혜로운 직감이 당신에게 혁신적인 아이디어를 선사하고, 남들이 생각하지 못한 새로운 방법으로 성공을 거둘 수 있습니다.',
-            sectors: {
-                career: 'R&D, 기획, 창작 분야에서 두각을 나타낼 수 있습니다. 혁신적인 아이디어로 인정받을 것입니다.',
-                love: '독특하고 매력적인 상대방과의 인연이 기대됩니다. 창의적인 데이트나 특별한 이벤트로 관계가 발전할 것입니다.',
-                health: '창조적 활동을 통해 스트레스를 해소하세요. 예술이나 취미 활동이 정신 건강에 도움이 됩니다.',
-                money: '새로운 수익원 개발이나 창업을 고려해볼 시기입니다. 독창적인 아이디어가 돈이 될 수 있습니다.'
-            },
-            luckyPeriods: '1월, 5월, 9월',
-            cautions: '너무 급진적이지 말고 점진적인 혁신을 추구하세요. 시장의 반응을 살펴가며 진행하세요.',
-            advice: '새로운 시각으로 문제를 바라보고 창의적 해결방안을 모색하세요. 남들과 다른 길이 성공의 지름길입니다.',
-            keywords: ['창의', '혁신', '아이디어', '독창성']
-        },
-        {
-            name: '리더십 발휘의 해',
-            icon: '👑',
-            summary: '타고난 리더십을 발휘하여 주변을 이끌어가는 해입니다.',
-            description: '2025년은 당신의 리더십이 빛을 발하는 한 해가 될 것입니다. 을사년 뱀의 카리스마가 당신의 지도력을 한층 강화시키고, 많은 사람들이 당신을 따르게 될 것입니다.',
-            sectors: {
-                career: '관리직으로의 승진이나 프로젝트 리더 역할이 기대됩니다. 팀을 이끄는 능력이 인정받을 것입니다.',
-                love: '관계에서 주도권을 갖되 상대방을 배려하는 마음을 잊지 마세요. 성숙한 리더십으로 관계를 이끌어가세요.',
-                health: '책임감이 많아져 스트레스가 증가할 수 있습니다. 적절한 운동으로 스트레스를 해소하세요.',
-                money: '투자 결정에서 신중함과 과감함의 균형이 필요합니다. 리더십을 발휘해 좋은 투자처를 찾아보세요.'
-            },
-            luckyPeriods: '3월, 8월, 12월',
-            cautions: '독단적이지 말고 팀원들의 의견도 경청하세요. 진정한 리더는 소통하는 리더입니다.',
-            advice: '솔선수범하며 다른 사람들에게 모범이 되어주세요. 진정한 리더는 섬기는 자임을 잊지 마세요.',
-            keywords: ['리더십', '책임감', '카리스마', '통솔력']
-        },
-        {
-            name: '조화와 협력의 해',
-            icon: '🤲',
-            summary: '혼자보다는 함께할 때 더 큰 힘을 발휘하는 해입니다.',
-            description: '2025년은 협력과 조화의 힘을 느끼는 한 해가 될 것입니다. 뱀의 유연함이 당신에게 다른 사람과 조화를 이루는 지혜를 가져다 주고, 팀워크를 통해 개인으로는 불가능한 성과를 거둘 수 있습니다.',
-            sectors: {
-                career: '팀 프로젝트나 파트너십에서 큰 성과를 얻을 수 있습니다. 협업 능력이 성공의 열쇠가 됩니다.',
-                love: '상호 존중과 이해를 바탕으로 한 관계가 발전합니다. 함께 성장하는 파트너십이 형성될 것입니다.',
-                health: '규칙적인 생활과 적당한 사회 활동이 도움됩니다. 혼자만의 시간과 사교 시간의 균형을 맞추세요.',
-                money: '공동 투자나 협력 사업에서 수익 기회가 있습니다. 신뢰할 수 있는 파트너와 함께 하세요.'
-            },
-            luckyPeriods: '4월, 7월, 11월',
-            cautions: '자신의 의견도 적절히 표현하며 균형을 유지하세요. 일방적인 양보만으로는 좋은 관계가 될 수 없습니다.',
-            advice: '다른 사람과의 협력을 통해 시너지를 창출하세요. 겸손함이 성공의 열쇠입니다.',
-            keywords: ['협력', '조화', '팀워크', '균형']
-        },
-        {
-            name: '도전과 모험의 해',
-            icon: '🎯',
-            summary: '새로운 도전에 과감히 나서며 모험정신을 발휘하는 해입니다.',
-            description: '2025년은 모험과 도전의 한 해가 될 것입니다. 을사년 뱀의 과감함이 당신에게 새로운 영역에 도전할 용기를 주고, 위험을 감수하더라도 더 큰 성취를 이룰 수 있게 해줄 것입니다.',
-            sectors: {
-                career: '새로운 프로젝트나 해외 진출의 기회가 있을 수 있습니다. 과감한 도전이 큰 성공으로 이어질 것입니다.',
-                love: '새로운 환경에서 예상치 못한 만남이 있을 수 있습니다. 모험적인 데이트나 여행에서 사랑이 싹틀 것입니다.',
-                health: '활동량이 많아지니 부상 방지에 주의하세요. 새로운 스포츠나 운동을 시작하기 좋은 시기입니다.',
-                money: '고위험 고수익 투자에서 기회가 있지만 신중하게 접근하세요. 모험적 투자는 여유 자금으로만 하세요.'
-            },
-            luckyPeriods: '2월, 6월, 10월',
-            cautions: '무모한 도전보다는 준비된 모험을 하세요. 위험 관리를 철저히 하고 도전하세요.',
-            advice: '계산된 위험을 감수하며 새로운 영역에 도전해보세요. 시도하지 않으면 성공도 없습니다.',
-            keywords: ['도전', '모험', '용기', '개척']
-        },
-        {
-            name: '완성과 성취의 해',
-            icon: '🏆',
-            summary: '오랫동안 추진해온 일들이 마무리되며 성과를 거두는 해입니다.',
-            description: '2025년은 그동안의 모든 노력이 결실을 맺는 한 해가 될 것입니다. 을사년의 완성 에너지가 당신의 프로젝트들을 성공적으로 마무리하게 하고, 목표했던 성과를 충분히 거둘 수 있게 해줄 것입니다.',
-            sectors: {
-                career: '프로젝트 완료나 목표 달성으로 크게 인정받을 것입니다. 승진이나 포상의 기회가 있을 수 있습니다.',
-                love: '관계가 안정되고 더욱 깊어지는 시기입니다. 결혼이나 약혼 등 중요한 결정을 할 수 있습니다.',
-                health: '그동안의 건강관리 노력이 결실을 맺습니다. 하지만 성취 후 긴장이 풀려 관리가 소홀해지지 않도록 주의하세요.',
-                money: '투자 수익 실현이나 큰 거래 성사가 기대됩니다. 재정 목표 달성으로 경제적 안정을 확보할 수 있습니다.'
-            },
-            luckyPeriods: '1월, 8월, 12월',
-            cautions: '성취에 만족하지 말고 다음 목표를 준비하세요. 완성은 끝이 아니라 새로운 시작입니다.',
-            advice: '마지막까지 최선을 다하며 완벽한 마무리를 추구하세요. 끝이 좋아야 모든 것이 좋습니다.',
-            keywords: ['완성', '성취', '결실', '목표달성']
-        }
-    ]
-
-// 2025년 신년운세 계산 함수 (새 버전)
-function calcNewYearFortune2025(birthDate, name = '') {
-    if (!birthDate) {
-        return { idx: null, text: '생년월일을 입력하세요.' };
-    }
-    
-    try {
-        const [year, month, day] = birthDate.split('-').map(Number);
-        if (!year || !month || !day) {
-            throw new Error('잘못된 날짜 형식입니다.');
-        }
-        
-        const currentAge = 2025 - year;
-        
-        // 생년월일 숫자 합계로 기본 인덱스 계산
-        let baseIndex = (year + month + day + 2025) % YEAR_2025_DATA_NEW.personalTypes.length;
-        
-        // 출생년도 끝자리로 추가 보정
-        const yearLastDigit = year % 10;
-        const finalIndex = (baseIndex + yearLastDigit) % YEAR_2025_DATA_NEW.personalTypes.length;
-        
-        const personalFortune = YEAR_2025_DATA_NEW.personalTypes[finalIndex];
-        
-        // 나이대별 특별 조언 생성
-        function getAgeSpecificAdvice(age) {
-            if (age < 25) {
-                return '젊은 에너지를 활용하여 다양한 경험을 쌓으세요. 실패를 두려워하지 말고 적극적으로 도전하는 것이 중요합니다. 2025년은 인생의 기반을 다지는 소중한 시기입니다.';
-            } else if (age < 35) {
-                return '경력 발전과 인생 설계가 중요한 시기입니다. 을사년의 지혜로운 에너지를 활용해 장기적인 계획을 세우고 실행해보세요. 이 시기의 선택이 향후 10년을 좌우합니다.';
-            } else if (age < 50) {
-                return '경험과 체력이 조화를 이루는 황금기입니다. 리더십을 발휘하고 후배들을 이끌어가며 자신만의 전문 영역을 구축하세요. 안정과 도전의 균형이 중요합니다.';
-            } else if (age < 65) {
-                return '풍부한 경험을 바탕으로 지혜로운 판단을 하는 시기입니다. 축적된 지식과 인맥을 활용해 새로운 가치를 창출하고, 사회에 기여할 수 있는 방법을 찾아보세요.';
-            } else {
-                return '인생의 여유와 깊이를 만끽할 시기입니다. 그동안의 경험을 후세에 전하고, 진정한 행복과 만족을 추구하는데 집중하세요. 건강관리가 가장 중요합니다.';
-            }
-        }
-        
-        return {
-            success: true,
-            idx: finalIndex,
-            yearInfo: YEAR_2025_DATA_NEW.yearInfo,
-            personalFortune: personalFortune,
-            ageAdvice: getAgeSpecificAdvice(currentAge),
-            birthYear: year,
-            currentAge: currentAge,
-            name: name
-        };
-        
-    } catch (error) {
-        console.error('신년운세 계산 오류:', error);
-        // 오류 시 기본 결과 반환
-        const [y, m, d] = birthDate.split('-').map(Number);
-        const k = (y + m + d + 2025) % 6;
-        const basicTypes = [
-            '도약의 해: 새로운 기회와 성장이 기다립니다.',
-            '성장의 해: 배움에 투자할수록 큰 보상이 따릅니다.',
-            '관계의 해: 인간관계에서 새로운 기회를 발견하세요.',
-            '안정의 해: 기반을 다지고 재정관리에 집중하세요.',
-            '전환의 해: 변화를 받아들이고 새로운 시작을 준비하세요.',
-            '휴식의 해: 건강관리와 에너지 충전에 집중하세요.'
-        ];
-        return {
-            success: false,
-            idx: k,
-            text: basicTypes[k]
-        };
-    }
-}
-
-// 신년운세 HTML 생성 함수 (새 버전)
-function createNewYearFortuneHTML2025(result, name) {
-    const nameTitle = name ? `${name}님의 ` : '';
-    
-    if (!result.success || !result.personalFortune) {
-        // 폴백 모드
-        return `
-            <div class="result-section">
-                <div class="section-title-result">🐍 ${nameTitle}2025년 을사년 운세</div>
-                <div class="result-card main-result">
-                    <div class="card-value">${result.text}</div>
-                </div>
-            </div>`;
-    }
-    
-    const { yearInfo, personalFortune, ageAdvice } = result;
-    
-    return `
-        <div class="result-section">
-            <div class="section-title-result">🐍 ${nameTitle}2025년 을사년 운세</div>
-            
-            <div class="year-overview-card">
-                <div class="year-character">
-                    <div class="year-element">${yearInfo.element}</div>
-                    <div class="year-desc">${yearInfo.description}</div>
-                    <div class="year-keywords">
-                        ${yearInfo.keywords.map(keyword => `<span class="keyword-tag">${keyword}</span>`).join('')}
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="result-section">
-            <div class="section-title-result">${personalFortune.icon} ${nameTitle}개인 운세</div>
-            
-            <div class="result-card main-result">
-                <div class="card-header">
-                    <div class="card-icon">${personalFortune.icon}</div>
-                    <div class="card-title">${personalFortune.name}</div>
-                </div>
-                <div class="card-description">${personalFortune.description}</div>
-            </div>
-        </div>
-        
-        <div class="result-section">
-            <div class="section-title-result">📊 분야별 2025년 운세</div>
-            
-            <div class="result-card">
-                <div class="card-header">
-                    <div class="card-icon">💼</div>
-                    <div class="card-title">직장운</div>
-                </div>
-                <div class="card-description">${personalFortune.sectors.career}</div>
-            </div>
-            
-            <div class="result-card">
-                <div class="card-header">
-                    <div class="card-icon">💕</div>
-                    <div class="card-title">연애운</div>
-                </div>
-                <div class="card-description">${personalFortune.sectors.love}</div>
-            </div>
-            
-            <div class="result-card">
-                <div class="card-header">
-                    <div class="card-icon">💪</div>
-                    <div class="card-title">건강운</div>
-                </div>
-                <div class="card-description">${personalFortune.sectors.health}</div>
-            </div>
-            
-            <div class="result-card">
-                <div class="card-header">
-                    <div class="card-icon">💰</div>
-                    <div class="card-title">재물운</div>
-                </div>
-                <div class="card-description">${personalFortune.sectors.money}</div>
-            </div>
-        </div>
-        
-        <div class="result-section">
-            <div class="section-title-result">📅 2025년 주요 시기</div>
-            
-            <div class="timeline-card">
-                <div class="timeline-item">
-                    <div class="timeline-icon">🍀</div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">특히 좋은 달</div>
-                        <div class="timeline-desc">${personalFortune.luckyPeriods}</div>
-                    </div>
-                </div>
-                <div class="timeline-item caution">
-                    <div class="timeline-icon">⚠️</div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">주의할 점</div>
-                        <div class="timeline-desc">${personalFortune.cautions}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="result-section">
-            <div class="section-title-result">🎯 ${result.currentAge}세 맞춤 조언</div>
-            <div class="result-card">
-                <div class="card-header">
-                    <div class="card-icon">🧭</div>
-                    <div class="card-title">인생 단계별 가이드</div>
-                </div>
-                <div class="card-description">${ageAdvice}</div>
-            </div>
-        </div>
-        
-        <div class="result-section">
-            <div class="section-title-result">💡 2025년 핵심 실천 조언</div>
-            <div class="result-card">
-                <div class="card-header">
-                    <div class="card-icon">⭐</div>
-                    <div class="card-title">성공의 열쇠</div>
-                </div>
-                <div class="card-description">${personalFortune.advice}</div>
-            </div>
-        </div>
-        
-        <div class="info-box">
-            <div class="info-title">📝 2025년 실천 체크리스트</div>
-            <div class="info-content">
-                <strong>핵심 테마:</strong> ${personalFortune.name}<br/>
-                <strong>주요 키워드:</strong> ${personalFortune.keywords.join(', ')}<br/>
-                <strong>실천 포인트:</strong> ${personalFortune.advice}
-            </div>
-        </div>
-    `;
-}
-
-// 신년운세 버튼 이벤트 (새 버전)
-function initNewYearFortuneButton() {
-    const btn = document.getElementById('btnYear');
-    if (!btn) {
-        console.log('btnYear 버튼을 찾을 수 없습니다. 3초 후 다시 시도합니다.');
-        setTimeout(initNewYearFortuneButton, 3000);
-        return;
-    }
-
-    // 기존 이벤트 리스너 제거
-    btn.replaceWith(btn.cloneNode(true));
-    const newBtn = document.getElementById('btnYear');
-    
-    newBtn.addEventListener('click', function() {
-        console.log('신년운세 버튼이 클릭되었습니다.');
-        
-        const birthDateInput = document.getElementById('year-birth');
-        const nameInput = document.getElementById('year-name');
-        
-        if (!birthDateInput) {
-            console.error('year-birth 입력 필드를 찾을 수 없습니다.');
-            alert('입력 필드를 찾을 수 없습니다.');
-            return;
-        }
-        
-        const birthDate = birthDateInput.value;
-        const name = nameInput ? nameInput.value.trim() : '';
-        
-        if (!birthDate) {
-            alert('생년월일을 입력하세요.');
-            return;
-        }
-        
-        console.log('입력값:', { birthDate, name });
-        
-        const result = calcNewYearFortune2025(birthDate, name);
-        console.log('계산 결과:', result);
-        
-        const html = createNewYearFortuneHTML2025(result, name);
-        
-        // openSheet 함수가 있는지 확인
-        if (typeof openSheet === 'function') {
-            openSheet('2025년 상세 신년운세', html, {
-                type: 'enhanced-year',
-                birthDate, name, result
-            });
-        } else {
-            console.error('openSheet 함수를 찾을 수 없습니다.');
-            // 임시로 alert으로 결과 표시
-            alert('신년운세가 계산되었습니다. 콘솔을 확인하세요.');
-            console.log('생성된 HTML:', html);
-        }
-    });
-    
-    console.log('신년운세 버튼 이벤트가 성공적으로 연결되었습니다.');
-}
-
-// 페이지 로드 후 초기화
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initNewYearFortuneButton);
-} else {
-    initNewYearFortuneButton();
-}
