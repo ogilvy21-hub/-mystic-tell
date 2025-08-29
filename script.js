@@ -1701,7 +1701,6 @@ function showFortuneResult(html) {
     // 기존 결과 제거
     const existingResults = document.querySelectorAll('#fortune-result');
 existingResults.forEach(result => result.remove());
-    }
     
     // 새 결과 컨테이너 생성
     const resultDiv = document.createElement('div');
