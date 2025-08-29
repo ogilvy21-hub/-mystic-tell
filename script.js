@@ -1558,6 +1558,26 @@ const html = `
     }
 }, 3000);
 
+function showFortuneResult(html) {
+    // 기존 결과 제거
+    const existingResult = document.getElementById('fortune-result');
+    if (existingResult) {
+        existingResult.remove();
+    }
+    
+    // 새 결과 컨테이너 생성
+    const resultDiv = document.createElement('div');
+    resultDiv.id = 'fortune-result';
+    resultDiv.innerHTML = html;
+    
+    // 신년운세 섹션 다음에 결과 삽입
+    const yearSection = document.querySelector('.container') || document.body;
+    yearSection.appendChild(resultDiv);
+    
+    // 결과로 스크롤
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 setTimeout(function() {
     const btn = document.getElementById('btnYear');
     if (btn) {
