@@ -1588,7 +1588,7 @@ function calcMatch(a, b) {
             
             return advice;
         }
-
+        
         // 2025년 신년운세 계산 함수
 function calc2025Fortune(birthDate, name = '') {
     if (!birthDate) {
@@ -2065,3 +2065,347 @@ setTimeout(() => {
         });
     }
 }, 3000);
+
+// 2025년 을사년 데이터 정의
+const YEAR_2025_DATA = {
+    yearInfo: {
+        element: "을사(乙巳)",
+        description: "지혜와 변화의 해",
+        keywords: ["지혜", "변화", "성장", "통찰", "재생"]
+    },
+    personalTypes: [
+        {
+            name: "도약의 해",
+            icon: "🚀",
+            description: "새로운 기회와 성장이 기다리는 한 해입니다. 적극적인 도전 정신으로 목표를 향해 나아가세요.",
+            keywords: ["도전", "성장", "기회"],
+            sectors: {
+                career: "새로운 프로젝트나 직책에 도전할 기회가 찾아옵니다. 적극적인 자세로 임하면 큰 성과를 거둘 수 있습니다.",
+                love: "새로운 만남이나 관계 발전의 기회가 많습니다. 진심을 다해 소통하면 좋은 결과가 있을 것입니다.",
+                health: "활동적인 생활과 규칙적인 운동이 건강운을 높여줍니다. 스트레스 관리에 신경 쓰세요.",
+                money: "투자나 사업에서 좋은 기회가 보입니다. 신중한 판단과 철저한 준비가 필요합니다."
+            },
+            luckyPeriods: "3월, 6월, 9월",
+            cautions: "성급한 결정은 금물. 충분한 검토 후 행동하세요.",
+            advice: "변화를 두려워하지 말고 새로운 도전에 적극적으로 나서세요. 꾸준한 노력이 큰 결실을 맺을 것입니다."
+        },
+        {
+            name: "성장의 해",
+            icon: "🌱",
+            description: "배움과 발전에 집중하는 한 해입니다. 자기계발에 투자하면 큰 보상을 받게 됩니다.",
+            keywords: ["학습", "발전", "자기계발"],
+            sectors: {
+                career: "기술 향상과 전문성 개발에 집중하면 좋은 평가를 받을 것입니다. 교육이나 연수 기회를 놓치지 마세요.",
+                love: "서로를 이해하고 성장시키는 관계가 중요합니다. 깊이 있는 대화를 통해 관계가 발전할 것입니다.",
+                health: "몸과 마음의 균형을 맞추는 것이 중요합니다. 명상이나 요가 같은 활동이 도움됩니다.",
+                money: "단기 이익보다 장기적 관점의 투자가 좋습니다. 교육비 지출은 미래의 자산이 될 것입니다."
+            },
+            luckyPeriods: "4월, 7월, 10월",
+            cautions: "조급함보다는 꾸준함이 중요합니다.",
+            advice: "지식과 기술 습득에 적극 투자하세요. 지금의 노력이 미래의 큰 자산이 될 것입니다."
+        },
+        {
+            name: "관계의 해",
+            icon: "🤝",
+            description: "인간관계에서 새로운 기회를 발견하는 한 해입니다. 네트워킹과 소통이 중요합니다.",
+            keywords: ["인맥", "협력", "소통"],
+            sectors: {
+                career: "동료들과의 협력이 성공의 열쇠입니다. 팀워크를 중시하고 리더십을 발휘하세요.",
+                love: "진솔한 마음으로 다가가면 좋은 인연을 만날 수 있습니다. 기존 관계도 더욱 깊어질 것입니다.",
+                health: "스트레스 해소를 위해 가족이나 친구들과 시간을 보내세요. 사회적 활동이 건강에 도움됩니다.",
+                money: "인맥을 통한 새로운 수익 기회가 생깁니다. 신뢰할 수 있는 파트너와 함께하세요."
+            },
+            luckyPeriods: "2월, 5월, 8월",
+            cautions: "너무 많은 사람을 신뢰하지 마세요. 진짜 친구를 구별하는 것이 중요합니다.",
+            advice: "진심어린 관심과 배려로 인간관계를 넓혀가세요. 좋은 인연이 인생을 바꿀 수 있습니다."
+        },
+        {
+            name: "안정의 해",
+            icon: "🏠",
+            description: "기반을 다지고 안정을 추구하는 한 해입니다. 차근차근 계획을 실행해나가세요.",
+            keywords: ["안정", "기반", "계획"],
+            sectors: {
+                career: "기존 업무에 충실하며 실력을 쌓는 것이 중요합니다. 성실함이 인정받을 때입니다.",
+                love: "안정적인 관계 발전에 집중하세요. 결혼이나 동거 등 구체적인 미래 계획을 세워보세요.",
+                health: "규칙적인 생활습관과 꾸준한 건강관리가 필요합니다. 정기검진도 잊지 마세요.",
+                money: "저축과 안전한 투자에 집중하세요. 무리한 투자보다는 안정성을 중시하는 것이 좋습니다."
+            },
+            luckyPeriods: "1월, 6월, 11월",
+            cautions: "변화에 대한 두려움이 기회를 놓치게 할 수 있습니다.",
+            advice: "안정을 추구하되 성장을 포기하지 마세요. 단계적으로 목표를 달성해나가는 것이 중요합니다."
+        },
+        {
+            name: "전환의 해",
+            icon: "🔄",
+            description: "변화를 받아들이고 새로운 시작을 준비하는 한 해입니다. 유연성이 핵심입니다.",
+            keywords: ["변화", "전환", "새출발"],
+            sectors: {
+                career: "직장 이직이나 업무 변화가 있을 수 있습니다. 열린 마음으로 새로운 환경에 적응하세요.",
+                love: "관계의 변화나 새로운 만남이 예상됩니다. 과거에 얽매이지 말고 앞을 보세요.",
+                health: "생활패턴의 변화가 건강에 영향을 줄 수 있습니다. 적응 기간 동안 더욱 세심한 관리가 필요합니다.",
+                money: "수입원의 변화나 새로운 투자 기회가 생깁니다. 리스크 관리에 신경 쓰세요."
+            },
+            luckyPeriods: "3월, 7월, 12월",
+            cautions: "너무 많은 변화를 한번에 시도하지 마세요.",
+            advice: "변화는 기회입니다. 두려움보다는 설렘으로 새로운 시작을 맞이하세요."
+        },
+        {
+            name: "휴식의 해",
+            icon: "🧘",
+            description: "충전과 회복에 집중하는 한 해입니다. 내면을 돌아보고 에너지를 축적하세요.",
+            keywords: ["휴식", "충전", "회복"],
+            sectors: {
+                career: "무리하지 말고 현재 상황을 유지하며 실력을 기르는 시기입니다. 번아웃 주의하세요.",
+                love: "서두르지 말고 자연스러운 흐름을 기다리세요. 혼자만의 시간도 소중히 여기세요.",
+                health: "충분한 휴식과 수면이 가장 중요합니다. 스트레스 해소와 힐링에 집중하세요.",
+                money: "지출을 줄이고 저축에 집중하는 것이 좋습니다. 큰 투자는 피하고 안정성을 우선하세요."
+            },
+            luckyPeriods: "4월, 8월, 10월",
+            cautions: "너무 소극적이 되지 않도록 주의하세요.",
+            advice: "지금은 충전의 시기입니다. 몸과 마음을 돌보며 다음 도약을 준비하세요."
+        }
+    ]
+};
+
+// 간단한 오행 매핑
+const GAN_WUXING = {
+    '甲': '木', '乙': '木',
+    '丙': '火', '丁': '火', 
+    '戊': '土', '己': '土',
+    '庚': '金', '辛': '金',
+    '壬': '水', '癸': '水'
+};
+
+// 2025년 신년운세 계산 함수 (수정된 버전)
+function calc2025Fortune(birthDate, name = '') {
+    if (!birthDate) {
+        return { idx: null, text: '생년월일을 입력하세요.' };
+    }
+    
+    try {
+        // 생년월일 파싱
+        const [year, month, day] = birthDate.split('-').map(Number);
+        if (!year || !month || !day) {
+            throw new Error('잘못된 날짜 형식입니다.');
+        }
+        
+        const currentAge = 2025 - year;
+        
+        // 생년월일 숫자 합계로 기본 인덱스 계산
+        let baseIndex = (year + month + day + 2025) % YEAR_2025_DATA.personalTypes.length;
+        
+        // 출생년도 끝자리로 추가 보정
+        const yearLastDigit = year % 10;
+        const finalIndex = (baseIndex + yearLastDigit) % YEAR_2025_DATA.personalTypes.length;
+        
+        const personalFortune = YEAR_2025_DATA.personalTypes[finalIndex];
+        
+        // 나이대별 특별 조언 생성
+        function getAgeSpecificAdvice(age) {
+            if (age < 25) {
+                return '젊은 에너지를 활용하여 다양한 경험을 쌓으세요. 실패를 두려워하지 말고 적극적으로 도전하는 것이 중요합니다. 2025년은 인생의 기반을 다지는 소중한 시기입니다.';
+            } else if (age < 35) {
+                return '경력 발전과 인생 설계가 중요한 시기입니다. 을사년의 지혜로운 에너지를 활용해 장기적인 계획을 세우고 실행해보세요. 이 시기의 선택이 향후 10년을 좌우합니다.';
+            } else if (age < 50) {
+                return '경험과 체력이 조화를 이루는 황금기입니다. 리더십을 발휘하고 후배들을 이끌어가며 자신만의 전문 영역을 구축하세요. 안정과 도전의 균형이 중요합니다.';
+            } else if (age < 65) {
+                return '풍부한 경험을 바탕으로 지혜로운 판단을 하는 시기입니다. 축적된 지식과 인맥을 활용해 새로운 가치를 창출하고, 사회에 기여할 수 있는 방법을 찾아보세요.';
+            } else {
+                return '인생의 여유와 깊이를 만끽할 시기입니다. 그동안의 경험을 후세에 전하고, 진정한 행복과 만족을 추구하는데 집중하세요. 건강관리가 가장 중요합니다.';
+            }
+        }
+        
+        return {
+            idx: finalIndex,
+            yearInfo: YEAR_2025_DATA.yearInfo,
+            personalFortune: personalFortune,
+            ageAdvice: getAgeSpecificAdvice(currentAge),
+            birthYear: year,
+            currentAge: currentAge,
+            name: name
+        };
+        
+    } catch (error) {
+        console.error('신년운세 계산 오류:', error);
+        // 오류 시 기본 결과 반환
+        const [y, m, d] = birthDate.split('-').map(Number);
+        const k = (y + m + d + 2025) % 6;
+        const basicTypes = [
+            '도약의 해: 새로운 기회와 성장이 기다립니다.',
+            '성장의 해: 배움에 투자할수록 큰 보상이 따릅니다.',
+            '관계의 해: 인간관계에서 새로운 기회를 발견하세요.',
+            '안정의 해: 기반을 다지고 재정관리에 집중하세요.',
+            '전환의 해: 변화를 받아들이고 새로운 시작을 준비하세요.',
+            '휴식의 해: 건강관리와 에너지 충전에 집중하세요.'
+        ];
+        return {
+            idx: k,
+            text: basicTypes[k]
+        };
+    }
+}
+
+// 신년운세 HTML 생성 함수
+function create2025FortuneHTML(result, name) {
+    const nameTitle = name ? `${name}님의 ` : '';
+    
+    if (!result.personalFortune) {
+        // 폴백 모드
+        return `<div class="result-section">
+            <div class="section-title-result">🐍 ${nameTitle}2025년 을사년 운세</div>
+            <div class="result-card main-result">
+                <div class="card-value">${result.text}</div>
+            </div>
+        </div>`;
+    }
+    
+    const { yearInfo, personalFortune, ageAdvice } = result;
+    
+    return `
+        <div class="result-section">
+            <div class="section-title-result">🐍 ${nameTitle}2025년 을사년 운세</div>
+            
+            <div class="year-overview-card">
+                <div class="year-character">
+                    <div class="year-element">${yearInfo.element}</div>
+                    <div class="year-desc">${yearInfo.description}</div>
+                    <div class="year-keywords">
+                        ${yearInfo.keywords.map(keyword => `<span class="keyword-tag">${keyword}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="result-section">
+            <div class="section-title-result">${personalFortune.icon} ${nameTitle}개인 운세</div>
+            
+            <div class="result-card main-result">
+                <div class="card-header">
+                    <div class="card-icon">${personalFortune.icon}</div>
+                    <div class="card-title">${personalFortune.name}</div>
+                </div>
+                <div class="card-description">${personalFortune.description}</div>
+            </div>
+        </div>
+        
+        <div class="result-section">
+            <div class="section-title-result">📊 분야별 2025년 운세</div>
+            
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-icon">💼</div>
+                    <div class="card-title">직장운</div>
+                </div>
+                <div class="card-description">${personalFortune.sectors.career}</div>
+            </div>
+            
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-icon">💕</div>
+                    <div class="card-title">연애운</div>
+                </div>
+                <div class="card-description">${personalFortune.sectors.love}</div>
+            </div>
+            
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-icon">💪</div>
+                    <div class="card-title">건강운</div>
+                </div>
+                <div class="card-description">${personalFortune.sectors.health}</div>
+            </div>
+            
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-icon">💰</div>
+                    <div class="card-title">재물운</div>
+                </div>
+                <div class="card-description">${personalFortune.sectors.money}</div>
+            </div>
+        </div>
+        
+        <div class="result-section">
+            <div class="section-title-result">📅 2025년 주요 시기</div>
+            
+            <div class="timeline-card">
+                <div class="timeline-item">
+                    <div class="timeline-icon">🍀</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">특히 좋은 달</div>
+                        <div class="timeline-desc">${personalFortune.luckyPeriods}</div>
+                    </div>
+                </div>
+                <div class="timeline-item caution">
+                    <div class="timeline-icon">⚠️</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">주의할 점</div>
+                        <div class="timeline-desc">${personalFortune.cautions}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="result-section">
+            <div class="section-title-result">🎯 ${result.currentAge}세 맞춤 조언</div>
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-icon">🧭</div>
+                    <div class="card-title">인생 단계별 가이드</div>
+                </div>
+                <div class="card-description">${ageAdvice}</div>
+            </div>
+        </div>
+        
+        <div class="result-section">
+            <div class="section-title-result">💡 2025년 핵심 실천 조언</div>
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-icon">⭐</div>
+                    <div class="card-title">성공의 열쇠</div>
+                </div>
+                <div class="card-description">${personalFortune.advice}</div>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <div class="info-title">📝 2025년 실천 체크리스트</div>
+            <div class="info-content">
+                <strong>핵심 테마:</strong> ${personalFortune.name}<br/>
+                <strong>주요 키워드:</strong> ${personalFortune.keywords.join(', ')}<br/>
+                <strong>실천 포인트:</strong> ${personalFortune.advice}
+            </div>
+        </div>
+    `;
+}
+
+// 신년운세 버튼 이벤트
+setTimeout(() => {
+    const btn = document.getElementById('btnYear');
+    if (btn) {
+        btn.addEventListener('click', () => {
+            const birthDate = document.getElementById('year-birth').value;
+            const name = document.getElementById('year-name')?.value?.trim() || '';
+            
+            if (!birthDate) {
+                alert('생년월일을 입력하세요.');
+                return;
+            }
+            
+            const result = calc2025Fortune(birthDate, name);
+            const html = create2025FortuneHTML(result, name);
+            
+            // openSheet 함수가 있다고 가정
+            if (typeof openSheet === 'function') {
+                openSheet('2025년 상세 신년운세', html, {
+                    type: 'enhanced-year',
+                    birthDate, name, result
+                });
+            } else {
+                console.log('결과 HTML:', html);
+                // 결과를 표시할 다른 방법이 필요함
+            }
+        });
+    } else {
+        console.error('btnYear 버튼을 찾을 수 없습니다.');
+    }
+}, 1000); // 3초에서 1초로 줄임
