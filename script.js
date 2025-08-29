@@ -1558,7 +1558,6 @@ const html = `
     }
 }, 3000);
 
-// 가장 단순한 신년운세만
 setTimeout(function() {
     const btn = document.getElementById('btnYear');
     if (btn) {
@@ -1568,7 +1567,21 @@ setTimeout(function() {
                 alert('생년월일을 입력하세요');
                 return;
             }
-            alert('2025년 을사년 운세: 지혜와 변화의 해입니다');
+            
+            // 팝업 대신 페이지에 결과 표시
+            const resultHTML = `
+                <div style="background: #f8f9fa; padding: 20px; margin: 20px 0; border-radius: 8px; text-align: center;">
+                    <h3 style="color: #2c3e50;">2025년 을사년 운세</h3>
+                    <p style="font-size: 18px; color: #e74c3c;">지혜와 변화의 해입니다</p>
+                    <p style="color: #7f8c8d;">을사년 뱀의 해, 내면의 성찰과 전환의 시기</p>
+                </div>
+            `;
+            
+            // 기존 결과 제거 후 새 결과 추가
+            const existingResult = document.querySelector('div[style*="background: #f8f9fa"]');
+            if (existingResult) existingResult.remove();
+            
+            document.body.insertAdjacentHTML('beforeend', resultHTML);
         };
     }
 }, 1000);
