@@ -1944,30 +1944,6 @@ setTimeout(() => {
                 alert(result.text);
                 return;
             }
-
-            // 신년운세 버튼 이벤트
-setTimeout(() => {
-    const btn = document.getElementById('btnYear');
-    if (btn) {
-        btn.addEventListener('click', () => {
-            const birthDate = document.getElementById('year-birth').value;
-            const name = document.getElementById('year-name')?.value?.trim() || '';
-            
-            if (!birthDate) {
-                alert('생년월일을 입력하세요.');
-                return;
-            }
-            
-            const result = calc2025Fortune(birthDate, name);
-            const html = create2025FortuneHTML(result, name);
-            
-            openSheet('2025년 상세 신년운세', html, {
-                type: 'enhanced-year',
-                birthDate, name, result
-            });
-        });
-    }
-}, 3000);
             
             // 기존 setTimeout 내부의 HTML 생성 부분을 이렇게 교체
 const html = `
@@ -2062,6 +2038,30 @@ const html = `
     ` : ''}
 `;
  openSheet('궁합 결과', html);
+        });
+    }
+}, 3000);
+
+// 신년운세 버튼 이벤트
+setTimeout(() => {
+    const btn = document.getElementById('btnYear');
+    if (btn) {
+        btn.addEventListener('click', () => {
+            const birthDate = document.getElementById('year-birth').value;
+            const name = document.getElementById('year-name')?.value?.trim() || '';
+            
+            if (!birthDate) {
+                alert('생년월일을 입력하세요.');
+                return;
+            }
+            
+            const result = calc2025Fortune(birthDate, name);
+            const html = create2025FortuneHTML(result, name);
+            
+            openSheet('2025년 상세 신년운세', html, {
+                type: 'enhanced-year',
+                birthDate, name, result
+            });
         });
     }
 }, 3000);
