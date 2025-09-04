@@ -1557,6 +1557,7 @@ const html = `
         });
     }
 }, 3000);
+
 // 신년운세 버튼 이벤트 리스너 (setTimeout 제거)
 const btnYear = document.getElementById('btnYear');
 if (btnYear) {
@@ -1652,7 +1653,6 @@ if (btnYear) {
     });
 }
 
-// ===== 신년운세 기능 추가 =====
 function generateNewYearFortune(birthdate, name = '') {
     const currentYear = new Date().getFullYear();
     const seed = birthdate.replaceAll('-', '') + currentYear.toString();
@@ -1663,32 +1663,41 @@ function generateNewYearFortune(birthdate, name = '') {
         hash = (hash * 37 + seed.charCodeAt(i)) % 100000;
     }
     
-    // 월별 운세 생성
+    // 월별 운세 생성 (각 월마다 다른 조언)
+    const monthAdvices = [
+        '새해를 시작하는 설렘과 함께 좋은 기회가 찾아올 것입니다.',
+        '사랑과 인간관계에서 특별한 만남이나 화해가 있을 수 있습니다.',
+        '새로운 계획을 세우기 좋은 시기입니다. 봄의 기운을 타고 도약하세요.',
+        '재정 관리에 신경쓰고, 건강한 생활 습관을 만들어가세요.',
+        '가정과 직장에서 안정적인 흐름을 만들어갈 수 있는 달입니다.',
+        '중요한 시험이나 결정이 있다면 신중하게 준비하세요.',
+        '휴식과 재충전이 필요한 시기입니다. 무리하지 마세요.',
+        '새로운 도전이나 학습에 적극적으로 나서면 좋은 결과가 있을 것입니다.',
+        '인간관계에서 조화를 이루고 협력이 중요한 시기입니다.',
+        '목표 달성을 위한 마지막 스퍼트를 할 시기입니다.',
+        '감사하는 마음으로 한 해를 되돌아보는 시간을 가져보세요.',
+        '한 해를 마무리하며 새로운 계획을 세우기 좋은 달입니다.'
+    ];
+    
     const months = [];
     for (let month = 1; month <= 12; month++) {
-        const monthSeed = hash + month * 1000;
-        const score = Math.abs(monthSeed) % 100;
+        // 각 월마다 다른 시드 생성
+        const monthSeed = hash + month * 1234 + birthdate.charCodeAt(month % birthdate.length) * 567;
+        const score = (Math.abs(monthSeed) % 80) + 20; // 20~99점 범위
+        
         let level = '보통';
-        let advice = '';
+        if (score >= 85) level = '최상';
+        else if (score >= 70) level = '상';
+        else if (score >= 55) level = '보통';
+        else if (score >= 40) level = '주의';
+        else level = '조심';
         
-        if (score >= 80) {
-            level = '최상';
-            advice = '새로운 기회와 행운이 가득한 달입니다. 적극적으로 도전해보세요!';
-        } else if (score >= 65) {
-            level = '상';
-            advice = '전반적으로 좋은 흐름의 달입니다. 계획한 일들이 순조롭게 진행될 것입니다.';
-        } else if (score >= 50) {
-            level = '보통';
-            advice = '안정적인 한 달입니다. 현재 상황을 유지하며 차근차근 나아가세요.';
-        } else if (score >= 35) {
-            level = '주의';
-            advice = '신중함이 필요한 달입니다. 중요한 결정은 미루는 것이 좋겠습니다.';
-        } else {
-            level = '조심';
-            advice = '어려움이 있을 수 있는 달입니다. 건강관리와 인간관계에 특히 신경쓰세요.';
-        }
-        
-        months.push({ month, score, level, advice });
+        months.push({ 
+            month, 
+            score, 
+            level, 
+            advice: monthAdvices[month - 1]
+        });
     }
     
     // 연간 종합 운세
