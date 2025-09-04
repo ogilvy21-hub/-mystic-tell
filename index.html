@@ -8,8 +8,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-W7FLS9VD');</script>
 <!-- End Google Tag Manager -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6295549457389423" crossorigin="anonymous"></script>
 <meta name="google-adsense-account" content="ca-pub-6295549457389423">
+<!-- AdSense 조건부 로드 -->
+<script>
+if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6295549457389423';
+    script.crossOrigin = 'anonymous';
+    document.head.appendChild(script);
+}
+</script>
 <meta charset="UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -103,7 +112,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
        data-ad-slot="6877404467"
        data-ad-format="auto"
        data-full-width-responsive="true"
-       data-adtest="on"></ins> <!-- 로딩 확인 후 on 제거 -->
+     
 </div>
 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
