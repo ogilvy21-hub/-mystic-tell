@@ -502,6 +502,20 @@ function handleRoute() {
     const match = hash.match(/^#\/([^/]+)(?:\/([^/]+))?/);
     const tab = match?.[1] || 'home';
     const sub = match?.[2] || '';
+    
+    // 홈 탭일 때 모바일에서 서비스 섹션으로 스크롤
+    if (tab === 'home' && window.innerWidth <= 768) {
+        setTimeout(() => {
+            const serviceTitle = document.querySelector('.section-title');
+            if (serviceTitle && serviceTitle.textContent.includes('핵심 운세 서비스')) {
+                serviceTitle.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start' 
+                });
+            }
+        }, 100);
+    }
+    
     setActiveTab(tab);
     if (tab === 'fortune') {
         const viewMap = {
