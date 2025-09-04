@@ -355,6 +355,7 @@ function hideSplash(){
     const main = $('#mainContent');
     const nav = $('#bottomNav');
     console.log('🚀 스플래시 숨김 시작...');
+    
     if (splash) {
         splash.style.display = 'none';
         splash.classList.add('hidden');
@@ -367,6 +368,20 @@ function hideSplash(){
         nav.style.display = 'flex';
         nav.classList.add('show');
     }
+    
+    // 모바일에서 "핵심 운세 서비스" 섹션으로 스크롤
+    if (window.innerWidth <= 768) {
+        setTimeout(() => {
+            const serviceTitle = document.querySelector('.section-title');
+            if (serviceTitle && serviceTitle.textContent.includes('핵심 운세 서비스')) {
+                serviceTitle.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start' 
+                });
+            }
+        }, 500);
+    }
+    
     // 초기 라우팅
     if (!location.hash) location.hash = '#/home';
 }
