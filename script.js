@@ -1557,4 +1557,164 @@ const html = `
         });
     }
 }, 3000);
+// 신년운세 버튼 이벤트 리스너 (setTimeout 제거)
+const btnYear = document.getElementById('btnYear');
+if (btnYear) {
+    btnYear.addEventListener('click', () => {
+        const birth = document.getElementById('year-birth')?.value;
+        const name = document.getElementById('year-name')?.value?.trim() || '';
+        
+        if (!birth || !birth.trim()) {
+            alert('생년월일을 입력하세요.');
+            return;
+        }
+        
+        try {
+            const result = generateNewYearFortune(birth, name);
+            
+            let html = `
+            <div class="result-section">
+                <div class="section-title-result">🎊 ${name ? name+'님의 ' : ''}${result.currentYear}년 신년운세</div>
+                <div class="result-card main-result">
+                    <div class="card-header">
+                        <div class="card-icon">🌟</div>
+                        <div class="card-title">연간 종합 운세</div>
+                    </div>
+                    <div class="card-value">${result.totalScore}점</div>
+                    <div class="card-description">${result.yearlyFortune}</div>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <div class="section-title-result">📅 월별 운세 달력</div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+            `;
+            
+            result.months.forEach(month => {
+                const levelColor = {
+                    '최상': '#10b981',
+                    '상': '#3b82f6', 
+                    '보통': '#6b7280',
+                    '주의': '#f59e0b',
+                    '조심': '#ef4444'
+                };
+                
+                html += `
+                <div class="result-card" style="border-left: 4px solid ${levelColor[month.level]};">
+                    <div class="card-header">
+                        <div class="card-icon">${month.month}월</div>
+                        <div class="card-title">${month.level}</div>
+                    </div>
+                    <div class="card-value">${month.score}점</div>
+                    <div class="card-description" style="font-size: 0.85em;">${month.advice}</div>
+                </div>
+                `;
+            });
+            
+            html += `
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <div class="section-title-result">🎯 주목할 시기</div>
+                <div class="result-card">
+                    <div class="card-header">
+                        <div class="card-icon">🌟</div>
+                        <div class="card-title">최고의 달</div>
+                    </div>
+                    <div class="card-value">${result.bestMonth.month}월 (${result.bestMonth.score}점)</div>
+                    <div class="card-description">이달에는 특히 좋은 기회가 많을 것입니다. 중요한 결정이나 새로운 시작을 계획해보세요.</div>
+                </div>
+                <div class="result-card">
+                    <div class="card-header">
+                        <div class="card-icon">⚠️</div>
+                        <div class="card-title">주의할 달</div>
+                    </div>
+                    <div class="card-value">${result.worstMonth.month}월 (${result.worstMonth.score}점)</div>
+                    <div class="card-description">이달에는 신중함이 필요합니다. 건강관리와 안전에 더욱 신경쓰시기 바랍니다.</div>
+                </div>
+            </div>
+            `;
+            
+            openSheet(`${result.currentYear}년 신년운세`, html, {
+                type: 'year-fortune',
+                birth: birth,
+                name: name,
+                data: result
+            });
+            
+            reactCrystal(`${result.currentYear}년 운세를 확인했습니다! ✨`);
+            
+        } catch (e) {
+            console.error(e);
+            alert('신년운세 계산 중 오류가 발생했습니다.');
+        }
+    });
+}
 
+// ===== 신년운세 기능 추가 =====
+function generateNewYearFortune(birthdate, name = '') {
+    const currentYear = new Date().getFullYear();
+    const seed = birthdate.replaceAll('-', '') + currentYear.toString();
+    
+    // 시드 기반 랜덤 생성
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        hash = (hash * 37 + seed.charCodeAt(i)) % 100000;
+    }
+    
+    // 월별 운세 생성
+    const months = [];
+    for (let month = 1; month <= 12; month++) {
+        const monthSeed = hash + month * 1000;
+        const score = Math.abs(monthSeed) % 100;
+        let level = '보통';
+        let advice = '';
+        
+        if (score >= 80) {
+            level = '최상';
+            advice = '새로운 기회와 행운이 가득한 달입니다. 적극적으로 도전해보세요!';
+        } else if (score >= 65) {
+            level = '상';
+            advice = '전반적으로 좋은 흐름의 달입니다. 계획한 일들이 순조롭게 진행될 것입니다.';
+        } else if (score >= 50) {
+            level = '보통';
+            advice = '안정적인 한 달입니다. 현재 상황을 유지하며 차근차근 나아가세요.';
+        } else if (score >= 35) {
+            level = '주의';
+            advice = '신중함이 필요한 달입니다. 중요한 결정은 미루는 것이 좋겠습니다.';
+        } else {
+            level = '조심';
+            advice = '어려움이 있을 수 있는 달입니다. 건강관리와 인간관계에 특히 신경쓰세요.';
+        }
+        
+        months.push({ month, score, level, advice });
+    }
+    
+    // 연간 종합 운세
+    const totalScore = Math.round(months.reduce((sum, m) => sum + m.score, 0) / 12);
+    let yearlyFortune = '';
+    
+    if (totalScore >= 75) {
+        yearlyFortune = `${name ? name+'님의' : ''} ${currentYear}년은 전체적으로 매우 좋은 해입니다. 새로운 도전과 기회가 많이 찾아올 것이며, 꾸준한 노력으로 큰 성과를 거둘 수 있습니다.`;
+    } else if (totalScore >= 60) {
+        yearlyFortune = `${name ? name+'님의' : ''} ${currentYear}년은 안정적이고 발전적인 해가 될 것입니다. 차근차근 계획을 세우고 실행하면 원하는 결과를 얻을 수 있습니다.`;
+    } else if (totalScore >= 45) {
+        yearlyFortune = `${name ? name+'님의' : ''} ${currentYear}년은 평범하지만 의미 있는 해입니다. 급하게 서두르지 말고 기초를 탄탄히 다지는 시간으로 보내세요.`;
+    } else {
+        yearlyFortune = `${name ? name+'님의' : ''} ${currentYear}년은 인내가 필요한 해입니다. 어려움이 있더라도 포기하지 말고 꾸준히 노력하면 하반기부터 좋아질 것입니다.`;
+    }
+    
+    // 특별한 달 찾기
+    const bestMonth = months.reduce((best, current) => current.score > best.score ? current : best);
+    const worstMonth = months.reduce((worst, current) => current.score < worst.score ? current : worst);
+    
+    return {
+        currentYear,
+        totalScore,
+        yearlyFortune,
+        months,
+        bestMonth,
+        worstMonth
+    };
+}
