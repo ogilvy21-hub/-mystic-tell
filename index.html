@@ -516,16 +516,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   window.addEventListener('DOMContentLoaded', () => {
     // 👉 모바일에서 페이지 로드시 즉시 수정구슬 위치로 (9월 18일 추가)
     if (window.innerWidth <= 768) {
-      setTimeout(() => {
-        const crystal = document.getElementById('mainCrystal');
-        if (crystal) {
-          crystal.scrollIntoView({ behavior: 'instant', block: 'start' });
-        }
-      }, 100);
+  
     }
     
     // 이미지 프리로드/페인트 시간을 살짝 기다렸다가
-    setTimeout(hideSplash, 7000);
+    setTimeout(hideSplash, 4000);
   });
 </script>
 </body>
