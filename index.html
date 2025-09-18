@@ -501,11 +501,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (main) { main.style.display = 'block'; }
     if (nav)  { nav.style.display  = 'flex';  }
   }
-
+ // 👉 추가: 모바일에서 스플래시 후 수정구슬로 스크롤 9월 18일 추가
+    if (window.innerWidth <= 768) {
+      setTimeout(() => {
+        document.getElementById('mainCrystal').scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start' 
+        });
+      }, 300);
+    }
+  }
+ 
   // 자동 시작 (버튼 없으므로)
   window.addEventListener('DOMContentLoaded', () => {
+   // 👉 추가: 모바일에서 페이지 로드시 즉시 수정구슬 위치로 9월 18일 추가
+    if (window.innerWidth <= 768) {
+      setTimeout(() => {
+        const crystal = document.getElementById('mainCrystal');
+        if (crystal) {
+          crystal.scrollIntoView({ behavior: 'instant', block: 'start' });
+        }
+      }, 100);
+    }
     // 이미지 프리로드/페인트 시간을 살짝 기다렸다가
-    setTimeout(hideSplash, 2000);
+   
+    setTimeout(hideSplash, 3000);
   });
 </script>
 
