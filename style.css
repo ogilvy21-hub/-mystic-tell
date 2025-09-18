@@ -1284,6 +1284,31 @@ body {
     margin: 10px;
   }
 }
+/* 👉 스플래시 우선 표시 (추가) */
+  .splash-screen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  body.loading .mt-header,
+  body.loading .mt-hero-split {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  
+  body.loaded .mt-header,
+  body.loaded .mt-hero-split {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
 /* ===== 접근성 ===== */
 @media (prefers-reduced-motion: reduce) {
   * {
