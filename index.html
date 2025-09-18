@@ -492,21 +492,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const splash = document.getElementById('splashScreen');
     const main   = document.getElementById('mainContent');
     const nav    = document.getElementById('bottomNav');
-
+    
     if (splash) splash.classList.add('hidden');     // .splash-screen.hidden { display:none !important; } 적용
     if (main)   main.classList.add('show');         // #mainContent.show { display:block !important; }
     if (nav)    nav.classList.add('show');          // #bottomNav.show { display:flex !important; }
-
+    
     // 혹시 인라인 스타일이 남아있어도 안전하게
     if (main) { main.style.display = 'block'; }
     if (nav)  { nav.style.display  = 'flex';  }
-  }
- // 👉 추가: 모바일에서 스플래시 후 수정구슬로 스크롤 9월 18일 추가
+    
+    // 👉 모바일에서 스플래시 후 수정구슬로 스크롤 (9월 18일 추가)
     if (window.innerWidth <= 768) {
       setTimeout(() => {
-        document.getElementById('mainCrystal').scrollIntoView({ 
+        document.getElementById('mainCrystal')?.scrollIntoView({ 
           behavior: 'smooth',
-          block: 'start' 
+          block: 'center' 
         });
       }, 300);
     }
@@ -514,7 +514,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
  
   // 자동 시작 (버튼 없으므로)
   window.addEventListener('DOMContentLoaded', () => {
-   // 👉 추가: 모바일에서 페이지 로드시 즉시 수정구슬 위치로 9월 18일 추가
+    // 👉 모바일에서 페이지 로드시 즉시 수정구슬 위치로 (9월 18일 추가)
     if (window.innerWidth <= 768) {
       setTimeout(() => {
         const crystal = document.getElementById('mainCrystal');
@@ -523,11 +523,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
       }, 100);
     }
+    
     // 이미지 프리로드/페인트 시간을 살짝 기다렸다가
-   
     setTimeout(hideSplash, 3000);
   });
 </script>
-
 </body>
 </html>
