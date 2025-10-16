@@ -433,7 +433,7 @@ function showFortuneView(route){
             views['fortune-match'].style.display = 'block';
             break;
         case 'fortune-year':
-            fortuneTitle.textContent = '신년 운세 (2025)';
+            fortuneTitle.textContent = '신년 운세 (2026)';
             views['fortune-year'].style.display = 'block';
             break;
         case 'fortune-lotto':
